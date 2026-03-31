@@ -1,0 +1,1848 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BALIAGENCIA — Simulateur d'incidents</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --dark: #080C12;
+  --dark2: #0D1420;
+  --dark3: #131C2E;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(201,168,76,0.15);
+  --text: #E8DCC8;
+  --muted: #6A7A8A;
+  --green: #2ECC71;
+  --red: #E74C3C;
+  --blue: #3498DB;
+  --orange: #F39C12;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--dark);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+}
+
+/* NAV */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 32px;
+  background: rgba(8,12,18,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size:18px; letter-spacing:4px; color:var(--gold);
+}
+.nav-back {
+  font-size:10px; letter-spacing:2px; color:var(--muted);
+  text-decoration:none; transition:color 0.2s;
+}
+.nav-back:hover { color:var(--gold); }
+.nav-tag {
+  font-size:9px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--gold); background:rgba(201,168,76,0.1);
+  border:1px solid rgba(201,168,76,0.2); border-radius:2px;
+  padding:4px 10px;
+}
+
+/* MAIN LAYOUT */
+.sim-wrap {
+  max-width:1200px; margin:0 auto;
+  padding: 100px 32px 60px;
+  display:grid;
+  grid-template-columns: 380px 1fr;
+  gap:32px;
+  align-items:start;
+}
+
+/* LEFT PANEL */
+.left-panel { position:sticky; top:90px; }
+
+.panel-title {
+  font-size:10px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--muted); margin-bottom:16px;
+}
+
+/* VILLA SELECTOR */
+.villa-selector { margin-bottom:24px; }
+.villa-option {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 14px; margin-bottom:8px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:6px; cursor:pointer; transition:all 0.2s;
+}
+.villa-option:hover { border-color:rgba(201,168,76,0.3); }
+.villa-option.selected { border-color:var(--gold); background:rgba(201,168,76,0.06); }
+.villa-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.villa-info { flex:1; }
+.villa-name { font-size:12px; color:var(--text); font-weight:600; margin-bottom:2px; }
+.villa-meta { font-size:9px; color:var(--muted); }
+
+/* SCENARIOS */
+.scenario-list { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+.scenario-btn {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:12px 14px;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:6px; cursor:pointer; transition:all 0.2s;
+  text-align:left; width:100%;
+}
+.scenario-btn:hover { border-color:rgba(201,168,76,0.3); background:rgba(255,255,255,0.03); }
+.scenario-btn.selected { border-color:var(--gold); background:rgba(201,168,76,0.06); }
+.scenario-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+.scenario-text { flex:1; }
+.scenario-name { font-size:11px; color:var(--text); font-weight:600; margin-bottom:3px; }
+.scenario-desc { font-size:9px; color:var(--muted); line-height:1.6; }
+.scenario-level {
+  font-size:8px; padding:2px 6px; border-radius:8px;
+  font-weight:600; margin-top:4px; display:inline-block;
+}
+.level-green { background:rgba(46,204,113,0.15); color:var(--green); }
+.level-orange { background:rgba(243,156,18,0.15); color:var(--orange); }
+.level-red { background:rgba(231,76,60,0.15); color:var(--red); }
+
+/* FREE INPUT */
+.free-input-wrap { margin-bottom:20px; }
+.free-input-label { font-size:10px; color:var(--muted); margin-bottom:8px; letter-spacing:1px; }
+.free-input-field {
+  width:100%; padding:12px 14px;
+  background:rgba(255,255,255,0.03); border:1px solid var(--border);
+  border-radius:6px; color:var(--text); font-family:'DM Mono',monospace;
+  font-size:11px; resize:vertical; min-height:80px; line-height:1.6;
+  transition:border-color 0.2s;
+}
+.free-input-field:focus { outline:none; border-color:rgba(201,168,76,0.4); }
+.free-input-field::placeholder { color:var(--muted); }
+
+/* LAUNCH BTN */
+.launch-btn {
+  width:100%; padding:14px;
+  background:var(--gold); color:var(--dark);
+  border:none; border-radius:4px; cursor:pointer;
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:3px; text-transform:uppercase;
+  transition:all 0.3s; font-weight:600;
+}
+.launch-btn:hover { background:var(--gold-light); transform:translateY(-1px); }
+.launch-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+.reset-btn {
+  width:100%; padding:10px; margin-top:8px;
+  background:transparent; color:var(--muted);
+  border:1px solid var(--border); border-radius:4px;
+  cursor:pointer; font-family:'DM Mono',monospace;
+  font-size:10px; letter-spacing:2px; transition:all 0.2s;
+}
+.reset-btn:hover { border-color:var(--gold); color:var(--gold); }
+
+/* RIGHT PANEL — SIMULATION */
+.right-panel { min-height:600px; }
+
+/* IDLE STATE */
+.sim-idle {
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:center; min-height:500px; gap:16px;
+  border:1px dashed rgba(201,168,76,0.15); border-radius:12px;
+  text-align:center; padding:40px;
+}
+.sim-idle-icon { font-size:48px; opacity:0.4; }
+.sim-idle-title { font-family:'Playfair Display',serif; font-size:22px; color:var(--gold); }
+.sim-idle-sub { font-size:11px; color:var(--muted); line-height:1.8; max-width:320px; }
+
+/* SIMULATION ACTIVE */
+.sim-active { display:none; flex-direction:column; gap:0; }
+
+/* VILLA HEADER */
+.sim-villa-header {
+  display:flex; align-items:center; gap:14px;
+  padding:16px 20px; margin-bottom:0;
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:8px 8px 0 0; border-bottom:none;
+}
+.sim-villa-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.sim-villa-name { font-size:14px; color:var(--text); font-weight:600; }
+.sim-villa-info { font-size:10px; color:var(--muted); }
+.sim-timer {
+  margin-left:auto; font-family:'DM Mono',monospace;
+  font-size:12px; color:var(--muted);
+}
+.sim-timer.red { color:var(--red); animation:pulse-r 1s infinite; }
+
+/* ALERT LEVEL BAR */
+.alert-level-bar {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 20px;
+  font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+  font-weight:600; transition:all 0.5s;
+}
+.alert-level-bar.green { background:rgba(46,204,113,0.08); border:1px solid rgba(46,204,113,0.2); color:var(--green); border-top:none; border-bottom:none; }
+.alert-level-bar.orange { background:rgba(243,156,18,0.08); border:1px solid rgba(243,156,18,0.2); color:var(--orange); border-top:none; border-bottom:none; }
+.alert-level-bar.red { background:rgba(231,76,60,0.1); border:1px solid rgba(231,76,60,0.3); color:var(--red); border-top:none; border-bottom:none; animation:flicker-border 1.5s infinite; }
+@keyframes flicker-border { 0%,100%{border-color:rgba(231,76,60,0.3);} 50%{border-color:rgba(231,76,60,0.7);} }
+
+.alert-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.alert-dot.green { background:var(--green); box-shadow:0 0 6px var(--green); }
+.alert-dot.orange { background:var(--orange); box-shadow:0 0 6px var(--orange); }
+.alert-dot.red { background:var(--red); box-shadow:0 0 6px var(--red); animation:pulse-r 1s infinite; }
+
+/* GUEST MESSAGE */
+.guest-message-box {
+  padding:16px 20px;
+  background:rgba(52,152,219,0.06); border:1px solid rgba(52,152,219,0.15);
+  border-top:none; border-bottom:none;
+}
+.gm-label { font-size:9px; color:var(--blue); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+.gm-bubble {
+  background:rgba(52,152,219,0.1); border:1px solid rgba(52,152,219,0.2);
+  border-radius:12px 12px 12px 4px; padding:12px 16px;
+  font-size:12px; color:var(--text); line-height:1.7;
+  max-width:85%;
+}
+.gm-meta { font-size:9px; color:var(--muted); margin-top:6px; }
+
+/* TIMELINE */
+.sim-timeline {
+  border:1px solid var(--border); border-top:none;
+  border-radius:0 0 8px 8px; overflow:hidden;
+}
+
+.timeline-entry {
+  display:flex; gap:0; border-bottom:1px solid rgba(255,255,255,0.04);
+  animation:entry-in 0.4s ease forwards; opacity:0;
+}
+@keyframes entry-in { from{opacity:0;transform:translateX(-8px);} to{opacity:1;transform:translateX(0);} }
+
+.entry-time {
+  width:70px; flex-shrink:0; padding:14px 12px;
+  font-size:10px; color:var(--muted); font-family:'DM Mono',monospace;
+  border-right:1px solid rgba(255,255,255,0.04);
+  display:flex; align-items:flex-start; padding-top:16px;
+}
+.entry-body { flex:1; padding:12px 16px; }
+.entry-icon { font-size:14px; margin-right:8px; }
+.entry-title { font-size:11px; color:var(--text); font-weight:600; margin-bottom:4px; }
+.entry-detail { font-size:10px; color:var(--muted); line-height:1.7; }
+.entry-tag {
+  display:inline-block; font-size:8px; padding:2px 7px;
+  border-radius:8px; margin-top:4px; font-weight:600;
+}
+.tag-sofia { background:rgba(201,168,76,0.12); color:var(--gold); }
+.tag-adi { background:rgba(52,152,219,0.12); color:var(--blue); }
+.tag-rex { background:rgba(46,204,113,0.12); color:var(--green); }
+.tag-alerte { background:rgba(231,76,60,0.12); color:var(--red); }
+.tag-system { background:rgba(255,255,255,0.06); color:var(--muted); }
+
+/* WHATSAPP MOCK */
+.wa-mock {
+  margin-top:8px; padding:10px 12px;
+  background:#1a2a1a; border:1px solid rgba(46,204,113,0.15);
+  border-radius:8px; font-size:10px; line-height:1.7;
+}
+.wa-header {
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:8px; padding-bottom:6px;
+  border-bottom:1px solid rgba(46,204,113,0.1);
+  font-size:9px; color:rgba(46,204,113,0.7);
+}
+.wa-bubble {
+  background:rgba(46,204,113,0.08); border-radius:0 8px 8px 8px;
+  padding:8px 12px; color:var(--text); margin-bottom:4px;
+  font-size:10px; line-height:1.6; max-width:90%;
+}
+.wa-bubble.sent {
+  background:rgba(52,152,219,0.08); border-radius:8px 0 8px 8px;
+  margin-left:auto;
+}
+.wa-time { font-size:8px; color:var(--muted); text-align:right; }
+
+/* SOFIA RESPONSE */
+.sofia-response {
+  margin-top:8px; padding:10px 12px;
+  background:rgba(201,168,76,0.04); border:1px solid rgba(201,168,76,0.15);
+  border-radius:8px;
+}
+.sofia-header {
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:6px; font-size:9px; color:var(--gold);
+}
+.sofia-bubble {
+  font-size:11px; color:var(--text); line-height:1.7;
+  font-style:italic;
+}
+.sofia-meta { font-size:9px; color:var(--muted); margin-top:4px; }
+
+/* CRITICAL POPUP */
+.critical-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.85); z-index:500;
+  align-items:center; justify-content:center; padding:20px;
+}
+.critical-overlay.visible { display:flex; }
+.critical-popup {
+  background:var(--dark2); border:2px solid var(--red);
+  border-radius:12px; padding:28px; max-width:480px; width:100%;
+  animation:popup-in 0.3s ease;
+}
+@keyframes popup-in { from{opacity:0;transform:scale(0.95);} to{opacity:1;transform:scale(1);} }
+.critical-header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.pulse-red { width:12px; height:12px; border-radius:50%; background:var(--red); animation:pulse-r 1s infinite; }
+.critical-title { font-size:14px; color:var(--red); font-weight:700; }
+.critical-timer { margin-left:auto; font-size:18px; font-family:'Playfair Display',serif; color:var(--red); }
+.critical-log {
+  background:rgba(0,0,0,0.3); border-radius:6px; padding:12px;
+  margin-bottom:16px; max-height:160px; overflow-y:auto;
+  display:flex; flex-direction:column; gap:4px;
+}
+.crit-log-line { font-size:9px; color:var(--muted); padding:3px 6px; border-left:2px solid rgba(231,76,60,0.3); }
+.critical-actions { display:flex; flex-direction:column; gap:8px; }
+.btn-takeover {
+  padding:14px; background:var(--red); color:#fff; border:none;
+  border-radius:4px; cursor:pointer; font-family:'DM Mono',monospace;
+  font-size:11px; letter-spacing:2px; font-weight:600; transition:all 0.2s;
+}
+.btn-takeover:hover { background:#c0392b; }
+.btn-let-agent {
+  padding:12px; background:transparent; color:var(--muted);
+  border:1px solid var(--border); border-radius:4px; cursor:pointer;
+  font-family:'DM Mono',monospace; font-size:10px; transition:all 0.2s;
+}
+.btn-let-agent:hover { border-color:var(--green); color:var(--green); }
+.btn-call {
+  padding:12px; background:rgba(46,204,113,0.1); color:var(--green);
+  border:1px solid rgba(46,204,113,0.3); border-radius:4px; cursor:pointer;
+  font-family:'DM Mono',monospace; font-size:10px; transition:all 0.2s;
+}
+.btn-call:hover { background:rgba(46,204,113,0.2); }
+
+/* REPORT */
+.incident-report {
+  display:none; margin-top:16px;
+  border:1px solid rgba(201,168,76,0.2); border-radius:8px; overflow:hidden;
+}
+.report-header {
+  padding:14px 20px; background:rgba(201,168,76,0.06);
+  border-bottom:1px solid rgba(201,168,76,0.15);
+  display:flex; align-items:center; gap:10px;
+}
+.report-title { font-size:12px; color:var(--gold); font-weight:600; }
+.report-body { padding:20px; display:flex; flex-direction:column; gap:12px; }
+.report-row { display:flex; gap:12px; font-size:11px; }
+.report-label { width:160px; color:var(--muted); flex-shrink:0; }
+.report-value { color:var(--text); flex:1; line-height:1.6; }
+.report-value.green { color:var(--green); }
+.report-value.orange { color:var(--orange); }
+.report-value.red { color:var(--red); }
+
+/* POWER BAR */
+.power-bar-wrap {
+  margin-top:24px; padding:16px 20px;
+  background:var(--surface); border:1px solid var(--border); border-radius:8px;
+}
+.power-bar-label {
+  display:flex; justify-content:space-between;
+  font-size:9px; color:var(--muted); margin-bottom:8px; letter-spacing:1.5px; text-transform:uppercase;
+}
+.power-bar-track { height:8px; background:rgba(255,255,255,0.05); border-radius:4px; overflow:hidden; }
+.power-bar-fill {
+  height:100%; border-radius:4px; transition:width 1.5s ease, background 1s ease;
+  width:0%;
+}
+.power-bar-sub { font-size:9px; color:var(--muted); margin-top:6px; text-align:right; }
+
+/* KEYFRAMES */
+@keyframes pulse-r { 0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,0.7);} 50%{box-shadow:0 0 0 6px rgba(231,76,60,0);} }
+
+
+/* TUKANG PROFILE CARD */
+.tukang-card {
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;
+  background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.2);
+  border-radius:8px;margin-top:8px;
+}
+.tukang-avatar {
+  width:48px;height:48px;border-radius:50%;flex-shrink:0;
+  background:var(--dark3);border:2px solid rgba(201,168,76,0.3);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+}
+.tukang-info { flex:1; }
+.tukang-name-big { font-size:13px;color:var(--text);font-weight:600;margin-bottom:2px; }
+.tukang-badge { font-size:9px;color:var(--green);background:rgba(46,204,113,0.1);border:1px solid rgba(46,204,113,0.2);border-radius:10px;padding:2px 8px;display:inline-block;margin-bottom:4px; }
+.tukang-spec { font-size:10px;color:var(--muted); }
+.tukang-eta-big { text-align:right; }
+.tukang-eta-num { font-size:22px;font-family:'Playfair Display',serif;color:var(--gold);line-height:1; }
+.tukang-eta-label { font-size:9px;color:var(--muted);letter-spacing:1px; }
+
+/* GEOLOC MINI MAP */
+.geo-strip {
+  display:flex;align-items:center;gap:12px;padding:10px 16px;
+  background:rgba(52,152,219,0.04);border:1px solid rgba(52,152,219,0.12);
+  border-radius:6px;margin-top:8px;font-size:10px;color:var(--muted);
+}
+.geo-dot-moving {
+  width:10px;height:10px;border-radius:50%;background:var(--blue);
+  box-shadow:0 0 8px var(--blue);flex-shrink:0;
+  animation:geo-pulse 1.2s ease-in-out infinite;
+}
+@keyframes geo-pulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.4);opacity:0.7;} }
+.geo-route {
+  flex:1;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;position:relative;overflow:visible;
+}
+.geo-route-fill {
+  height:100%;border-radius:2px;background:rgba(52,152,219,0.5);
+  transition:width 3s ease;
+  position:relative;
+}
+.geo-route-fill::after {
+  content:'🏍️';position:absolute;right:-10px;top:-8px;font-size:14px;
+  animation:bike-bounce 0.6s ease-in-out infinite alternate;
+}
+@keyframes bike-bounce { from{transform:translateY(0);} to{transform:translateY(-3px);} }
+.geo-villa-pin { font-size:14px;flex-shrink:0; }
+
+/* SOFIA GUEST MSG (during tracking) */
+.sofia-guest-notify {
+  padding:12px 16px;
+  background:rgba(201,168,76,0.04);border-left:3px solid rgba(201,168,76,0.4);
+  border-radius:0 6px 6px 0;margin-top:8px;
+}
+.sgn-label { font-size:9px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px; }
+.sgn-msg { font-size:11px;color:var(--text);line-height:1.7;font-style:italic; }
+.sgn-meta { font-size:9px;color:var(--muted);margin-top:4px; }
+
+/* QCM TUKANG */
+.qcm-wrap {
+  margin-top:8px;padding:14px 16px;
+  background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;
+}
+.qcm-title { font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px; }
+.qcm-question { font-size:11px;color:var(--text);margin-bottom:8px;font-weight:600; }
+.qcm-options { display:flex;flex-direction:column;gap:6px; }
+.qcm-option {
+  display:flex;align-items:center;gap:8px;padding:8px 12px;
+  background:rgba(255,255,255,0.02);border:1px solid var(--border);
+  border-radius:4px;cursor:pointer;font-size:10px;color:var(--muted);
+  transition:all 0.2s;
+}
+.qcm-option:hover { border-color:rgba(201,168,76,0.3);color:var(--text); }
+.qcm-option.selected { border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.06); }
+.qcm-option.confirmed { border-color:var(--green);color:var(--green);background:rgba(46,204,113,0.06); }
+.qcm-radio { width:12px;height:12px;border-radius:50%;border:1.5px solid var(--muted);flex-shrink:0;transition:all 0.2s; }
+.qcm-option.selected .qcm-radio { border-color:var(--gold);background:var(--gold); }
+.qcm-option.confirmed .qcm-radio { border-color:var(--green);background:var(--green); }
+.qcm-confirm-btn {
+  margin-top:10px;padding:8px 16px;
+  background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);
+  border-radius:4px;color:var(--gold);font-family:'DM Mono',monospace;
+  font-size:10px;cursor:pointer;transition:all 0.2s;width:100%;
+}
+.qcm-confirm-btn:hover { background:rgba(201,168,76,0.18); }
+
+/* PHOTO UPLOAD MOCK */
+.photo-mock {
+  margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;
+}
+.photo-thumb {
+  width:72px;height:72px;border-radius:6px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;position:relative;overflow:hidden;
+}
+.photo-thumb::after {
+  content:'✓';position:absolute;bottom:3px;right:5px;
+  font-size:9px;color:var(--green);font-weight:700;
+}
+
+/* END QCM */
+.end-qcm { margin-top:10px; }
+.end-result {
+  padding:12px 16px;border-radius:6px;font-size:11px;line-height:1.7;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.end-result.good { background:rgba(46,204,113,0.06);border:1px solid rgba(46,204,113,0.2);color:var(--green); }
+.end-result.warn { background:rgba(243,156,18,0.06);border:1px solid rgba(243,156,18,0.2);color:var(--orange); }
+
+/* OWNER MODE BADGE */
+.owner-mode {
+  display:inline-flex;align-items:center;gap:6px;
+  padding:3px 10px;border-radius:10px;font-size:9px;
+  font-weight:600;margin-left:auto;
+}
+.owner-mode.ghost { background:rgba(106,122,138,0.15);color:var(--muted);border:1px solid rgba(106,122,138,0.2); }
+.owner-mode.superhost { background:rgba(201,168,76,0.12);color:var(--gold);border:1px solid rgba(201,168,76,0.25); }
+
+
+/* MULTI-INCIDENT */
+.multi-header {
+  display:flex;gap:8px;align-items:center;padding:10px 16px;
+  background:rgba(155,89,182,0.06);border:1px solid rgba(155,89,182,0.2);
+  border-bottom:none;font-size:11px;color:#9B59B6;font-weight:600;
+}
+.incident-lane {
+  border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;margin-bottom:12px;
+}
+.incident-lane-header {
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  font-size:11px;font-weight:600;border-bottom:1px solid var(--border);
+}
+.incident-lane-body { padding:12px 14px; }
+.lane-status-pill {
+  margin-left:auto;padding:3px 10px;border-radius:10px;
+  font-size:9px;font-weight:600;font-family:'DM Mono',monospace;
+  transition:all 0.5s;
+}
+.pill-searching { background:rgba(243,156,18,0.12);color:var(--orange); }
+.pill-inroute   { background:rgba(52,152,219,0.12);color:var(--blue); }
+.pill-onsite    { background:rgba(201,168,76,0.12);color:var(--gold); }
+.pill-done      { background:rgba(46,204,113,0.12);color:var(--green); }
+.pill-problem   { background:rgba(231,76,60,0.12);color:var(--red); }
+
+.dispatch-search {
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:rgba(255,255,255,0.02);border-radius:6px;
+  font-size:10px;color:var(--muted);margin-bottom:8px;
+}
+.search-spinner {
+  width:12px;height:12px;border-radius:50%;border:2px solid rgba(201,168,76,0.2);
+  border-top-color:var(--gold);animation:spin 0.8s linear infinite;flex-shrink:0;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.dispatch-found {
+  padding:10px 12px;border-radius:6px;font-size:10px;
+  background:rgba(46,204,113,0.05);border:1px solid rgba(46,204,113,0.15);
+  display:flex;align-items:center;gap:10px;margin-bottom:8px;
+}
+
+/* MOBILE */
+@media(max-width:768px) {
+  .sim-wrap { grid-template-columns:1fr; padding:90px 16px 40px; gap:24px; }
+  .left-panel { position:static; }
+  nav { padding:14px 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">BAL<span style="color:var(--gold-light)">I.A</span>GENCIA</div>
+  <span class="nav-tag">Simulateur d'incidents</span>
+  <a href="index.html" class="nav-back">← Retour</a>
+</nav>
+
+<div class="sim-wrap">
+
+  <!-- LEFT PANEL -->
+  <div class="left-panel">
+
+    <div class="panel-title">1 — Choisir une villa</div>
+    <div class="villa-selector" id="villa-selector">
+      <div class="villa-option selected" onclick="selectVilla(0)" id="v0">
+        <div class="villa-dot" style="background:#2ECC71;box-shadow:0 0 6px #2ECC71"></div>
+        <div class="villa-info">
+          <div class="villa-name">Villa Lotus</div>
+          <div class="villa-meta">Batu Bolong · 2ch · piscine · $115/nuit · 78% occ</div>
+        </div>
+      </div>
+      <div class="villa-option" onclick="selectVilla(1)" id="v1">
+        <div class="villa-dot" style="background:#F39C12;box-shadow:0 0 6px #F39C12"></div>
+        <div class="villa-info">
+          <div class="villa-name">Villa Semeru</div>
+          <div class="villa-meta">Berawa · 3ch · piscine infinity · $138/nuit · 71% occ</div>
+        </div>
+      </div>
+      <div class="villa-option" onclick="selectVilla(2)" id="v2">
+        <div class="villa-dot" style="background:#9B59B6;box-shadow:0 0 6px #9B59B6"></div>
+        <div class="villa-info">
+          <div class="villa-name">Villa Ombak</div>
+          <div class="villa-meta">Pererenan · 1ch · vue rizière · $88/nuit · 41% occ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-title">2 — Scénario d'incident</div>
+    <div class="scenario-list" id="scenario-list">
+
+      <button class="scenario-btn selected" onclick="selectScenario(0)" id="sc0">
+        <span class="scenario-icon">💧</span>
+        <div class="scenario-text">
+          <div class="scenario-name">Fuite plomberie</div>
+          <div class="scenario-desc">Le guest signale de l'eau sous l'évier de la cuisine. Tukang principal indisponible.</div>
+          <span class="scenario-level level-red">🔴 Critique</span>
+        </div>
+      </button>
+
+      <button class="scenario-btn" onclick="selectScenario(1)" id="sc1">
+        <span class="scenario-icon">❄️</span>
+        <div class="scenario-text">
+          <div class="scenario-name">Panne climatisation</div>
+          <div class="scenario-desc">AC chambre principale ne refroidit plus. Guest réveillé à 3h du matin.</div>
+          <span class="scenario-level level-orange">🟡 Moyen</span>
+        </div>
+      </button>
+
+      <button class="scenario-btn" onclick="selectScenario(2)" id="sc2">
+        <span class="scenario-icon">🌐</span>
+        <div class="scenario-text">
+          <div class="scenario-name">Coupure WiFi</div>
+          <div class="scenario-desc">Internet coupé depuis 2h. Guest télétravaille, réunion Zoom dans 30 min.</div>
+          <span class="scenario-level level-orange">🟡 Moyen</span>
+        </div>
+      </button>
+
+      <button class="scenario-btn" onclick="selectScenario(3)" id="sc3">
+        <span class="scenario-icon">🔒</span>
+        <div class="scenario-text">
+          <div class="scenario-name">Serrure bloquée</div>
+          <div class="scenario-desc">Code de la serrure ne fonctionne plus. Guest bloqué dehors avec ses bagages.</div>
+          <span class="scenario-level level-red">🔴 Critique</span>
+        </div>
+      </button>
+
+      <button class="scenario-btn" onclick="selectScenario(4)" id="sc4">
+        <span class="scenario-icon">🪳</span>
+        <div class="scenario-text">
+          <div class="scenario-name">Insectes signalés</div>
+          <div class="scenario-desc">Guest découvre des cafards dans la cuisine. Menaçe de laisser une review 1★.</div>
+          <span class="scenario-level level-red">🔴 Critique</span>
+        </div>
+      </button>
+
+      <button class="scenario-btn" onclick="selectScenario(5)" id="sc5">
+        <span class="scenario-icon">🏊</span>
+        <div class="scenario-text">
+          <div class="scenario-name">Piscine trouble</div>
+          <div class="scenario-desc">Eau de la piscine verdâtre ce matin. Famille avec enfants arrive dans 4h.</div>
+          <span class="scenario-level level-orange">🟡 Moyen</span>
+        </div>
+      </button>
+
+      <button class="scenario-btn" onclick="selectScenario(6)" id="sc6">
+        <span class="scenario-icon">⚡</span>
+        <div class="scenario-text">
+          <div class="scenario-name">Coupure électrique</div>
+          <div class="scenario-desc">Panne de courant totale. Frigo arrêté, pas de lumière, pas d'eau chaude.</div>
+          <span class="scenario-level level-red">🔴 Critique</span>
+        </div>
+      </button>
+
+      <button class="scenario-btn" onclick="selectScenario(7)" id="sc7" style="border-color:rgba(155,89,182,0.3);background:rgba(155,89,182,0.04);">
+        <span class="scenario-icon">💧❄️</span>
+        <div class="scenario-text">
+          <div class="scenario-name">Double panne simultanée</div>
+          <div class="scenario-desc">Plus d'eau + clim chambre en panne. Guest reçoit les deux en même temps. Sofia dispatche 2 techniciens en parallèle.</div>
+          <span class="scenario-level" style="background:rgba(155,89,182,0.15);color:#9B59B6;border:1px solid rgba(155,89,182,0.3);">🟣 Multi-incidents</span>
+        </div>
+      </button>
+
+    </div>
+
+    <div class="panel-title" style="margin-top:4px;">3 — Ou écrivez le vôtre</div>
+    <div class="free-input-wrap">
+      <textarea class="free-input-field" id="free-input" placeholder="Ex: Le guest dit que la douche ne chauffe pas, il repart demain matin..."></textarea>
+    </div>
+
+    <button class="launch-btn" id="launch-btn" onclick="launchSim()">
+      ▶ Lancer la simulation →
+    </button>
+    <button class="reset-btn" id="reset-btn" onclick="resetSim()">↺ Réinitialiser</button>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right-panel">
+
+    <div class="sim-idle" id="sim-idle">
+      <div class="sim-idle-icon">🤖</div>
+      <div class="sim-idle-title">Prêt à simuler</div>
+      <div class="sim-idle-sub">Choisissez une villa, un scénario ou tapez votre propre incident. Vous verrez le système réagir en temps réel — de la réponse au guest jusqu'à l'alerte critique si nécessaire.</div>
+    </div>
+
+    <div class="sim-active" id="sim-active">
+
+      <div class="sim-villa-header" id="sim-villa-header">
+        <div class="sim-villa-dot" id="sim-villa-dot" style="background:#2ECC71"></div>
+        <div>
+          <div class="sim-villa-name" id="sim-villa-name">Villa Lotus</div>
+          <div class="sim-villa-info" id="sim-villa-info">Batu Bolong · Guest: Sarah K.</div>
+        </div>
+        <div class="sim-timer" id="sim-timer">00:00</div>
+      </div>
+
+      <div class="alert-level-bar green" id="alert-level-bar">
+        <div class="alert-dot green" id="alert-dot"></div>
+        <span id="alert-level-text">🟢 Niveau Normal — agents en gestion autonome</span>
+      </div>
+
+      <!-- INCIDENT PROGRESS BAR -->
+      <div id="eta-estimate-bar" style="display:none;padding:12px 16px;border:1px solid var(--border);border-top:none;border-bottom:none;background:rgba(255,255,255,0.015);">
+        <!-- Header row -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="font-size:9px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;">Progression de l'incident</div>
+          <div style="display:flex;gap:12px;font-size:9px;align-items:center;">
+            <span id="eta-init-label" style="color:var(--green);">—</span>
+            <span id="eta-revised-label" style="color:var(--orange);display:none;"></span>
+            <span id="eta-end-label" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);">—</span>
+          </div>
+        </div>
+        <!-- Segmented bar -->
+        <div style="position:relative;height:12px;background:rgba(255,255,255,0.05);border-radius:6px;overflow:hidden;">
+          <!-- done segment (dark green) -->
+          <div id="seg-done" style="position:absolute;left:0;top:0;bottom:0;width:0%;background:#1a8a3a;border-radius:6px 0 0 6px;transition:width 0.8s ease;"></div>
+          <!-- in-progress segment (light green striped) -->
+          <div id="seg-progress" style="position:absolute;top:0;bottom:0;width:0%;background:repeating-linear-gradient(45deg,rgba(46,204,113,0.6),rgba(46,204,113,0.6) 6px,rgba(46,204,113,0.3) 6px,rgba(46,204,113,0.3) 12px);transition:left 0.8s ease,width 0.8s ease;"></div>
+          <!-- extra segment (orange = problem added) -->
+          <div id="seg-extra" style="position:absolute;top:0;bottom:0;width:0%;background:repeating-linear-gradient(45deg,rgba(243,156,18,0.7),rgba(243,156,18,0.7) 6px,rgba(243,156,18,0.4) 6px,rgba(243,156,18,0.4) 12px);transition:left 0.8s ease,width 0.8s ease;"></div>
+        </div>
+        <!-- Time labels -->
+        <div id="seg-time-labels" style="display:flex;justify-content:space-between;font-size:8px;color:var(--muted);margin-top:4px;"></div>
+        <!-- Revision notice -->
+        <div id="eta-revision-notice" style="display:none;margin-top:6px;font-size:9px;color:var(--orange);line-height:1.6;"></div>
+        <!-- Equipment hint -->
+        <div id="eta-equipment" style="font-size:9px;color:var(--muted);margin-top:6px;line-height:1.7;display:none;border-top:1px solid rgba(255,255,255,0.04);padding-top:6px;"></div>
+      </div>
+
+      <div class="guest-message-box" id="guest-message-box">
+        <div class="gm-label">Message du guest</div>
+        <div class="gm-bubble" id="guest-bubble">—</div>
+        <div class="gm-meta" id="guest-meta">—</div>
+      </div>
+
+      <div class="sim-timeline" id="sim-timeline"></div>
+
+      <div class="incident-report" id="incident-report">
+        <div class="report-header">
+          <span style="font-size:16px;">📋</span>
+          <div class="report-title">Rapport d'incident — généré automatiquement</div>
+          <span style="margin-left:auto;font-size:9px;color:var(--muted);" id="report-date">—</span>
+        </div>
+        <div class="report-body" id="report-body"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- CRITICAL POPUP -->
+<div class="critical-overlay" id="critical-overlay">
+  <div class="critical-popup">
+    <div class="critical-header">
+      <div class="pulse-red"></div>
+      <div class="critical-title" id="crit-title">ALERTE CRITIQUE</div>
+      <div class="critical-timer" id="crit-timer">00:00</div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.7;" id="crit-summary">—</div>
+    <div class="critical-log" id="crit-log"></div>
+    <div class="critical-actions">
+      <button class="btn-takeover" onclick="takeOver()">⛔ Prendre la main — stopper les agents</button>
+      <button class="btn-call" onclick="callStaff()" id="crit-call-btn">📞 Appeler Pak Made directement</button>
+      <button class="btn-let-agent" onclick="letAgentHandle()">🤖 Laisser l'agent gérer encore 5 min</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// =====================
+// DATA
+// =====================
+const VILLAS = [
+  { name:'Villa Lotus',  area:'Batu Bolong', color:'#2ECC71', guest:'Sarah K.',  guestLang:'EN', checkout:'Apr 12', staff:['Irfan','Hana','Pak Made'] },
+  { name:'Villa Semeru', area:'Berawa',       color:'#F39C12', guest:'Thomas W.', guestLang:'DE', checkout:'Apr 15', staff:['Wayan','Dewi','Pak Ketut'] },
+  { name:'Villa Ombak',  area:'Pererenan',    color:'#9B59B6', guest:'Marie L.',  guestLang:'FR', checkout:'Apr 10', staff:['Budi','Sari','Pak Nyoman'] },
+];
+
+const TUKANG_PROFILES = [
+  { name:'Made Suardika', emoji:'👨‍🔧', spec:'Plomberie · Électricité', cert:'Certifié BALIAGENCIA', rating:'4.9★', dist:'2.3 km' },
+  { name:'Wayan Karma',   emoji:'🧑‍🔧', spec:'Climatisation · Électricité', cert:'Certifié BALIAGENCIA', rating:'4.8★', dist:'3.7 km' },
+  { name:'Ketut Arsana',  emoji:'👷',   spec:'Pool · Plomberie · Général', cert:'Certifié BALIAGENCIA', rating:'4.7★', dist:'1.8 km' },
+];
+
+const SCENARIOS = [
+  {
+    id:0, level:'red', icon:'💧', name:'Fuite plomberie',
+    guestMsg:{ en:"Hi, there's water leaking under the kitchen sink, it's getting worse... 😟", fr:"Il y a une fuite sous l'évier de cuisine, ça empire...", de:"Unter der Küchenspüle ist ein Wasserleck..." },
+    sofiaReply:{ en:"Hi Sarah! I'm so sorry — our maintenance team has been alerted immediately. I'll update you every 15 minutes. Please avoid the kitchen sink. Can I send a complimentary breakfast? 🙏", fr:"Toutes mes excuses — notre équipe est alertée immédiatement. Je vous tiens informée toutes les 15 min. Un petit-déjeuner offert demain ? 🙏", de:"Das tut mir sehr leid — unser Wartungsteam wurde sofort alarmiert. Ich halte Sie auf dem Laufenden. 🙏" },
+    waMsg:"Selamat siang Irfan 🙏\n\nAda bocoran di bawah wastafel dapur. Tamu masih di tempat.\n\nTolong datang secepatnya — situasi darurat. 🔧",
+    staffNoReply:true, eta:32,
+    waterfall:['Irfan — Tukang principal','Budi — Remplaçant #1','Pak Made — Remplaçant #2'],
+    critSummary:'Fuite active, tukang principal + remplaçant #1 injoignables. Guest impactée. Risque dommages structure.',
+    resolution:'Pak Made confirmé · arrivée dans 45 min · guest informée · bon restaurant offert',
+    impact:'+$0 (résolu avant review)', powerDelta:3,
+  },
+  {
+    id:1, level:'orange', icon:'❄️', name:'Panne climatisation',
+    guestMsg:{ en:"The AC in the bedroom stopped working, it's 3am and it's boiling hot...", fr:"La clim de la chambre est tombée en panne, il est 3h du mat...", de:"Die Klimaanlage im Schlafzimmer funktioniert nicht mehr, es ist 3 Uhr morgens..." },
+    sofiaReply:{ en:"Hi Sarah! I'm so sorry — a technician is notified immediately. Can I move you to the second bedroom with working AC? 🙏", fr:"Toutes mes excuses — technicien alerté immédiatement. Puis-je vous proposer la seconde chambre climatisée ? 🙏", de:"Es tut mir sehr leid — Techniker sofort benachrichtigt. Darf ich Ihnen das zweite Zimmer anbieten? 🙏" },
+    waMsg:"Halo Wayan 🙏\n\nAC kamar utama mati — jam 3 pagi, tamu tidak bisa tidur.\n\nBisa datang sekarang? Ini darurat.",
+    staffNoReply:false, eta:28,
+    waterfall:['Wayan — Technicien clim'],
+    critSummary:null,
+    resolution:'Technicien arrivé en 28 min · fusible remplacé · late checkout offert',
+    impact:'+$0 (résolu proprement)', powerDelta:2,
+  },
+  {
+    id:2, level:'orange', icon:'🌐', name:'Coupure WiFi',
+    guestMsg:{ en:"The WiFi has been down for 2 hours. I have a Zoom call in 30 minutes!", fr:"Le WiFi est coupé depuis 2h. J'ai une réunion Zoom dans 30 minutes !", de:"Das WLAN ist seit 2 Stunden ausgefallen. Ich habe in 30 Minuten einen Zoom-Call!" },
+    sofiaReply:{ en:"Hi! I'm resetting the router remotely right now. If that doesn't work, a 4G hotspot arrives in 10 min so you don't miss your call. 📡", fr:"Je réinitialise le routeur à distance. Si ça ne suffit pas, un hotspot 4G arrive dans 10 min. 📡", de:"Ich starte den Router gerade aus der Ferne neu. Falls nötig, bringe ich in 10 Minuten einen 4G-Hotspot. 📡" },
+    waMsg:"Halo Budi 🙏\n\nWiFi mati — tamu perlu internet untuk meeting penting dalam 30 menit.\n\nBisa reset router sekarang?",
+    staffNoReply:false, eta:12,
+    waterfall:['Budi — Support IT'],
+    critSummary:null,
+    resolution:'Router redémarré à distance · connexion rétablie en 3 min · review 5★ probable',
+    impact:'+$0', powerDelta:5,
+  },
+  {
+    id:3, level:'red', icon:'🔒', name:'Serrure bloquée',
+    guestMsg:{ en:"HELP! The door lock won't open, I'm outside with all my luggage!", fr:"URGENT ! La serrure ne s'ouvre plus, je suis dehors avec mes valises !", de:"HILFE! Das Türschloss öffnet sich nicht! Ich stehe mit Gepäck draußen!" },
+    sofiaReply:{ en:"On this RIGHT NOW. Try emergency code: 8547#. If not, team arrives in 10 min with backup key. You won't be left outside. 🔑", fr:"Je m'en occupe IMMÉDIATEMENT. Essayez le code d'urgence : 8547#. Sinon, quelqu'un arrive en 10 min avec clé de secours. 🔑", de:"SOFORT! Probieren Sie den Notfallcode: 8547#. Falls nicht, kommt jemand in 10 Minuten mit Ersatzschlüssel. 🔑" },
+    waMsg:"DARURAT Irfan! 🚨\n\nTamu terkunci di luar villa sekarang juga!\n\nBawa kunci cadangan SEKARANG — prioritas tertinggi.",
+    staffNoReply:true, eta:18,
+    waterfall:['Irfan — Tukang principal','Hana — Housekeeping (clé maître)','Pak Made — Backup urgent'],
+    critSummary:'Guest bloqué dehors depuis 15 min. Irfan + Hana injoignables. Risque review catastrophique.',
+    resolution:'Pak Made arrivé en 18 min · serrure remplacée · upgrade offert · guest satisfaite',
+    impact:'+$45 (upgrade chambre)', powerDelta:1,
+  },
+  {
+    id:4, level:'red', icon:'🪳', name:'Insectes signalés',
+    guestMsg:{ en:"There are cockroaches in the kitchen!! I'm going to leave a 1 star review unless this is fixed NOW.", fr:"Il y a des cafards dans la cuisine !! Je vais mettre 1★ si ça n'est pas réglé immédiatement.", de:"Es gibt Kakerlaken in der Küche!! Wenn das nicht sofort behoben wird, gebe ich 1 Stern!" },
+    sofiaReply:{ en:"I sincerely apologize — completely unacceptable. Pest control arrives within the hour. We're offering you dinner tonight at Mexicola ($80) while we handle this. 🙏", fr:"Sincèrement désolée — inacceptable. Un spécialiste arrive dans l'heure. Le dîner ce soir est offert ($80) pendant l'intervention. 🙏", de:"Ich entschuldige mich aufrichtig — inakzeptabel. Schädlingsbekämpfer kommt in einer Stunde. Abendessen heute Abend auf unsere Kosten ($80). 🙏" },
+    waMsg:"Halo Budi 🙏\n\nAda laporan kecoa di dapur — tamu ancam review 1 bintang.\n\nHubungi pest control sekarang, harus datang dalam 1 jam.",
+    staffNoReply:false, eta:55,
+    waterfall:['Budi — Maintenance + pest control'],
+    critSummary:'Guest menaçant 1★ review.',
+    resolution:'Pest control en 55 min · dîner offert · guest a mis 4★ · maintenance préventive programmée',
+    impact:'-$80 (dîner) / review sauvée', powerDelta:2,
+  },
+  {
+    id:5, level:'orange', icon:'🏊', name:'Piscine trouble',
+    guestMsg:{ en:"The pool water is green and murky. We have kids arriving today...", fr:"L'eau de la piscine est verte et trouble. Nos enfants arrivent aujourd'hui...", de:"Das Poolwasser ist grün und trüb. Unsere Kinder kommen heute..." },
+    sofiaReply:{ en:"Thank you for letting me know — our pool technician arrives this morning. Crystal clear for your family! Complimentary pool toys for the kids! 🏊", fr:"Notre technicien piscine intervient ce matin. L'eau sera impeccable. Des jouets piscine offerts pour les enfants ! 🏊", de:"Unser Pooltechniker kommt heute Morgen. Kristallklares Wasser für Ihre Familie! Spielzeug für die Kinder! 🏊" },
+    waMsg:"Halo Wayan 🙏\n\nAir kolam renang hijau dan keruh — tamu keluarga datang hari ini.\n\nHarus beres sebelum jam 2 siang.",
+    staffNoReply:false, eta:25,
+    waterfall:['Wayan — Pool maintenance'],
+    critSummary:null,
+    resolution:'Traitement chimique · piscine propre à 13h30 · famille arrivée sans incident',
+    impact:'+$0', powerDelta:4,
+  },
+  {
+    id:6, level:'red', icon:'⚡', name:'Coupure électrique',
+    guestMsg:{ en:"Everything is off — no lights, no water, no AC, fridge stopped. I have food in there!", fr:"Tout est coupé — pas de lumière, pas d'eau chaude, le frigo est arrêté. J'ai de la nourriture dedans !", de:"Alles ist aus — kein Licht, kein Warmwasser, der Kühlschrank läuft nicht!" },
+    sofiaReply:{ en:"I'm so sorry! Someone will be at the villa in 15 minutes. Candles and flashlight in the wooden box under the bed. Fridge stays cold for 2 hours. 🕯️", fr:"Toutes mes excuses ! Quelqu'un arrive en 15 min. Bougies et lampe torche dans la boîte en bois sous le lit. 🕯️", de:"Es tut mir sehr leid! Jemand kommt in 15 Minuten. Kerzen und Taschenlampe in der Holzbox unter dem Bett. 🕯️" },
+    waMsg:"DARURAT semua staf! ⚡\n\nListrik mati total — tamu panik.\n\nIrfan: cek panel listrik dan MCB sekarang!\nUpdate dalam 10 menit.",
+    staffNoReply:true, eta:22,
+    waterfall:['Irfan — Électricité','Pak Made — Backup électricien','PLN — Contact urgence'],
+    critSummary:'Panne totale. Tukang ne répond pas. Guest en détresse.',
+    resolution:'Disjoncteur réarmé · courant rétabli en 22 min · bon SPA offert',
+    impact:'+$0 / bon SPA $60 offert', powerDelta:1,
+  },
+  {
+    id:7, level:'multi', icon:'💧❄️', name:'Double panne simultanée',
+    multi:true,
+    incidents:[
+      {
+        idx:0, icon:'💧', name:'Coupure eau', spec:'Plomberie', eta:28,
+        hasProblem:false,
+        guestMsgText:{ en:"There's no water at all from any tap. I can't shower...", fr:"Il n'y a plus d'eau du tout — aucun robinet. Je peux pas me doucher...", de:"Es gibt überhaupt kein Wasser. Ich kann mich nicht duschen..." },
+        resolution:"Vanne principale réarmée · eau rétablie en 28 min",
+        waMsg:"Halo Ketut 🙏\n\nAir mati total di villa — semua keran tidak keluar air.\n\nTolong cek valve utama sekarang — tamu menunggu.",
+      },
+      {
+        idx:1, icon:'❄️', name:'Clim en panne', spec:'Climatisation', eta:35,
+        hasProblem:true,
+        guestMsgText:{ en:"Also the AC in the main bedroom stopped working too. It's so hot combined with no water...", fr:"En plus la clim est tombée en panne. Il fait une chaleur... combiné à plus d'eau c'est vraiment dur.", de:"Außerdem funktioniert die Klimaanlage nicht mehr. So heiß zusammen mit kein Wasser..." },
+        resolution:"Filtre nettoyé + freon rechargé · clim rétablie en 35 min",
+        waMsg:"Halo Wayan 🙏\n\nAC kamar utama mati — tamu sudah tidak ada air juga.\n\nDouble darurat. Bisa ke sana sekarang?",
+      },
+    ],
+    powerDelta:2,
+  },
+];
+
+// =====================
+// STATE
+// =====================
+let selectedVillaIdx = 0;
+let selectedScenarioIdx = 0;
+let simRunning = false;
+let simTimerInterval = null;
+let critTimerInterval = null;
+let simSeconds = 0;
+let freeMode = false;
+
+// =====================
+// SELECTION
+// =====================
+function selectVilla(idx) {
+  document.querySelectorAll('.villa-option').forEach((el,i) => el.classList.toggle('selected', i===idx));
+  selectedVillaIdx = idx;
+}
+
+function selectScenario(idx) {
+  document.querySelectorAll('.scenario-btn').forEach((el,i) => el.classList.toggle('selected', i===idx));
+  selectedScenarioIdx = idx;
+  freeMode = false;
+  document.getElementById('free-input').value = '';
+}
+
+document.getElementById('free-input').addEventListener('input', function() {
+  if (this.value.trim().length > 3) {
+    document.querySelectorAll('.scenario-btn').forEach(el => el.classList.remove('selected'));
+    freeMode = true;
+  }
+});
+
+// =====================
+// UTILS
+// =====================
+function pad(n) { return String(n).padStart(2,'0'); }
+function fmtElapsed(s) { return pad(Math.floor(s/60)) + ':' + pad(s%60); }
+
+// Simulated clock — starts at real time, advances per step
+let simClockStart = null;
+let simClockOffsetMin = 0;
+
+function resetSimClock() {
+  simClockStart = new Date();
+  simClockOffsetMin = 0;
+}
+
+function advanceSimClock(minutes) {
+  simClockOffsetMin += minutes;
+}
+
+function nowStr() {
+  if (!simClockStart) return pad(new Date().getHours()) + ':' + pad(new Date().getMinutes());
+  const d = new Date(simClockStart.getTime() + simClockOffsetMin * 60000);
+  return pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function clockAt(offsetMin) {
+  if (!simClockStart) return '--:--';
+  const d = new Date(simClockStart.getTime() + offsetMin * 60000);
+  return pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+// =====================
+// SEGMENTED PROGRESS BAR ENGINE
+// =====================
+let etaState = {
+  initMin: 0,      // initial estimate (normal case)
+  extraMin: 0,     // orange segments added (problems)
+  totalMin: 0,     // initMin + extraMin
+  elapsedMin: 0,   // how much time has passed (sim clock)
+  phase: 'waiting' // waiting / transit / onsite / repair / extra / done
+};
+
+function fmtH(min) {
+  if (min >= 60) return Math.floor(min/60) + 'h' + (min%60>0?pad(min%60):'');
+  return min + ' min';
+}
+
+function initETA(sc) {
+  const response = sc.staffNoReply ? 25 : 8;
+  const travel   = sc.eta || 25;
+  const diag     = 12;
+  const repair   = sc.level === 'red' ? 40 : 22;
+  etaState.initMin  = response + travel + diag + repair;
+  etaState.extraMin = 0;
+  etaState.totalMin = etaState.initMin;
+  etaState.elapsedMin = 0;
+  etaState.phase = 'waiting';
+  renderSegBar();
+}
+
+function setETAPhase(phase) {
+  etaState.phase = phase;
+  etaState.elapsedMin = simClockOffsetMin;
+  renderSegBar();
+}
+
+function addETAExtra(minutes, reason) {
+  etaState.extraMin += minutes;
+  etaState.totalMin  = etaState.initMin + etaState.extraMin;
+  const notice = document.getElementById('eta-revision-notice');
+  if (notice) {
+    notice.style.display = 'block';
+    notice.innerHTML = '🟠 Estimation révisée : <strong>' + fmtH(etaState.totalMin) + '</strong>' +
+      ' (estimation initiale ' + fmtH(etaState.initMin) + ' + <span style="color:var(--orange);">+' + fmtH(minutes) + ' ' + reason + '</span>)';
+  }
+  const rev = document.getElementById('eta-revised-label');
+  if (rev) { rev.style.display = 'inline'; rev.textContent = 'Révisée : ' + fmtH(etaState.totalMin); }
+  renderSegBar();
+}
+
+function renderSegBar() {
+  const bar = document.getElementById('eta-estimate-bar');
+  if (bar) bar.style.display = 'block';
+
+  const total  = etaState.totalMin || etaState.initMin || 1;
+  const init   = etaState.initMin;
+  const extra  = etaState.extraMin;
+  const elapsed = Math.min(etaState.elapsedMin, total);
+
+  // Pct of each segment within total bar width
+  const donePct     = Math.round((elapsed / total) * 100);
+  const initPct     = Math.round((init / total) * 100);
+  const extraPct    = Math.round((extra / total) * 100);
+  // in-progress = between done and end of init segment
+  const progressLeft = donePct;
+  const progressW    = Math.max(0, initPct - donePct);
+
+  const segDone = document.getElementById('seg-done');
+  const segProg = document.getElementById('seg-progress');
+  const segEx   = document.getElementById('seg-extra');
+
+  if (segDone) segDone.style.width = donePct + '%';
+  if (segProg) { segProg.style.left = progressLeft + '%'; segProg.style.width = progressW + '%'; }
+  if (segEx)   { segEx.style.left = initPct + '%'; segEx.style.width = extraPct + '%'; }
+
+  // Labels row
+  const initLabel = document.getElementById('eta-init-label');
+  const endLabel  = document.getElementById('eta-end-label');
+  if (initLabel) initLabel.textContent = 'Estimation initiale : ' + fmtH(init);
+  if (endLabel)  endLabel.textContent  = elapsed > 0 ? ('Ecoulé : ' + fmtH(elapsed)) : ('Fin estimée : +' + fmtH(total));
+
+  // Time labels under bar
+  const labelsEl = document.getElementById('seg-time-labels');
+  if (labelsEl && simClockStart) {
+    const startT = simClockStart;
+    const initEnd = new Date(startT.getTime() + init * 60000);
+    const totalEnd = new Date(startT.getTime() + total * 60000);
+    const fmt = d => pad(d.getHours()) + ':' + pad(d.getMinutes());
+    labelsEl.innerHTML =
+      '<span>' + fmt(startT) + ' début</span>' +
+      '<span>' + fmt(initEnd) + (extra > 0 ? ' (init)' : ' fin estimée') + '</span>' +
+      (extra > 0 ? '<span style="color:var(--orange);">' + fmt(totalEnd) + ' fin révisée</span>' : '');
+  }
+}
+
+// Equipment hints per incident type
+const EQUIPMENT_HINTS = {
+  0: 'Joint caoutchouc plomberie · Clé anglaise · Ruban téflon · Seau · Serviettes',
+  1: 'Testeur électrique · Fusibles · Recharge freon si besoin · Nettoyant filtre',
+  2: 'Cable RJ45 de rechange · Reset instructions routeur · Hotspot 4G backup',
+  3: 'Clé maître / code backup · Batteries AA pour serrure électronique',
+  4: 'Spray insecticide · Joints bas de portes · Bouchons canalisations',
+  5: 'Chlore · Régulateur pH · Brosse pool · Test kit chimique',
+  6: 'Testeur de courant · Fusibles MCB · Lampe torche · Bougies',
+  7: 'Joint plomberie + chlore piscine (double)',
+  99: 'Outillage général · Téléphone chargé',
+};
+
+function showEquipmentHint(scId) {
+  const hint = EQUIPMENT_HINTS[scId] || EQUIPMENT_HINTS[99];
+  const el = document.getElementById('eta-equipment');
+  if (el) {
+    el.style.display = 'block';
+    el.innerHTML = '🔧 Matériel conseillé à emporter : <strong style="color:var(--gold);">' + hint + '</strong>';
+  }
+}
+
+function getLang(villa) {
+  return villa.guestLang === 'FR' ? 'fr' : villa.guestLang === 'DE' ? 'de' : 'en';
+}
+
+function addEntry(timeLabel, icon, title, detail, tagHtml, extra) {
+  const tl = document.getElementById('sim-timeline');
+  const div = document.createElement('div');
+  div.className = 'timeline-entry';
+  const tagStr = tagHtml ? '<span class="entry-tag ' + tagHtml.cls + '">' + tagHtml.txt + '</span>' : '';
+  div.innerHTML =
+    '<div class="entry-time">' + timeLabel + '</div>' +
+    '<div class="entry-body">' +
+      '<div class="entry-title"><span class="entry-icon">' + icon + '</span>' + title + '</div>' +
+      '<div class="entry-detail">' + detail + '</div>' +
+      tagStr + (extra || '') +
+    '</div>';
+  tl.appendChild(div);
+  tl.scrollTop = tl.scrollHeight;
+}
+
+function setAlertLevel(level) {
+  const bar  = document.getElementById('alert-level-bar');
+  const dot  = document.getElementById('alert-dot');
+  const text = document.getElementById('alert-level-text');
+  const timer = document.getElementById('sim-timer');
+  if (!bar) return;
+  bar.className = 'alert-level-bar ' + level;
+  dot.className = 'alert-dot ' + level;
+  if (level === 'green')  { text.textContent = '🟢 Niveau Normal — agents en gestion autonome'; timer.classList.remove('red'); }
+  if (level === 'orange') { text.textContent = '🟡 Niveau Moyen — surveillance active'; timer.classList.remove('red'); }
+  if (level === 'red')    { text.textContent = '🔴 Niveau Critique — intervention humaine requise'; timer.classList.add('red'); }
+}
+
+// =====================
+// LAUNCH
+// =====================
+function launchSim() {
+  if (simRunning) return;
+  simRunning = true;
+  simSeconds = 0;
+  document.getElementById('launch-btn').disabled = true;
+  document.getElementById('sim-idle').style.display = 'none';
+  document.getElementById('sim-active').style.display = 'flex';
+  document.getElementById('sim-timeline').innerHTML = '';
+  document.getElementById('incident-report').style.display = 'none';
+  const _pb = document.getElementById('power-bar-wrap'); if(_pb) _pb.style.display = 'none';
+
+  const villa = VILLAS[selectedVillaIdx];
+  const sc    = freeMode ? buildFreeScenario() : SCENARIOS[selectedScenarioIdx];
+  const lang  = getLang(villa);
+
+  // Villa header
+  document.getElementById('sim-villa-dot').style.cssText = 'background:' + villa.color + ';box-shadow:0 0 8px ' + villa.color;
+  document.getElementById('sim-villa-name').textContent = villa.name;
+  document.getElementById('sim-villa-info').textContent = villa.area + ' · Guest: ' + villa.guest + ' · Check-out: ' + villa.checkout;
+  setAlertLevel('green');
+
+  // Guest message
+  const firstMsg = sc.multi ? (sc.incidents[0].guestMsgText[lang] || sc.incidents[0].guestMsgText.en) : (sc.guestMsg[lang] || sc.guestMsg.en);
+  document.getElementById('guest-bubble').textContent = firstMsg;
+  document.getElementById('guest-meta').innerHTML = '🌏 ' + villa.guestLang + ' · ' + villa.guest + ' · il y a quelques secondes via WhatsApp';
+
+  resetSimClock();
+  initETA(sc);
+  showEquipmentHint(sc.id);
+
+  simTimerInterval = setInterval(() => {
+    simSeconds++;
+    document.getElementById('sim-timer').textContent = fmtElapsed(simSeconds);
+  }, 1000);
+
+  if (sc.multi) {
+    runMultiSim(sc, villa, lang);
+  } else {
+    runSequence(sc, villa, lang);
+  }
+}
+
+function buildFreeScenario() {
+  const text = document.getElementById('free-input').value.trim();
+  const isRed = /fuite|bloqu|serrure|lectrique|cafard|urgent|help|secours|eau|feu/i.test(text);
+  return {
+    id:99, level:isRed?'red':'orange', icon:'🚨', name:'Incident personnalisé', multi:false,
+    guestMsg:{ en:text, fr:text, de:text },
+    sofiaReply:{ en:"Thank you — our team has been immediately alerted. We're taking care of this right now. 🙏", fr:"Merci de nous prévenir — notre équipe est alertée immédiatement. 🙏", de:"Danke — unser Team wurde sofort alarmiert. 🙏" },
+    waMsg:"Halo tim 🙏\n\nTamu melaporkan masalah. Tolong tangani segera.",
+    staffNoReply:isRed, eta:25,
+    waterfall:['Irfan — Tukang principal','Pak Made — Backup'],
+    critSummary:'Incident signalé par le guest. Tukang injoignable.',
+    resolution:'Problème pris en charge · résolu',
+    impact:'+$0', powerDelta:2,
+  };
+}
+
+// =====================
+// SINGLE INCIDENT SEQUENCE
+// =====================
+function runSequence(sc, villa, lang) {
+  const step = 900;
+  let tick = 0;
+
+  // Pre-compute realistic minute offsets for clock labels
+  const rDelay = sc.staffNoReply ? 0 : (4 + Math.floor(Math.random()*16));
+  const clocks = {
+    t0: 0,           // ticket
+    t1: 1,           // Sofia reply
+    t2: 2,           // dispatch
+    t3: 2 + rDelay,  // tukang replies (or first no-reply check)
+    t4: 2 + 20,      // 2nd waterfall attempt
+    t5: 2 + 30,      // 3rd attempt / red alert (after 30 min total, not 8)
+  };
+
+  // Step 1 — ticket
+  setTimeout(() => {
+    simClockOffsetMin = clocks.t0;
+    addEntry(clockAt(clocks.t0), '📩',
+      'Message reçu — ticket #' + (1000+Math.floor(Math.random()*8000)) + ' ouvert',
+      'Niveau : ' + (sc.level==='red'?'🔴 Critique':'🟡 Moyen') + ' · Langue : ' + villa.guestLang,
+      {cls:'tag-system',txt:'SYSTEM'}, null);
+    setAlertLevel('orange');
+    setETAPhase('waiting');
+  }, tick += step);
+
+  // Step 2 — Sofia replies
+  setTimeout(() => {
+    simClockOffsetMin = clocks.t1;
+    const msg = sc.sofiaReply[lang] || sc.sofiaReply.en;
+    addEntry(clockAt(clocks.t1), '🤖', 'Sofia — réponse au guest en 27 sec',
+      'Langue : ' + villa.guestLang + ' · WhatsApp · Lu ✓✓',
+      {cls:'tag-sofia',txt:'SOFIA'}, sofiaBox(msg));
+  }, tick += step*1.5);
+
+  // Step 3 — dispatch
+  setTimeout(() => {
+    simClockOffsetMin = clocks.t2;
+    addEntry(clockAt(clocks.t2), '📱', 'Dispatch WhatsApp → ' + villa.staff[0],
+      'Bahasa Indonesia · texte uniquement · voice notes bloqués',
+      {cls:'tag-adi',txt:'ADI'}, waBox(villa.staff[0], sc.waMsg));
+  }, tick += step*1.2);
+
+  if (!sc.staffNoReply) {
+    // ── NORMAL: tukang replies ─────────────────────────────────────────────
+    setTimeout(() => {
+      simClockOffsetMin = clocks.t3;
+      const profile = TUKANG_PROFILES[selectedVillaIdx % TUKANG_PROFILES.length];
+      addEntry(clockAt(clocks.t3), '✅',
+        villa.staff[0] + ' répond — ' + rDelay + ' min après dispatch',
+        'ETA : ' + sc.eta + ' min · en route',
+        {cls:'tag-adi',txt:'ADI'}, waBoxReply(villa.staff[0], 'Oke siap, segera ke sana 🙏'));
+      setETAPhase('transit');
+      spawnTracker(villa.staff[0], sc.eta, sc, villa, lang, profile);
+    }, tick += step*2);
+
+  } else {
+    // ── WATERFALL: no reply cascade ───────────────────────────────────────
+    // After 20 min — first no reply (NOT red, totally normal at Bali)
+    setTimeout(() => {
+      simClockOffsetMin = clocks.t3;
+      addEntry(clockAt(clocks.t3), '⏳',
+        villa.staff[0] + ' — pas de réponse après 20 min',
+        'Normal a Bali · cascade automatique → remplaçant #1',
+        {cls:'tag-system',txt:'WATERFALL'}, null);
+      setAlertLevel('orange');
+    }, tick += step*2.5);
+
+    // Dispatch #2
+    setTimeout(() => {
+      simClockOffsetMin = clocks.t4;
+      addEntry(clockAt(clocks.t4), '📱',
+        'Dispatch → ' + (sc.waterfall[1]||villa.staff[1]),
+        '2ème technicien · WhatsApp automatique',
+        {cls:'tag-adi',txt:'ADI'}, null);
+    }, tick += step*1.5);
+
+    // After 30 min total — #2 no reply, try #3
+    setTimeout(() => {
+      simClockOffsetMin = clocks.t5;
+      addEntry(clockAt(clocks.t5), '⏳',
+        (sc.waterfall[1]||'Remplaçant #1').split(' ')[0] + ' — pas de réponse',
+        '3ème tentative → ' + (sc.waterfall[2]||'backup zone'),
+        {cls:'tag-system',txt:'WATERFALL'}, null);
+    }, tick += step*2);
+
+    // Dispatch #3
+    setTimeout(() => {
+      addEntry(clockAt(clocks.t5 + 5), '📱',
+        'Dispatch → ' + (sc.waterfall[2]||'Pak Made backup'),
+        '3ème technicien · dernier recours interne',
+        {cls:'tag-adi',txt:'ADI'}, null);
+    }, tick += step*1.5);
+
+    // After 60 min — still no one: RED alert
+    setTimeout(() => {
+      simClockOffsetMin = clocks.t5 + 30;
+      addEntry(clockAt(clocks.t5 + 30), '🔴',
+        'Aucun technicien joignable après 60 min',
+        'Seuil critique atteint · Prestataires externes ou gérant requis',
+        {cls:'tag-alerte',txt:'ESCALADE'},
+        '<div style="margin-top:8px;padding:10px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.25);border-radius:6px;font-size:10px;color:var(--red);">3 techniciens contactés sans réponse · Piste externe ou intervention gérant</div>');
+      setAlertLevel('red');
+      addETAExtra(45, 'prestataire externe');
+      openCriticalPopup(sc, villa, lang);
+    }, tick += step*3);
+  }
+}
+
+// =====================
+// MULTI INCIDENT
+// =====================
+function runMultiSim(sc, villa, lang) {
+  const T = (ms, fn) => setTimeout(fn, ms);
+  let resolvedCount = 0;
+
+  // Step 1 — 2 tickets
+  T(900, () => {
+    addEntry(nowStr(), '📩', '2 incidents détectés — 2 tickets ouverts en parallèle',
+      'Ticket A (eau) + Ticket B (clim) · Niveau : 🟡 Moyen · Langue : ' + villa.guestLang,
+      {cls:'tag-system',txt:'SYSTEM'}, null);
+    setAlertLevel('orange');
+  });
+
+  // Step 2 — Sofia 1 message for both
+  T(1800, () => {
+    const msgs = {
+      en:"Sorry Sarah, two issues at once. I'm dispatching two specialists RIGHT NOW simultaneously so you wait once not twice. Coffee at Revolver on us while we handle it! ☕🙏",
+      fr:"Marie, toutes mes excuses, deux problemes en meme temps. Je dispatche deux techniciens SIMULTANEMENT. Vous n'attendrez pas deux fois. Un bon cafe Revolver ? ☕🙏",
+      de:"Thomas, zwei Probleme gleichzeitig. Ich entsende SOFORT zwei Spezialisten gleichzeitig. Sie warten nicht zweimal. Kaffeegutschein? ☕🙏",
+    };
+    addEntry(nowStr(), '🤖', 'Sofia — 1 message groupé pour 2 incidents · 31 secondes',
+      'Langue : ' + villa.guestLang + ' · 1 seul message pour ne pas spammer · Lu ✓✓',
+      {cls:'tag-sofia',txt:'SOFIA'},
+      sofiaBox(msgs[lang]||msgs.en));
+  });
+
+  // Step 3 — dispatch both in parallel
+  T(3200, () => {
+    const tl = document.getElementById('sim-timeline');
+    const wrap = document.createElement('div');
+    wrap.className = 'timeline-entry';
+    wrap.style.cssText = 'flex-direction:column;padding:0;';
+
+    const lanes = sc.incidents.map((inc, i) => buildLane(inc, i)).join('');
+
+    wrap.innerHTML =
+      '<div style="display:flex;gap:0;">' +
+        '<div class="entry-time" style="padding-top:16px;">' + nowStr() + '</div>' +
+        '<div class="entry-body" style="flex:1;">' +
+          '<div class="entry-title">🔍 Sofia — 2 techniciens recherchés en parallèle</div>' +
+          '<div class="entry-detail">Critères : disponible · spécialité · distance · pas en intervention active</div>' +
+          '<span class="entry-tag" style="background:rgba(155,89,182,0.12);color:#9B59B6;">MULTI-DISPATCH</span>' +
+          lanes +
+        '</div>' +
+      '</div>';
+    tl.appendChild(wrap);
+    tl.scrollTop = tl.scrollHeight;
+
+    // Animate each lane
+    sc.incidents.forEach((inc, i) => {
+      animateLane(inc, i, villa, lang, () => {
+        resolvedCount++;
+        if (resolvedCount === sc.incidents.length) {
+          setTimeout(() => {
+            addEntry(nowStr(), '✅', 'Double incident résolu — deux techniciens ont terminé',
+              'Eau rétablie · Clim réparée · Guest informée · Propriétaire non dérangé',
+              {cls:'tag-sofia',txt:'SOFIA'}, null);
+            setAlertLevel('green');
+            const fakeSc = {
+              icon:'💧❄️', name:'Double panne simultanée',
+              resolution:'Eau rétablie (28 min) · Clim réparée (35 min) · Guest remerciée',
+              impact:'$0 · Bon café offert ($12)', level:'orange',
+            };
+            setTimeout(() => finishSim(fakeSc, villa), 1200);
+          }, 1500);
+        }
+      });
+    });
+  });
+}
+
+function buildLane(inc, i) {
+  return '<div class="incident-lane" id="lane-' + i + '-wrap" style="margin-top:12px;">' +
+    '<div class="incident-lane-header">' +
+      '<span style="font-size:16px;">' + inc.icon + '</span>' +
+      '<span>' + inc.name + '</span>' +
+      '<span style="font-size:9px;color:var(--muted);margin-left:6px;">· ' + inc.spec + '</span>' +
+      '<span class="lane-status-pill pill-searching" id="lane-' + i + '-pill">🔍 Recherche...</span>' +
+    '</div>' +
+    '<div class="incident-lane-body" id="lane-' + i + '-body">' +
+      '<div class="dispatch-search">' +
+        '<div class="search-spinner" id="lane-' + i + '-spinner"></div>' +
+        '<span id="lane-' + i + '-txt">Recherche technicien disponible dans la zone...</span>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+}
+
+function animateLane(inc, i, villa, lang, onDone) {
+  const profile = TUKANG_PROFILES[i % TUKANG_PROFILES.length];
+  const body = document.getElementById('lane-' + i + '-body');
+  const pill = document.getElementById('lane-' + i + '-pill');
+  const spinner = document.getElementById('lane-' + i + '-spinner');
+  const txt = document.getElementById('lane-' + i + '-txt');
+
+  // Found in 1.5s
+  setTimeout(() => {
+    if (txt) txt.textContent = profile.name + ' trouvé · ' + profile.dist + ' · dispo · ETA ' + inc.eta + ' min';
+    if (spinner) { spinner.style.animation = 'none'; spinner.style.borderColor = 'var(--green)'; }
+    if (pill) { pill.textContent = '🏍️ En route'; pill.className = 'lane-status-pill pill-inroute'; }
+
+    if (body) {
+      body.innerHTML +=
+        '<div class="dispatch-found" style="margin-top:8px;">' +
+          '<span style="font-size:16px;">🏍️</span>' +
+          '<div style="flex:1;">' +
+            '<div style="font-size:11px;color:var(--text);font-weight:600;">' + profile.name + ' dispatché</div>' +
+            '<div style="font-size:9px;color:var(--muted);">' + inc.spec + ' · ' + profile.dist + ' · ETA ' + inc.eta + ' min · ' + profile.cert + ' · ' + profile.rating + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="font-size:9px;color:var(--muted);margin:8px 0 4px;">📱 WhatsApp → ' + profile.name + '</div>' +
+        '<div style="padding:8px 10px;background:#1a2a1a;border:1px solid rgba(46,204,113,0.15);border-radius:6px;font-size:9px;color:var(--text);line-height:1.6;">' +
+          inc.waMsg.split('\n').join('<br>') +
+        '</div>';
+    }
+
+    // Sofia notif to guest
+    if (i === 0) {
+      const guestNotif = {
+        en:"Two specialists are on their way simultaneously — one for the water, one for the AC. Both certified by the agency. I'll update you when they arrive. 🙏",
+        fr:"Deux techniciens en route en même temps — un pour l'eau, un pour la clim. Les deux certifiés agence. Je vous préviens à leur arrivée. 🙏",
+        de:"Zwei Spezialisten gleichzeitig unterwegs — einer fürs Wasser, einer für die Klimaanlage. Beide zertifiziert. Ich benachrichtige Sie bei Ankunft. 🙏",
+      };
+      if (body) {
+        body.innerHTML +=
+          '<div class="sofia-guest-notify" style="margin-top:8px;">' +
+            '<div class="sgn-label">🤖 Sofia → ' + villa.guest + ' · WhatsApp</div>' +
+            '<div class="sgn-msg">"' + (guestNotif[lang]||guestNotif.en) + '"</div>' +
+            '<div class="sgn-meta">Mise à jour automatique · Lu ✓✓</div>' +
+          '</div>';
+      }
+    }
+
+    // Arrive on site
+    setTimeout(() => {
+      if (pill) { pill.textContent = '🔧 Sur place'; pill.className = 'lane-status-pill pill-onsite'; }
+      if (body) {
+        body.innerHTML +=
+          '<div style="margin-top:8px;padding:8px 12px;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.15);border-radius:6px;font-size:10px;color:var(--text);">' +
+            '🔧 ' + profile.name + ' sur place · Diagnostic en cours...' +
+          '</div>';
+      }
+
+      // Repair or problem
+      const hasProblem = inc.hasProblem && Math.random() < 0.5;
+      setTimeout(() => {
+        if (hasProblem) {
+          if (pill) { pill.textContent = '⚠️ Matériel manquant'; pill.className = 'lane-status-pill pill-problem'; }
+          if (body) {
+            body.innerHTML +=
+              '<div style="margin-top:8px;padding:10px 12px;background:rgba(243,156,18,0.06);border:1px solid rgba(243,156,18,0.2);border-radius:6px;font-size:10px;color:var(--orange);">' +
+                '⚠️ ' + profile.name + ' signale un manque de matériel · part chercher (+30 min)<br>' +
+                '<em style="font-size:9px;color:var(--muted);">Sofia informe le guest automatiquement</em>' +
+              '</div>';
+          }
+          setTimeout(() => {
+            if (pill) { pill.textContent = '✅ Résolu'; pill.className = 'lane-status-pill pill-done'; }
+            if (body) {
+              body.innerHTML +=
+                '<div style="margin-top:6px;padding:8px 12px;background:rgba(46,204,113,0.05);border:1px solid rgba(46,204,113,0.15);border-radius:6px;font-size:10px;color:var(--green);">✅ ' + inc.resolution + '</div>';
+            }
+            onDone();
+          }, 3000);
+        } else {
+          if (pill) { pill.textContent = '✅ Résolu'; pill.className = 'lane-status-pill pill-done'; }
+          if (body) {
+            body.innerHTML +=
+              '<div style="margin-top:8px;padding:8px 12px;background:rgba(46,204,113,0.05);border:1px solid rgba(46,204,113,0.15);border-radius:6px;font-size:10px;color:var(--green);">✅ ' + inc.resolution + '</div>';
+          }
+          onDone();
+        }
+      }, 2200 + i * 700);
+    }, inc.eta * 500);
+  }, 1400 + i * 700);
+}
+
+// =====================
+// TUKANG TRACKER (single incident)
+// =====================
+function spawnTracker(tukangName, eta, sc, villa, lang, profile) {
+  const tl = document.getElementById('sim-timeline');
+  const id = 'tr' + Date.now();
+  window['_sc_'+id] = sc;
+  window['_vil_'+id] = villa;
+  window['_lang_'+id] = lang;
+
+  const notifMsgs = {
+    en: profile.name + " is on his way — " + eta + " min ETA. He's certified by the agency, you can leave if needed. I'll message you when he arrives! 🏍️🙏",
+    fr: profile.name + " est en route — " + eta + " min. Il est certifié agence, vous pouvez sortir si besoin. Je vous préviens à son arrivée ! 🏍️🙏",
+    de: profile.name + " ist unterwegs — " + eta + " Minuten. Er ist zertifiziert, Sie können das Haus verlassen. Ich benachrichtige Sie bei Ankunft! 🏍️🙏",
+  };
+
+  const entry = document.createElement('div');
+  entry.className = 'timeline-entry';
+  entry.style.cssText = 'flex-direction:column;padding:0;';
+  entry.innerHTML =
+    '<div style="display:flex;gap:0;">' +
+      '<div class="entry-time" style="padding-top:16px;">' + nowStr() + '</div>' +
+      '<div class="entry-body" style="flex:1;">' +
+        '<div class="entry-title">🏍️ ' + profile.name + ' dispatché — en route · ' + profile.dist + '</div>' +
+        '<div class="entry-detail">ETA : ' + eta + ' min · ' + profile.cert + ' · ' + profile.rating + ' · ' + profile.spec + '</div>' +
+        '<span class="entry-tag tag-adi">ADI</span>' +
+        // Tukang card
+        '<div class="tukang-card">' +
+          '<div class="tukang-avatar">' + profile.emoji + '</div>' +
+          '<div class="tukang-info">' +
+            '<div class="tukang-name-big">' + profile.name + '</div>' +
+            '<span class="tukang-badge">✓ ' + profile.cert + '</span>' +
+            '<div class="tukang-spec">' + profile.spec + ' · ' + profile.rating + ' · ' + profile.dist + '</div>' +
+          '</div>' +
+          '<div class="tukang-eta-big"><div class="tukang-eta-num">' + eta + '</div><div class="tukang-eta-label">MIN ETA</div></div>' +
+        '</div>' +
+        // Geo strip
+        '<div class="geo-strip">' +
+          '<div class="geo-dot-moving"></div>' +
+          '<div style="font-size:9px;color:var(--blue);white-space:nowrap;" id="' + id + '-eta">' + eta + ' min</div>' +
+          '<div class="geo-route"><div class="geo-route-fill" id="' + id + '-geo" style="width:3%"></div></div>' +
+          '<div class="geo-villa-pin">📍</div>' +
+        '</div>' +
+        // Sofia notif
+        '<div class="sofia-guest-notify">' +
+          '<div class="sgn-label">🤖 Sofia → ' + villa.guest + ' · WhatsApp · 34 sec</div>' +
+          '<div class="sgn-msg">"' + (notifMsgs[lang]||notifMsgs.en) + '"</div>' +
+          '<div class="sgn-meta">Lu ✓✓</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  tl.appendChild(entry);
+  tl.scrollTop = tl.scrollHeight;
+
+  // Animate geo bar
+  let g = 0;
+  const geoInt = setInterval(() => {
+    g++;
+    const fill = document.getElementById(id + '-geo');
+    const etaEl = document.getElementById(id + '-eta');
+    if (fill) fill.style.width = Math.min(92, Math.round(g/(eta*0.9)*100)) + '%';
+    if (etaEl && g < eta*0.9) etaEl.textContent = Math.max(1, eta - Math.round(g/0.9)) + ' min';
+    if (g >= eta*0.9) clearInterval(geoInt);
+  }, 600);
+
+  // Arrive on site
+  setTimeout(() => {
+    clearInterval(geoInt);
+    simClockOffsetMin += eta;
+    setETAPhase('onsite');
+    const fill = document.getElementById(id + '-geo');
+    if (fill) { fill.style.width = '100%'; fill.style.transition = 'width 0.5s'; fill.style.background = 'rgba(46,204,113,0.7)'; }
+    const etaEl = document.getElementById(id + '-eta');
+    if (etaEl) etaEl.textContent = 'Arrivé ✓';
+
+    addEntry(nowStr(), '🚪', profile.name + ' arrivé sur place',
+      'Confirmation arrivée · Diagnostic en cours · Photo entrée envoyée',
+      {cls:'tag-adi',txt:'ADI'},
+      arrivalNotif(lang, profile, villa));
+
+    // Repair phase
+    setTimeout(() => {
+      const hasProblem = sc.level === 'red' && Math.random() < 0.4;
+      if (hasProblem) {
+        addEntry(nowStr(), '⚠️', profile.name + ' — matériel manquant',
+          'Signalé via QCM · "Perlu beli suku cadang dulu"',
+          {cls:'tag-alerte',txt:'MATÉRIEL'},
+          materialChoice(id, profile, sc, villa, lang));
+      } else {
+        simClockOffsetMin += 12;
+        setETAPhase('repair');
+        addEntry(nowStr(), '🔧', 'Réparation en cours — ' + profile.name,
+          'Estimation 15–25 min · photos avant/pendant uploadées · propriétaire non dérangé',
+          {cls:'tag-adi',txt:'ADI'}, null);
+        setTimeout(() => {
+          simClockOffsetMin += 20;
+          setETAPhase('done');
+          addEntry(nowStr(), '✅', 'Réparation terminée — QCM de fin rempli', sc.resolution, {cls:'tag-adi',txt:'ADI'}, null);
+          addEntry(nowStr(), '📲', 'Sofia informe le guest', 'Problème résolu · message de clôture envoyé · 0 review impactée', {cls:'tag-sofia',txt:'SOFIA'}, null);
+          setAlertLevel('green');
+          setTimeout(() => finishSim(sc, villa), 1200);
+        }, 3500);
+      }
+    }, 1800);
+  }, eta * 600);
+}
+
+function arrivalNotif(lang, profile, villa) {
+  const msgs = {
+    en: profile.name + " just arrived at the villa. He's a specialist (" + profile.rating + "). He'll start immediately. 🙏",
+    fr: profile.name + " vient d'arriver à la villa. Spécialisé, " + profile.rating + ". Il commence immédiatement. 🙏",
+    de: profile.name + " ist gerade angekommen. Spezialist, " + profile.rating + ". Er beginnt sofort. 🙏",
+  };
+  return '<div class="sofia-guest-notify">' +
+    '<div class="sgn-label">🤖 Sofia → ' + villa.guest + ' · Notification arrivée</div>' +
+    '<div class="sgn-msg">"' + (msgs[lang]||msgs.en) + '"</div>' +
+    '<div class="sgn-meta">Automatique · Lu ✓✓</div>' +
+  '</div>';
+}
+
+function materialChoice(id, profile, sc, villa, lang) {
+  window['_sc_'+id] = sc; window['_vil_'+id] = villa; window['_lang_'+id] = lang;
+  return '<div class="qcm-wrap" style="margin-top:8px;">' +
+    '<div class="qcm-title">⚠️ ' + profile.name + ' signale un problème</div>' +
+    '<div style="font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.7;">"Maaf, saya tidak bawa yang dibutuhkan. Perlu ke toko dulu." — ' + profile.name + '<br>Estimation : Rp 85 000–150 000 · +30 min</div>' +
+    '<div style="display:flex;gap:8px;">' +
+      '<button class="tracker-choice-btn secondary" style="flex:1;font-size:10px;" onclick="doFetch(\'' + id + '\',\'' + profile.name + '\')">🛒 Part chercher (+30 min)</button>' +
+      '<button class="tracker-choice-btn primary" style="flex:1;font-size:10px;" onclick="doBackup(\'' + id + '\',\'' + profile.name + '\')">📞 Envoyer backup avec matériel</button>' +
+    '</div>' +
+  '</div>';
+}
+
+function doFetch(id, name) {
+  document.querySelectorAll('[onclick*="doFetch(\'' + id + '\')"], [onclick*="doBackup(\'' + id + '\')"]').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+  const sc = window['_sc_'+id]; const villa = window['_vil_'+id];
+  addEntry(nowStr(), '🛒', name + ' parti chercher le matériel', 'Retour dans ~30 min · Sofia informe le guest', {cls:'tag-adi',txt:'ADI'}, null);
+  setAlertLevel('orange');
+  setTimeout(() => {
+    addEntry(nowStr(), '✅', name + ' de retour — réparation terminée', sc.resolution, {cls:'tag-adi',txt:'ADI'}, null);
+    addEntry(nowStr(), '📲', 'Sofia informe le guest — problème résolu', 'Message de clôture · 0 review impactée', {cls:'tag-sofia',txt:'SOFIA'}, null);
+    setAlertLevel('green');
+    setTimeout(() => finishSim(sc, villa), 1200);
+  }, 3500);
+}
+
+function doBackup(id, name) {
+  document.querySelectorAll('[onclick*="doFetch(\'' + id + '\')"], [onclick*="doBackup(\'' + id + '\')"]').forEach(b => { b.disabled = true; b.style.opacity = '0.5'; });
+  const sc = window['_sc_'+id]; const villa = window['_vil_'+id];
+  addEntry(nowStr(), '📞', 'Backup dispatché avec matériel', 'Pak Made en route · matériel récupéré au dépôt · ETA 20 min', {cls:'tag-alerte',txt:'BACKUP'}, null);
+  setTimeout(() => {
+    addEntry(nowStr(), '✅', 'Pak Made sur place — réparation terminée', sc.resolution, {cls:'tag-adi',txt:'ADI'}, null);
+    addEntry(nowStr(), '📲', 'Sofia informe le guest', 'Tout résolu · 0 review impactée', {cls:'tag-sofia',txt:'SOFIA'}, null);
+    setAlertLevel('green');
+    setTimeout(() => finishSim(sc, villa), 1200);
+  }, 3200);
+}
+
+// =====================
+// SOFIA & WA HELPERS
+// =====================
+function sofiaBox(msg) {
+  return '<div class="sofia-response">' +
+    '<div class="sofia-header">🤖 Sofia <span style="margin-left:auto;color:var(--green);font-size:9px;">⚡ 27 sec</span></div>' +
+    '<div class="sofia-bubble">"' + msg + '"</div>' +
+    '<div class="sofia-meta">Envoyé via WhatsApp · Message lu ✓✓</div>' +
+  '</div>';
+}
+
+function waBox(name, msg) {
+  return '<div class="wa-mock">' +
+    '<div class="wa-header">📱 WhatsApp Business · ' + name + '</div>' +
+    '<div class="wa-bubble">' + msg.split('\n').join('<br>') + '</div>' +
+    '<div class="wa-time">Envoyé · ' + nowStr() + '</div>' +
+  '</div>';
+}
+
+function waBoxReply(name, msg) {
+  return '<div class="wa-mock">' +
+    '<div class="wa-header">📱 Réponse de ' + name + '</div>' +
+    '<div class="wa-bubble sent">' + msg + '</div>' +
+    '<div class="wa-time">' + nowStr() + ' ✓✓</div>' +
+  '</div>';
+}
+
+// =====================
+// CRITICAL POPUP
+// =====================
+let critTimerSec = 0;
+function openCriticalPopup(sc, villa, lang) {
+  critTimerSec = 0;
+  window['_crit_sc'] = sc; window['_crit_villa'] = villa; window['_crit_lang'] = lang;
+  document.getElementById('crit-title').textContent = '🔴 ALERTE CRITIQUE — ' + villa.name;
+  document.getElementById('crit-summary').textContent = sc.critSummary || 'Intervenants injoignables.';
+  document.getElementById('crit-call-btn').textContent = '📞 Appeler ' + (sc.waterfall[sc.waterfall.length-1]||'backup') + ' directement';
+  const t = nowStr();
+  document.getElementById('crit-log').innerHTML = [
+    t + ' · Ticket créé — ' + sc.name,
+    t + ' · Sofia répondu en 27 sec',
+    t + ' · ' + (sc.waterfall[0]||'').split(' ')[0] + ' contacté — pas de réponse (15 min)',
+    t + ' · ' + (sc.waterfall[1]||'').split(' ')[0] + ' contacté — pas de réponse (8 min)',
+    t + ' · Escalade critique déclenchée',
+  ].map(l => '<div class="crit-log-line">' + l + '</div>').join('');
+  document.getElementById('critical-overlay').classList.add('visible');
+  clearInterval(critTimerInterval);
+  critTimerInterval = setInterval(() => {
+    critTimerSec++;
+    document.getElementById('crit-timer').textContent = fmtElapsed(critTimerSec);
+  }, 1000);
+}
+
+function closePopup() {
+  clearInterval(critTimerInterval);
+  document.getElementById('critical-overlay').classList.remove('visible');
+}
+
+function takeOver() {
+  closePopup();
+  const sc = window['_crit_sc']; const villa = window['_crit_villa'];
+  addEntry(nowStr(), '⛔', 'Vous avez pris la main', 'Agents IA en pause · vous gérez directement', {cls:'tag-system',txt:'MANUEL'}, null);
+  setTimeout(() => {
+    addEntry(nowStr(), '📞', 'Vous appelez ' + (sc.waterfall[sc.waterfall.length-1]||'backup'), 'Confirmé · intervention en cours', {cls:'tag-system',txt:'VOUS'}, null);
+    setTimeout(() => {
+      addEntry(nowStr(), '✅', 'Résolu', sc.resolution, {cls:'tag-adi',txt:'ADI'}, null);
+      setAlertLevel('green');
+      setTimeout(() => finishSim(sc, villa), 1200);
+    }, 1800);
+  }, 1200);
+}
+
+function callStaff() {
+  const sc = window['_crit_sc']; const villa = window['_crit_villa'];
+  const btn = document.getElementById('crit-call-btn');
+  if (btn) { btn.textContent = '✓ Appel en cours...'; btn.style.color = 'var(--green)'; }
+  setTimeout(() => {
+    closePopup();
+    addEntry(nowStr(), '📞', 'Appel direct — ' + (sc.waterfall[sc.waterfall.length-1]||'backup'), 'Confirmé · ETA 40 min · agents reprennent la main', {cls:'tag-system',txt:'VOUS'}, null);
+    setTimeout(() => {
+      addEntry(nowStr(), '✅', 'Incident résolu', sc.resolution, {cls:'tag-adi',txt:'ADI'}, null);
+      setAlertLevel('green');
+      setTimeout(() => finishSim(sc, villa), 1200);
+    }, 2000);
+  }, 1500);
+}
+
+function letAgentHandle() {
+  const sc = window['_crit_sc']; const villa = window['_crit_villa'];
+  closePopup();
+  addEntry(nowStr(), '🤖', 'Agents continuent — 3ème tentative', 'Adi contacte ' + (sc.waterfall[sc.waterfall.length-1]||'backup'), {cls:'tag-adi',txt:'ADI'}, null);
+  setTimeout(() => {
+    addEntry(nowStr(), '✅', (sc.waterfall[sc.waterfall.length-1]||'backup').split(' ')[0] + ' confirmé · en route', 'ETA 45 min · guest informée par Sofia', {cls:'tag-sofia',txt:'SOFIA'}, null);
+    setAlertLevel('orange');
+    setTimeout(() => {
+      addEntry(nowStr(), '✅', 'Incident résolu', sc.resolution, {cls:'tag-adi',txt:'ADI'}, null);
+      setAlertLevel('green');
+      setTimeout(() => finishSim(sc, villa), 1200);
+    }, 2500);
+  }, 2000);
+}
+
+// =====================
+// FINISH + REPORT
+// =====================
+function buildRealTimeline(sc) {
+  // Realistic Bali timing breakdown
+  const responseDelay = Math.floor(Math.random() * 25) + 2;       // 2-27 min tukang picks up
+  const travelTime   = sc.eta || (20 + Math.floor(Math.random() * 25)); // ETA from scenario
+  const diagTime     = 10 + Math.floor(Math.random() * 15);        // 10-25 min diagnostic
+  const repairTime   = sc.level === 'red'
+    ? 25 + Math.floor(Math.random() * 45)   // 25-70 min for serious stuff
+    : 15 + Math.floor(Math.random() * 30);  // 15-45 min normal
+  const fetchTime    = sc.staffNoReply ? 45 + Math.floor(Math.random() * 30) : 0; // 0 or 45-75 if needed material
+  const totalMin     = responseDelay + travelTime + diagTime + repairTime + fetchTime;
+  const totalH       = Math.floor(totalMin / 60);
+  const totalM       = totalMin % 60;
+  const totalStr     = totalH > 0 ? totalH + 'h' + (totalM > 0 ? pad(totalM) : '00') : totalMin + ' min';
+
+  // Cost estimate in IDR + USD
+  const callOut  = Math.floor((50000 + Math.random() * 50000) / 10000) * 10000; // 50k-100k IDR
+  const parts    = sc.level === 'red' ? Math.floor((80000 + Math.random() * 200000) / 10000) * 10000 : 0;
+  const labour   = Math.floor((100000 + Math.random() * 150000) / 10000) * 10000;
+  const totalIDR = callOut + parts + labour;
+  const totalUSD = (totalIDR / 16000).toFixed(0);
+
+  return {
+    breakdown: [
+      { label: 'Réponse tukang au message', val: responseDelay + ' min', note: responseDelay < 10 ? '⚡ Rapide' : responseDelay > 20 ? '⏳ Long — Bali 🌴' : 'Normal' },
+      { label: 'Trajet vers la villa',   val: travelTime + ' min',   note: travelTime > 35 ? 'Trafic Canggu' : 'OK' },
+      { label: 'Diagnostic sur place',       val: diagTime + ' min',     note: '' },
+      { label: 'Réparation',                 val: repairTime + ' min',   note: '' },
+      { label: fetchTime > 0 ? 'Chercher materiel' : null, val: fetchTime > 0 ? fetchTime + ' min' : null, note: fetchTime > 0 ? 'Toko terdekat' : null },
+    ].filter(x => x.label !== null),
+    total: totalStr,
+    totalMin: totalMin,
+    cost: {
+      callOut: callOut,
+      parts: parts,
+      labour: labour,
+      totalIDR: totalIDR,
+      totalUSD: totalUSD,
+    }
+  };
+}
+
+function finishSim(sc, villa) {
+  clearInterval(simTimerInterval);
+  simRunning = false;
+  document.getElementById('launch-btn').disabled = false;
+
+  const timeline = buildRealTimeline(sc);
+  const cost = timeline.cost;
+
+  const breakdownHTML = timeline.breakdown.map(b =>
+    '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03);font-size:10px;">' +
+      '<span style="color:var(--muted);">' + b.label + '</span>' +
+      '<span style="color:var(--text);">' + b.val + (b.note ? ' <em style="color:var(--muted);font-size:9px;">— ' + b.note + '</em>' : '') + '</span>' +
+    '</div>'
+  ).join('');
+
+  const costHTML =
+    '<div style="margin-top:10px;padding:12px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:6px;">' +
+      '<div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Coût intervention estimé</div>' +
+      '<div style="display:flex;flex-direction:column;gap:4px;">' +
+        '<div style="display:flex;justify-content:space-between;font-size:10px;">' +
+          '<span style="color:var(--muted);">Call-out fee</span>' +
+          '<span style="color:var(--text);">Rp ' + (cost.callOut/1000) + 'K</span>' +
+        '</div>' +
+        (cost.parts > 0 ? '<div style="display:flex;justify-content:space-between;font-size:10px;">' +
+          '<span style="color:var(--muted);">Pièces / matériaux</span>' +
+          '<span style="color:var(--text);">Rp ' + (cost.parts/1000) + 'K</span>' +
+        '</div>' : '') +
+        '<div style="display:flex;justify-content:space-between;font-size:10px;">' +
+          '<span style="color:var(--muted);">Main-oeuvre</span>' +
+          '<span style="color:var(--text);">Rp ' + (cost.labour/1000) + 'K</span>' +
+        '</div>' +
+        '<div style="display:flex;justify-content:space-between;font-size:11px;font-weight:600;border-top:1px solid var(--border);padding-top:6px;margin-top:4px;">' +
+          '<span style="color:var(--text);">Total</span>' +
+          '<span style="color:var(--gold);">Rp ' + (cost.totalIDR/1000) + 'K <span style="font-size:9px;font-weight:400;color:var(--muted);">~$' + cost.totalUSD + ' USD</span></span>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:9px;color:var(--muted);margin-top:8px;line-height:1.6;">💡 Enregistré dans le ticket · Visible propriétaire uniquement · Guest non informée du coût</div>' +
+    '</div>';
+
+  // Report
+  const report = document.getElementById('incident-report');
+  const now = new Date();
+  document.getElementById('report-date').textContent = nowStr() + ' · ' + now.toLocaleDateString('fr-FR');
+  document.getElementById('report-body').innerHTML =
+    row('Villa', villa.name + ' · ' + villa.area) +
+    row('Guest', villa.guest + ' · ' + villa.guestLang + ' · Check-out ' + villa.checkout) +
+    row('Incident', sc.icon + ' ' + sc.name) +
+    row('Niveau', sc.level==='red'?'🔴 Critique':sc.level==='orange'?'🟡 Moyen':sc.level==='multi'?'🟣 Multi-incidents':'🟢 Normal') +
+    row('Réponse Sofia', '27 secondes ✓', 'green') +
+    row('Résolution', sc.resolution) +
+    '<div class="report-row" style="flex-direction:column;gap:8px;">' +
+      '<span class="report-label" style="width:auto;">⏱️ Durée réelle estimée — <strong style="color:var(--gold);">' + timeline.total + '</strong></span>' +
+      '<div style="padding:0 0 4px;">' + breakdownHTML + '</div>' +
+      '<div style="font-size:9px;color:var(--muted);line-height:1.6;">On est à Bali — les délais font partie du jeu. Ce qui compte : le problema est resolu, le guest est rassure, le proprio na pas été dérangé.</div>' +
+    '</div>' +
+    '<div class="report-row" style="flex-direction:column;">' +
+      costHTML +
+    '</div>' +
+    row('Boss dérangé ?', sc.staffNoReply ? 'Oui — 1× décision critique' : 'Non ✓ — résolu en autonome', sc.staffNoReply ? '' : 'green') +
+    row('Guest informée ?', 'Oui — à chaque étape · 0 appel manuel', 'green') +
+    row('Review protégée ?', sc.level === 'red' ? '⚠️ Risque réduit — guest prise en charge' : '✅ Oui — guest satisfaite', sc.level === 'red' ? 'orange' : 'green');
+  report.style.display = 'block';
+
+  // Mark bar as done
+  setETAPhase('done');
+  setTimeout(() => report.scrollIntoView({behavior:'smooth',block:'nearest'}), 300);
+}
+
+function row(label, value, cls) {
+  return '<div class="report-row">' +
+    '<span class="report-label">' + label + '</span>' +
+    '<span class="report-value' + (cls?' '+cls:'') + '">' + value + '</span>' +
+  '</div>';
+}
+
+// =====================
+// RESET
+// =====================
+function resetSim() {
+  clearInterval(simTimerInterval);
+  clearInterval(critTimerInterval);
+  simRunning = false;
+  simSeconds = 0;
+  document.getElementById('sim-idle').style.display = 'flex';
+  document.getElementById('sim-active').style.display = 'none';
+  document.getElementById('critical-overlay').classList.remove('visible');
+  document.getElementById('launch-btn').disabled = false;
+  document.getElementById('sim-timer').textContent = '00:00';
+  document.getElementById('sim-timer').classList.remove('red');
+  document.getElementById('incident-report').style.display = 'none';
+  const _pb = document.getElementById('power-bar-wrap'); if(_pb) _pb.style.display = 'none';
+  document.getElementById('sim-timeline').innerHTML = '';
+  const etaBar = document.getElementById('eta-estimate-bar');
+  if (etaBar) etaBar.style.display = 'none';
+  const etaRev = document.getElementById('eta-revision-notice');
+  if (etaRev) { etaRev.style.display = 'none'; }
+  const etaRevLabel = document.getElementById('eta-revised-label');
+  if (etaRevLabel) { etaRevLabel.style.display = 'none'; }
+  ['seg-done','seg-progress','seg-extra'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.width = '0%'; el.style.left = '0%'; }
+  });
+  simClockStart = null;
+  simClockOffsetMin = 0;
+  etaState = { initMin:0, extraMin:0, totalMin:0, elapsedMin:0, phase:'waiting' };
+}
+</script>
+</body>
+</html>
