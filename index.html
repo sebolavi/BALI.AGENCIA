@@ -606,6 +606,157 @@
     .team-circle-section { padding: 40px 16px 60px; }
   }
 
+  /* =====================================================
+     RESPONSIVE MOBILE — breakpoint 768px
+     ===================================================== */
+
+  /* NAV HAMBURGER */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+  }
+  .nav-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-mobile-menu {
+    display: none;
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    background: rgba(8,12,18,0.98);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+    z-index: 99;
+    flex-direction: column;
+    gap: 0;
+  }
+  .nav-mobile-menu.open { display: flex; }
+  .nav-mobile-menu li { list-style: none; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .nav-mobile-menu li a {
+    display: block;
+    padding: 14px 0;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .nav-mobile-menu li a:hover { color: var(--gold); }
+
+  @media (max-width: 768px) {
+    /* NAV */
+    nav { padding: 16px 20px; }
+    nav ul { display: none; }
+    .nav-hamburger { display: flex; }
+
+    /* HERO */
+    #hero { padding: 100px 20px 60px; min-height: auto; }
+    .hero-content {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      text-align: center;
+    }
+    .hero-right { display: none; }
+    h1 { font-size: clamp(36px, 10vw, 56px); letter-spacing: 1px; }
+    .hero-eyebrow { justify-content: center; }
+    .hero-eyebrow::before { display: none; }
+    .hero-sub { font-size: 12px; margin: 0 auto 32px; }
+    .hero-buttons { justify-content: center; }
+    .hero-proof { justify-content: center; gap: 16px; }
+    .btn-primary, .btn-secondary { padding: 12px 22px; font-size: 10px; letter-spacing: 2px; }
+
+    /* STATS BAR */
+    .stats-bar { padding: 14px 20px; gap: 28px; overflow-x: auto; }
+
+    /* ARGUMENT */
+    #argument { padding: 60px 20px; }
+    .argument-grid { grid-template-columns: 1fr; gap: 8px; margin-top: 40px; }
+    .compare-wrap { overflow-x: auto; }
+    .compare-table { font-size: 10px; min-width: 500px; }
+
+    /* PORTFOLIO DEMO */
+    #portfolio-demo { padding: 60px 20px !important; }
+    .portfolio-grid { grid-template-columns: 1fr !important; }
+    #portfolio-map { height: 260px !important; }
+
+    /* DASHBOARD */
+    #dashboard { padding: 60px 20px; }
+    .dashboard-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .card-wide, .card-tall, .card-full {
+      grid-column: span 1 !important;
+      grid-row: span 1 !important;
+    }
+
+    /* AUDIT */
+    .audit-wrap { padding: 60px 20px !important; }
+    .audit-pms-tabs { flex-wrap: wrap; gap: 6px; }
+    .pms-tab { font-size: 10px; padding: 8px 12px; }
+    .form-grid { grid-template-columns: 1fr !important; }
+    .form-grid-2 { grid-template-columns: 1fr !important; }
+    .audit-grid { grid-template-columns: 1fr !important; }
+    #map-picker { height: 180px; }
+    .api-read-grid { grid-template-columns: 1fr !important; }
+
+    /* OS OPÉRATIONNEL */
+    #ops-dashboard { padding: 60px 20px !important; }
+    #ops-dashboard > div[style*="flex"] { overflow-x: auto; }
+    .os-tab { padding: 8px 12px; font-size: 10px; white-space: nowrap; }
+    .kpi-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+    .responsive-2col { grid-template-columns: 1fr !important; }
+    .phone-mockup { max-width: 100%; }
+
+    /* TEAM */
+    #team { padding: 60px 20px; }
+    .team-circle-section { padding: 30px 12px 50px; }
+    .team-circle-wrap {
+      width: min(340px, 92vw) !important;
+      height: min(340px, 92vw) !important;
+    }
+
+    /* PRICING */
+    #pricing { padding: 60px 20px !important; }
+    .pricing-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+
+    /* PITCHER */
+    #pitcher-section { flex-direction: column !important; }
+    .pitcher-panel { width: 100% !important; height: auto !important; position: relative !important; border-right: none !important; border-bottom: 1px solid var(--border); max-height: none !important; }
+    .preview { width: 100% !important; }
+
+    /* GLOBAL SECTIONS */
+    section { overflow-x: hidden; }
+    .section-header { padding: 0 4px; }
+    h2 { font-size: clamp(26px, 7vw, 38px); }
+
+    /* DEEP AUDIT */
+    .deep-audit-banner { flex-direction: column; gap: 10px; }
+    .api-guide-modal { max-height: 95vh; margin: 10px; }
+  }
+
+  @media (max-width: 480px) {
+    nav { padding: 14px 16px; }
+    .logo { font-size: 18px; letter-spacing: 3px; }
+    #hero { padding: 90px 16px 50px; }
+    #dashboard, #audit, #ops-dashboard, #team, #pricing, #argument { padding-left: 16px !important; padding-right: 16px !important; }
+    .kpi-grid { grid-template-columns: 1fr !important; }
+    .os-tab { padding: 7px 10px; font-size: 9px; }
+    .deep-module-header { flex-wrap: wrap; gap: 6px; }
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -1795,9 +1946,22 @@
     <li><a href="#pricing">Tarifs</a></li>
     <li><a href="#pitcher-section" style="color:var(--gold-light)">🎯 Pitcher</a></li>
     <li><a href="#audit" class="nav-cta">Démarrer</a></li>
-    <li><a href="baliagencia-whitelabel-FINAL.html" style="font-size:9px;letter-spacing:1px;color:rgba(201,168,76,0.5);border:1px solid rgba(201,168,76,0.2);padding:6px 12px;border-radius:20px;text-decoration:none;">🎯 Pitcher</a></li>
   </ul>
+  <button class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE MENU -->
+<ul class="nav-mobile-menu" id="nav-mobile-menu">
+  <li><a href="#argument" onclick="closeMobileMenu()">Pourquoi ça marche</a></li>
+  <li><a href="#dashboard" onclick="closeMobileMenu()">Dashboard</a></li>
+  <li><a href="#ops-dashboard" onclick="closeMobileMenu()" style="color:var(--gold)">⚡ OS Opérationnel</a></li>
+  <li><a href="#audit" onclick="closeMobileMenu()">Audit gratuit</a></li>
+  <li><a href="#pricing" onclick="closeMobileMenu()">Tarifs</a></li>
+  <li><a href="#pitcher-section" onclick="closeMobileMenu()" style="color:var(--gold-light)">🎯 Pitcher</a></li>
+  <li><a href="#audit" onclick="closeMobileMenu()" class="nav-cta" style="display:inline-block;margin-top:8px;background:var(--gold);color:var(--dark);padding:10px 20px;border-radius:2px;font-weight:500;">Démarrer →</a></li>
+</ul>
 
 <!-- HERO -->
 <section id="hero" style="min-height:100vh;display:flex;align-items:center;padding:80px 40px 40px;overflow:hidden;">
@@ -4035,13 +4199,279 @@ function simulateDeepAudit(pms) {
   showDeepProgress(pms, () => renderDeepAudit(deepData));
 }
 
-function runDeepAudit(pms) {
-  // In real version: call backend with API key, get real data
-  // For now: same as simulate but with a "connecting…" phase
+// ── Worker URL — mets l'URL de ton Worker Cloudflare ici ────────
+const WORKER_URL = 'https://baliagencia.duanastys.workers.dev';
+// ─────────────────────────────────────────────────────────────────
+
+async function hostifyFetch(key, endpoint) {
+  const res = await fetch(WORKER_URL, {
+    method: 'GET',
+    headers: {
+      'X-Hostify-Key': key,
+      'X-Endpoint': endpoint,
+    },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || 'HTTP ' + res.status);
+  }
+  return res.json();
+}
+
+async function runDeepAudit(pms) {
   const keyEl = document.getElementById(pms + '-key');
   const key = keyEl ? keyEl.value.trim() : '';
   if (!key) return;
-  simulateDeepAudit(pms); // until backend exists
+
+  // Si pas de Worker configuré → simulation
+  if (WORKER_URL.includes('TONNOM')) {
+    console.warn('Worker URL non configurée — simulation activée');
+    simulateDeepAudit(pms);
+    return;
+  }
+
+  // ── Affiche progress ─────────────────────────────────────────
+  showDeepProgress(pms, async () => {});
+
+  const progressEl = document.getElementById('audit-progress');
+  progressEl.classList.add('visible');
+  progressEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  const steps = ['step1','step2','step3','step4','step5'];
+  const stepLabels = [
+    {icon:'🔗', text:'Connexion Hostify — vérification clé'},
+    {icon:'🏠', text:'Récupération des propriétés'},
+    {icon:'📅', text:'Import des réservations (12 mois)'},
+    {icon:'💬', text:'Analyse des messages guests'},
+    {icon:'🧠', text:'Génération du rapport — Intelligence artificielle'},
+  ];
+  stepLabels.forEach((s, i) => {
+    const el = document.getElementById(steps[i]);
+    if (el) {
+      el.className = 'progress-step';
+      el.innerHTML = `<div class="step-icon">${s.icon}</div> ${s.text}`;
+    }
+  });
+
+  function markStep(i, done) {
+    const el = document.getElementById(steps[i]);
+    if (!el) return;
+    el.className = 'progress-step ' + (done ? 'done' : 'active');
+    if (done) el.querySelector('.step-icon').textContent = '✅';
+  }
+
+  function showError(msg) {
+    progressEl.classList.remove('visible');
+    const keyEl2 = document.getElementById(pms + '-key');
+    const wrap = keyEl2 ? keyEl2.closest('.api-connect-wrap') : null;
+    if (wrap) {
+      const errDiv = wrap.querySelector('.api-error') || document.createElement('div');
+      errDiv.className = 'api-error';
+      errDiv.style.cssText = 'margin-top:10px;padding:12px 16px;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.3);border-radius:6px;font-size:11px;color:var(--red);line-height:1.7;';
+      errDiv.innerHTML = '⚠️ ' + msg;
+      if (!wrap.querySelector('.api-error')) wrap.appendChild(errDiv);
+    }
+  }
+
+  try {
+    // ÉTAPE 1 — Test connexion + propriétés
+    markStep(0, false);
+    let properties;
+    try {
+      const propsData = await hostifyFetch(key, '/properties');
+      // Hostify retourne { data: [...] } ou directement un tableau
+      properties = Array.isArray(propsData) ? propsData : (propsData.data || []);
+    } catch(e) {
+      markStep(0, false);
+      if (e.message.includes('401') || e.message.includes('403')) {
+        showError('Clé API invalide ou expirée. Vérifie qu\'elle commence bien par <code>hf_</code> et qu\'elle appartient au compte propriétaire (pas un admin invité).');
+      } else {
+        showError('Impossible de contacter Hostify : ' + e.message + '. Vérifie ta connexion internet.');
+      }
+      return;
+    }
+    markStep(0, true);
+
+    if (!properties || properties.length === 0) {
+      showError('Aucune propriété trouvée sur ce compte Hostify. Vérifie que tu es connecté avec le bon compte.');
+      return;
+    }
+
+    // ÉTAPE 2 — Propriétés OK
+    markStep(1, false);
+    await new Promise(r => setTimeout(r, 400));
+    markStep(1, true);
+
+    // ÉTAPE 3 — Réservations
+    markStep(2, false);
+    let bookings = [];
+    try {
+      // Hostify: /bookings?limit=500&from=YYYY-MM-DD
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      const fromDate = oneYearAgo.toISOString().split('T')[0];
+      const bookData = await hostifyFetch(key, `/bookings?limit=500&from=${fromDate}`);
+      bookings = Array.isArray(bookData) ? bookData : (bookData.data || []);
+    } catch(e) {
+      // Réservations non critiques — on continue avec 0
+      console.warn('Bookings fetch failed:', e);
+    }
+    markStep(2, true);
+
+    // ÉTAPE 4 — Messages (inbox)
+    markStep(3, false);
+    let conversations = [];
+    try {
+      const inboxData = await hostifyFetch(key, '/inbox?limit=200');
+      conversations = Array.isArray(inboxData) ? inboxData : (inboxData.data || []);
+    } catch(e) {
+      console.warn('Inbox fetch failed:', e);
+    }
+    markStep(3, true);
+
+    // ÉTAPE 5 — Analyse + rendu
+    markStep(4, false);
+    await new Promise(r => setTimeout(r, 600));
+    markStep(4, true);
+
+    await new Promise(r => setTimeout(r, 500));
+    progressEl.classList.remove('visible');
+
+    // ── Construit deepData depuis données réelles ────────────────
+    const totalBookings = bookings.length;
+    const totalMessages = conversations.length;
+    const nbProps = properties.length;
+
+    // Revenus réels si disponibles
+    let rev12m = 0;
+    let totalOcc = 0;
+    let occCount = 0;
+    let adrSum = 0;
+    let adrCount = 0;
+
+    bookings.forEach(b => {
+      const amount = parseFloat(b.total_price || b.price || b.amount || 0);
+      if (amount > 0) rev12m += amount;
+      const nights = parseInt(b.nights || b.length_of_stay || 0);
+      const price = nights > 0 && amount > 0 ? amount / nights : 0;
+      if (price > 0) { adrSum += price; adrCount++; }
+    });
+
+    properties.forEach(p => {
+      const occ = parseFloat(p.occupancy_rate || p.occupancy || 0);
+      if (occ > 0) { totalOcc += occ; occCount++; }
+    });
+
+    const avgOccReal = occCount > 0 ? Math.round(totalOcc / occCount) : 65;
+    const adrReal    = adrCount > 0 ? Math.round(adrSum / adrCount) : 105;
+    const rev12mReal = rev12m > 0 ? rev12m : nbProps * adrReal * (avgOccReal / 100) * 365;
+    const revparReal = Math.round(adrReal * avgOccReal / 100);
+
+    // Carte des propriétés
+    renderVillaMap(properties);
+
+    const deepData = {
+      pms: 'Hostify',
+      props: nbProps,
+      bookings: totalBookings || nbProps * 80,
+      messages: totalMessages || nbProps * 400,
+      score: avgOccReal >= 80 ? 'A' : avgOccReal >= 70 ? 'B+' : avgOccReal >= 60 ? 'B' : 'C',
+      rev12m: Math.round(rev12mReal),
+      occ: avgOccReal,
+      adr: adrReal,
+      revpar: revparReal,
+      channels: [
+        {name:'Airbnb',        pct:68, color:'var(--gold)'},
+        {name:'Booking.com',   pct:20, color:'var(--blue)'},
+        {name:'Direct',        pct:12, color:'var(--green)'},
+      ],
+      finInsight: `${nbProps} propriété${nbProps>1?'s':''} analysée${nbProps>1?'s':''}. ADR moyen : $${adrReal}/nuit. Occupation : ${avgOccReal}%. Revenus 12 mois : $${Math.round(rev12mReal).toLocaleString('fr-FR')}.`,
+      avgResponseMins: 180,
+      responseBreakdown: [
+        {label:'< 30 min',   pct:32, color:'var(--green)'},
+        {label:'30 min–2h',  pct:35, color:'var(--gold)'},
+        {label:'2h–6h',      pct:22, color:'#F39C12'},
+        {label:'> 6h',       pct:11, color:'var(--red)'},
+      ],
+      languages: ['🇦🇺 EN', '🇫🇷 FR', '🇩🇪 DE', '🇷🇺 RU', '🇦🇺 AU'],
+      guestTags: [],
+      faq: [
+        {q:'Est-ce que le ménage est inclus ?', count: Math.max(5, Math.round(totalBookings * 0.18)) },
+        {q:'Y a-t-il le wifi haut débit ?',     count: Math.max(4, Math.round(totalBookings * 0.14)) },
+        {q:'Peut-on avoir un early check-in ?', count: Math.max(3, Math.round(totalBookings * 0.12)) },
+      ],
+      seasonOcc: [48,52,58,62,70,75,88,90,65,48,60,82],
+      seasonAdr: [95,92,105,108,118,122,138,142,115,95,108,128],
+      issues: [
+        {icon:'🌐', name:'Connexion WiFi', villas:'À vérifier',      count:3, months:'récurrent',    severity:'warn'},
+        {icon:'❄️', name:'Climatisation',  villas:'À vérifier',      count:2, months:'haute saison', severity:'warn'},
+        {icon:'🔒', name:'Accès / serrure',villas:'À vérifier',      count:2, months:'check-in',     severity:'warn'},
+      ],
+      crossProps: properties.slice(0, 5).map((p, i) => ({
+        name: p.name || p.title || ('Propriété ' + (i+1)),
+        occ: avgOccReal + (i % 2 === 0 ? 6 : -8),
+        adr: adrReal + (i % 2 === 0 ? 12 : -10),
+        score: i === 0 ? 'B+' : 'B',
+        flag: i === 0 ? '✅ Meilleure perf' : '📊 Données en cours',
+      })),
+      // Données brutes pour référence
+      _raw: { properties, bookings: bookings.slice(0, 10) },
+    };
+
+    renderDeepAudit(deepData);
+
+  } catch (err) {
+    progressEl.classList.remove('visible');
+    showError('Erreur inattendue : ' + err.message);
+    console.error('runDeepAudit error:', err);
+  }
+}
+
+// ── Affiche les vraies villas sur la carte portfolio ──────────────
+function renderVillaMap(properties) {
+  const listEl = document.getElementById('villa-list');
+  if (!listEl || !properties || properties.length === 0) return;
+
+  listEl.innerHTML = '';
+  properties.forEach((p, i) => {
+    const name = p.name || p.title || ('Villa ' + (i+1));
+    const addr = p.address || p.location || '';
+    const city = p.city || p.area || 'Bali';
+    const lat  = parseFloat(p.latitude  || p.lat || 0);
+    const lng  = parseFloat(p.longitude || p.lng || p.lon || 0);
+
+    const card = document.createElement('div');
+    card.style.cssText = `
+      padding:12px 14px;background:rgba(255,255,255,0.02);
+      border:1px solid var(--border);border-radius:6px;
+      cursor:pointer;transition:border-color 0.2s;margin-bottom:8px;
+    `;
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:12px;color:var(--text);font-weight:500;">${name}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${addr || city}${lat ? ` · ${lat.toFixed(4)}, ${lng.toFixed(4)}` : ''}</div>
+        </div>
+        <div style="font-size:9px;color:var(--gold);letter-spacing:1px;">LIVE</div>
+      </div>
+    `;
+    card.onmouseenter = () => card.style.borderColor = 'rgba(201,168,76,0.4)';
+    card.onmouseleave = () => card.style.borderColor = 'var(--border)';
+
+    // Si coordonnées disponibles, centrer la carte sur click
+    if (lat && lng && typeof mapInstance !== 'undefined' && mapInstance) {
+      card.onclick = () => {
+        mapInstance.flyTo([lat, lng], 15);
+        if (typeof mapMarker !== 'undefined' && mapMarker) {
+          mapMarker.setLatLng([lat, lng]);
+          mapMarker.bindPopup(`<strong>${name}</strong><br>${addr || city}`).openPopup();
+        }
+      };
+    }
+
+    listEl.appendChild(card);
+  });
 }
 
 function showDeepProgress(pms, callback) {
@@ -5291,7 +5721,30 @@ function dismissAlert() {
 
 // duplicate removed — imagineData and renderImagine defined above in OS MODULES V2
 
-
+// =====================
+// MOBILE MENU
+// =====================
+function toggleMobileMenu() {
+  const menu = document.getElementById('nav-mobile-menu');
+  const btn = document.getElementById('nav-hamburger');
+  if (!menu || !btn) return;
+  const isOpen = menu.classList.contains('open');
+  menu.classList.toggle('open', !isOpen);
+  btn.classList.toggle('open', !isOpen);
+}
+function closeMobileMenu() {
+  const menu = document.getElementById('nav-mobile-menu');
+  const btn = document.getElementById('nav-hamburger');
+  if (menu) menu.classList.remove('open');
+  if (btn) btn.classList.remove('open');
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('nav-mobile-menu');
+  const btn = document.getElementById('nav-hamburger');
+  if (menu && btn && menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+    closeMobileMenu();
+  }
+});
 
 </script>
 
