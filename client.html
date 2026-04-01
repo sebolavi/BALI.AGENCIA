@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Espace Propriétaire — BALIAGENCIA</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--dark:#080C12;--dark2:#0D1420;--dark3:#131C2E;--surface:rgba(255,255,255,0.04);--border:rgba(201,168,76,0.15);--text:#E8DCC8;--muted:#6A7A8A;--green:#2ECC71;--green-dark:#1a7a44;--red:#E74C3C;--orange:#F39C12;--blue:#3498DB;--violet:#9B59B6;--rose:#E91E8C;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--dark);color:var(--text);font-family:"DM Mono",monospace;min-height:100vh;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(8,12,18,0.96);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);}
+.topbar-logo{font-family:"Playfair Display",serif;font-size:16px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;}
+.topbar-logo span{color:var(--muted);font-size:10px;font-family:"DM Mono",monospace;letter-spacing:3px;display:block;margin-top:1px;}
+.pill-row{display:flex;gap:6px;}
+.pill{padding:5px 12px;font-size:10px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--border);border-radius:20px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent;font-family:"DM Mono",monospace;}
+.pill.active,.pill:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,0.08);}
+.client-badge{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--text);}
+.client-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,rgba(201,168,76,0.3),rgba(201,168,76,0.1));border:1px solid rgba(201,168,76,0.4);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--gold);font-family:"Playfair Display",serif;}
+.main{max-width:1100px;margin:0 auto;padding:36px 32px 100px;}
+@media(max-width:600px){.main{padding:20px 16px 80px;}.topbar{padding:0 16px;}}
+.greeting{margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--border);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.greeting-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.greeting h1{font-family:"Playfair Display",serif;font-size:32px;font-weight:400;line-height:1.2;}
+.greeting h1 em{color:var(--gold);font-style:italic;}
+.greeting-meta{font-size:10px;color:var(--muted);text-align:right;line-height:1.9;}
+.section-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:14px;}
+.section-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+/* POWER BLOCK */
+.power-block{margin-bottom:48px;}
+.power-global{background:var(--dark2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px;position:relative;}
+.power-global::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#2ECC71,transparent);opacity:.8;}
+.pg-header{padding:22px 28px 0;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+.pg-net-confirmed{font-family:"Playfair Display",serif;font-size:42px;color:#2ECC71;line-height:1;}
+.pg-slash{font-size:26px;color:var(--muted);}
+.pg-net-forecast{font-family:"Playfair Display",serif;font-size:30px;color:var(--gold-light);line-height:1;}
+.pg-labels{display:flex;flex-direction:column;gap:3px;margin-left:4px;align-self:center;}
+.pg-label-conf{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);}
+.pg-label-fore{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);}
+.pg-period{font-size:10px;color:var(--muted);margin-left:auto;align-self:flex-end;padding-bottom:4px;}
+.pg-progress{padding:16px 28px 8px;}
+.pg-bar-track{height:8px;background:rgba(255,255,255,0.06);border-radius:4px;position:relative;margin-bottom:6px;}
+.pg-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green-dark),var(--green));transition:width .8s ease;position:relative;}
+.pg-bar-fill::after{content:"";position:absolute;right:-1px;top:-3px;width:14px;height:14px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);border:2px solid var(--dark2);}
+.pg-bar-objective{position:absolute;top:-4px;height:16px;width:2px;background:var(--gold);border-radius:1px;box-shadow:0 0 6px rgba(201,168,76,.6);}
+.pg-bar-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);}
+.pg-timeline{padding:8px 28px 16px;}
+.pg-tl-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.day-track{display:flex;gap:3px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+.day-sq{width:20px;height:20px;border-radius:3px;flex-shrink:0;cursor:pointer;transition:transform .15s;position:relative;}
+.day-sq:hover{transform:scale(1.2);z-index:10;}
+.day-sq.ds-done{background:#2ECC71;}
+.day-sq.ds-bradee{background:#9B59B6;}
+.day-sq.ds-missed{background:#CD5C5C;opacity:0.6;}
+.vrc-day.ds-done{background:#2ECC71;}
+.vrc-day.ds-bradee{background:#9B59B6;}
+.vrc-day.ds-missed{background:#CD5C5C;opacity:0.6;}
+.day-sq.ds-booked{background:#3498DB;}
+.day-sq.ds-available{background:#2ECC71;}
+.day-sq.ds-lastmin{background:#8E44AD;}
+.day-sq.ds-lastmin-active{background:#F4D03F;animation:blink-lm 1.2s infinite;}
+.day-sq.ds-bradee{background:#7D3C98;}
+.day-sq.ds-exceeded{background:#E91E8C;box-shadow:0 0 6px rgba(233,30,140,0.5);}
+.day-sq.ds-alert{background:repeating-linear-gradient(45deg,var(--orange),var(--orange) 4px,var(--red) 4px,var(--red) 8px);}
+.day-sq.ds-works{background:repeating-linear-gradient(45deg,#F4D03F,#F4D03F 4px,#1a1a00 4px,#1a1a00 8px);}
+.day-sq.ds-empty{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);}
+.day-sq.ds-today{outline:2px solid var(--gold);outline-offset:1px;}
+@keyframes blink-lm{0%,100%{background:#F4D03F;box-shadow:0 0 6px rgba(244,208,63,0.7);}50%{background:#F0B200;box-shadow:0 0 14px rgba(244,208,63,1);}}
+.day-numbers{display:flex;gap:3px;margin-top:3px;}
+.day-num{width:20px;font-size:7px;color:var(--muted);text-align:center;flex-shrink:0;}
+.day-num.today{color:var(--gold);}
+.pg-charges{border-top:1px solid var(--border);}
+.pg-charges-toggle{width:100%;padding:10px 28px;display:flex;align-items:center;justify-content:space-between;background:none;border:none;color:var(--muted);font-family:"DM Mono",monospace;font-size:10px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;}
+.pg-charges-toggle:hover{color:var(--text);}
+.pg-charges-body{display:none;padding:0 28px 16px;}
+.pg-charges-body.open{display:block;}
+.charge-row{display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.charge-label{color:var(--muted);}
+.charge-amt{font-family:"DM Mono",monospace;color:var(--red);}
+.charge-total{display:flex;justify-content:space-between;font-size:12px;padding-top:10px;margin-top:6px;border-top:1px solid var(--border);}
+/* VILLA ROWS */
+.villa-rows{display:flex;flex-direction:column;gap:10px;margin-bottom:48px;}
+.villa-row-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .2s;}
+.villa-row-card:hover{border-color:rgba(201,168,76,0.3);}
+.villa-row-card.active{border-color:rgba(201,168,76,0.5);background:rgba(201,168,76,0.02);}
+.vrc-header{display:flex;align-items:center;gap:10px;padding:12px 16px;flex-wrap:wrap;}
+.vrc-status-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.vrc-emoji{font-size:18px;}
+.vrc-name{font-size:13px;color:var(--text);}
+.vrc-location{font-size:10px;color:var(--muted);}
+.vrc-net-wrap{display:flex;align-items:flex-start;gap:6px;margin-left:auto;flex-shrink:0;}
+.vrc-confirmed{font-family:"Playfair Display",serif;font-size:18px;color:var(--green);}
+.vrc-slash{color:var(--muted);font-size:14px;}
+.vrc-forecast{font-family:"Playfair Display",serif;font-size:15px;color:var(--gold);}
+.vrc-occ{font-size:10px;color:var(--muted);margin-left:12px;}
+.vrc-stats{display:flex;flex-direction:column;align-items:flex-end;gap:3px;margin-left:14px;flex-shrink:0;}
+.vrc-fill-rate{font-size:11px;font-family:"DM Mono",monospace;}
+.vrc-adr-wrap{font-size:10px;color:var(--muted);}
+.vrc-adr-val{color:var(--text);}
+.vrc-adr-vs{font-size:9px;}
+.vrc-adr-up{color:var(--green);}
+.vrc-adr-dn{color:var(--orange);}
+/* DAY DETAIL PANEL */
+.day-detail-panel{background:var(--dark3);border:1px solid var(--border);border-radius:6px;padding:14px 20px;margin:0 20px 14px;display:none;}
+.day-detail-panel.open{display:block;}
+.ddp-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.ddp-grid{display:flex;gap:3px;flex-wrap:wrap;}
+.ddp-day{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+.ddp-sq{width:28px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;}
+.ddp-price{font-size:8px;color:var(--muted);text-align:center;line-height:1.2;}
+.ddp-num{font-size:7px;color:var(--muted);text-align:center;}
+/* REVENUE BAR MULTI-SEGMENT */
+.rev-bar-wrap{padding:16px 28px 8px;}
+.rev-bar-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between;}
+.rev-bar-track{height:10px;background:rgba(255,255,255,0.05);border-radius:5px;overflow:hidden;display:flex;}
+.rev-seg{height:100%;transition:width .8s ease;}
+.rev-seg-done{background:#2ECC71;}
+.rev-seg-booked{background:#3498DB;}
+.rev-seg-lastmin{background:#F4D03F;}
+.rev-bar-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;}
+.rev-leg-item{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);}
+.rev-leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+/* DAY COLOR LEGEND */
+.day-legend{display:flex;gap:12px;flex-wrap:wrap;padding:0 28px 14px;margin-top:-6px;}
+.dl-item{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);}
+.dl-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.vrc-timeline{padding:0 20px 12px;display:flex;gap:2px;overflow-x:auto;}
+.vrc-day{width:16px;height:10px;border-radius:2px;flex-shrink:0;}
+.vrc-day.ds-done{background:#2ECC71;}
+.vrc-day.ds-booked{background:#3498DB;}
+.vrc-day.ds-available{background:#2ECC71;}
+.vrc-day.ds-lastmin{background:#8E44AD;}
+.vrc-day.ds-lastmin-active{background:#F4D03F;}
+.vrc-day.ds-bradee{background:#7D3C98;}
+.vrc-day.ds-exceeded{background:#E91E8C;}
+.vrc-day.ds-alert{background:repeating-linear-gradient(45deg,var(--orange),var(--orange) 3px,var(--red) 3px,var(--red) 6px);}
+.vrc-day.ds-works{background:repeating-linear-gradient(45deg,#F4D03F,#F4D03F 3px,#1a1a00 3px,#1a1a00 6px);}
+.vrc-day.ds-empty{background:rgba(255,255,255,0.07);}
+.vrc-day.ds-today{outline:1.5px solid var(--gold);outline-offset:1px;}
+/* PANEL */
+.villa-panel{background:var(--dark2);border:1px solid var(--border);border-radius:12px;margin-bottom:40px;overflow:hidden;animation:slideDown .3s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes blink-og{0%,100%{border-color:#F39C12;box-shadow:0 0 12px rgba(243,156,18,0.4);}50%{border-color:#2ECC71;box-shadow:0 0 12px rgba(46,204,113,0.4);}}
+.ring-blink-og{animation:blink-og 2s infinite !important;}
+.panel-header{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:linear-gradient(135deg,rgba(201,168,76,0.04),transparent);}
+.panel-title{font-family:"Playfair Display",serif;font-size:22px;color:var(--gold);}
+.panel-sub{font-size:10px;color:var(--muted);margin-top:3px;}
+.panel-close{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--muted);font-size:16px;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.panel-close:hover{border-color:var(--red);color:var(--red);}
+.panel-kpi-bar{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);}
+@media(max-width:600px){.panel-kpi-bar{grid-template-columns:repeat(2,1fr);}}
+.pkpi{padding:16px 20px;border-right:1px solid var(--border);}
+.pkpi:last-child{border-right:none;}
+.pkpi-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.pkpi-num{font-family:"Playfair Display",serif;font-size:20px;color:var(--text);}
+.pkpi-num.gold{color:var(--gold);}
+.pkpi-num.green{color:var(--green);}
+.pkpi-sub{font-size:10px;color:var(--muted);margin-top:4px;}
+/* STAFF CLOCK */
+.staff-clock-wrap{display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:18px 28px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.01);}
+.staff-clock-legend{display:flex;flex-direction:column;gap:7px;}
+.clg-item{display:flex;align-items:center;gap:8px;font-size:10px;cursor:pointer;}
+.clg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+/* REVIEWS */
+.reviews-bar{padding:14px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+.rv-platform{display:flex;flex-direction:column;gap:2px;}
+.rv-name{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.rv-score{font-family:"Playfair Display",serif;font-size:22px;color:var(--gold);}
+.rv-count{font-size:10px;color:var(--muted);}
+.rv-sep{width:1px;height:32px;background:var(--border);flex-shrink:0;}
+.rv-best{flex:1;min-width:180px;padding:10px 14px;background:rgba(201,168,76,0.04);border:1px solid rgba(201,168,76,0.12);border-radius:6px;}
+.rv-best-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.rv-best-text{font-size:11px;color:var(--text);font-style:italic;line-height:1.5;font-family:"Cormorant Garamond",serif;}
+.rv-best-author{font-size:10px;color:var(--muted);margin-top:4px;}
+.rv-alert{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(231,76,60,0.06);border:1px solid rgba(231,76,60,0.2);border-radius:6px;flex:1;min-width:180px;}
+.rv-alert-label{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--red);margin-bottom:3px;}
+.rv-alert-handled{font-size:10px;color:var(--green);margin-top:4px;}
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab-btn{padding:10px 18px;font-family:"DM Mono",monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-content{display:none;padding:22px 28px;}
+.tab-content.active{display:block;}
+.bk-table{width:100%;border-collapse:collapse;}
+.bk-table th{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:0 10px 12px 0;text-align:left;border-bottom:1px solid var(--border);}
+.bk-table td{padding:11px 10px 11px 0;font-size:11px;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.03);}
+.bk-pl{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:3px;font-size:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);}
+.bk-st{padding:3px 8px;border-radius:10px;font-size:9px;letter-spacing:1px;}
+.s-done{background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid var(--border);}
+.s-confirmed{background:rgba(46,204,113,0.12);color:var(--green);border:1px solid rgba(46,204,113,0.2);}
+.s-pending{background:rgba(243,156,18,0.12);color:var(--orange);border:1px solid rgba(243,156,18,0.2);}
+.fr-row{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.fr-label{font-size:12px;color:var(--text);}
+.fr-sub{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.6;}
+.fr-amt{font-family:"DM Mono",monospace;font-size:13px;flex-shrink:0;margin-left:12px;}
+.fa-c{color:var(--green);}
+.fa-d{color:var(--red);}
+.fa-o{color:var(--orange);}
+.mgmt-btn{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);cursor:pointer;border:none;background:none;font-family:"DM Mono",monospace;padding:4px 0;}
+.mgmt-box{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-top:10px;display:none;}
+.mgmt-box.open{display:block;}
+.mgmt-ln{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.mgmt-ln:last-child{border-bottom:none;}
+.tr-up{font-size:9px;color:var(--red);}
+.tr-dn{font-size:9px;color:var(--green);}
+.exc-card{border-radius:6px;padding:13px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;}
+.exc-o{background:rgba(243,156,18,0.06);border:1px solid rgba(243,156,18,0.2);}
+.exc-r{background:rgba(231,76,60,0.06);border:1px solid rgba(231,76,60,0.2);}
+.exc-name{font-size:12px;color:var(--text);font-weight:500;}
+.exc-desc{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.6;}
+.exc-date{font-size:9px;color:var(--muted);margin-top:4px;font-style:italic;}
+.exc-amt{margin-left:auto;font-family:"DM Mono",monospace;font-size:13px;flex-shrink:0;}
+.occ-chart{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;margin:14px 0 4px;}
+.occ-bc{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.occ-b{width:100%;border-radius:2px;background:rgba(201,168,76,0.08);position:relative;overflow:hidden;height:70px;}
+.occ-f{position:absolute;bottom:0;left:0;right:0;border-radius:2px;transition:height 1s ease;}
+.occ-p{font-size:8px;color:var(--muted);text-align:center;}
+.occ-m{font-size:8px;color:var(--muted);text-align:center;}
+.psg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;}
+.psc{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;}
+.psl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.psn{font-family:"Playfair Display",serif;font-size:20px;}
+/* ORBITAL CLOCK */
+.clock-section{display:flex;justify-content:center;align-items:center;gap:40px;flex-wrap:wrap;margin-bottom:48px;padding:20px 0;}
+#main-clock{cursor:pointer;display:block;}
+.clk-legend{display:flex;flex-direction:column;gap:10px;}
+.clk-li{display:flex;align-items:center;gap:8px;cursor:pointer;transition:opacity .2s;}
+.clk-li:hover{opacity:.75;}
+.clk-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+/* HISTORY */
+.history-section{margin-bottom:48px;}
+.hcw{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:16px;}
+.hct{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.history-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;}
+.hcard{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:15px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.hcard:hover{border-color:rgba(201,168,76,0.3);transform:translateY(-2px);}
+.hcard::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;}
+.hc-green::before{background:var(--green);}
+.hc-orange::before{background:var(--orange);}
+.h-mo{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.h-net{font-family:"Playfair Display",serif;font-size:20px;}
+.h-occ{font-size:10px;color:var(--muted);margin-top:4px;}
+.h-tr{font-size:10px;margin-top:5px;}
+/* TIMELINE */
+.tl-section{margin-bottom:48px;}
+.tl-vname{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+.tl-track{display:flex;gap:2px;overflow-x:auto;padding-bottom:4px;}
+.tl-w{min-width:20px;flex:1;height:18px;border-radius:2px;cursor:pointer;transition:opacity .2s;}
+.tl-w:hover{opacity:.7;}
+.tl-green{background:var(--green);}
+.tl-green-light{background:#1a7a44;}
+.tl-orange{background:var(--orange);}
+.tl-striped{background:repeating-linear-gradient(45deg,var(--green),var(--green) 3px,var(--orange) 3px,var(--orange) 6px);}
+.tl-red{background:var(--red);}
+.tl-rose{background:var(--rose);}
+.tl-violet{background:var(--violet);}
+.tl-empty{background:rgba(255,255,255,0.06);}
+.tl-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;}
+.tl-li{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--muted);}
+.tl-ld{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+/* MODALS / POPUPS */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-ov.open{display:flex;}
+.modal-box{background:var(--dark2);border:1px solid var(--border);border-radius:12px;max-width:540px;width:100%;max-height:85vh;overflow-y:auto;}
+.modal-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.modal-ttl{font-family:"Playfair Display",serif;font-size:20px;color:var(--gold);}
+.modal-cl{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--muted);font-size:16px;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.modal-cl:hover{border-color:var(--red);color:var(--red);}
+.modal-bd{padding:22px;}
+.sp-ov{display:none;position:fixed;inset:0;z-index:600;background:rgba(0,0,0,0.65);align-items:center;justify-content:center;padding:20px;}
+.sp-ov.open{display:flex;}
+.sp-box{background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:20px 24px;min-width:240px;max-width:300px;width:100%;}
+.sp-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.sp-ttl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.sp-cl{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;}
+.sp-mb{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.sp-mb:last-child{border-bottom:none;}
+.sp-ic{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;border:1px solid rgba(255,255,255,0.1);}
+.sp-nm{font-size:12px;color:var(--text);}
+.sp-dy{font-size:10px;color:var(--muted);margin-top:2px;}
+.day-tip{position:fixed;z-index:200;background:var(--dark2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:10px;color:var(--text);pointer-events:none;display:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.5);}
+.fade-in{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease;}
+.fade-in.visible{opacity:1;transform:none;}
+
+/* ARROW FLOW */
+.arrow-flow{display:flex;align-items:center;gap:0;flex-wrap:nowrap;width:100%;padding:18px 28px 4px;}
+.af-num{display:flex;flex-direction:column;flex-shrink:0;}
+.af-val{font-family:"Playfair Display",serif;line-height:1;}
+.af-label{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;}
+.af-arrow{flex:1;height:28px;min-width:40px;display:flex;align-items:center;position:relative;margin:0 4px;}
+.af-arrow svg{width:100%;height:28px;display:block;}
+
+/* VILLA LINK */
+.cursor-line{position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(180deg,rgba(201,168,76,0.9),rgba(201,168,76,0.3));pointer-events:none;z-index:5;}
+.cursor-line::before{content:'TODAY';position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:7px;color:var(--gold);letter-spacing:1px;white-space:nowrap;font-family:'DM Mono',monospace;}
+.timeline-container{position:relative;}
+.villa-link{font-size:9px;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:3px;padding:3px 8px;white-space:nowrap;transition:all .2s;font-family:"DM Mono",monospace;letter-spacing:0.5px;}
+.villa-link:hover{color:var(--gold);border-color:var(--gold);}
+
+/* ADR badge */
+.adr-badge{font-family:"Playfair Display",serif;font-size:22px;color:var(--text);font-weight:400;}
+.adr-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:1px;}
+</style>
+</head>
+<body>
+<nav class="topbar">
+  <div class="topbar-logo">BALIAGENCIA<span>Espace Propriétaire</span></div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="pill-row">
+      <button class="pill active" onclick="setPeriod('month',this)">Ce mois</button>
+      <button class="pill" onclick="setPeriod('quarter',this)">Trimestre</button>
+      <button class="pill" onclick="setPeriod('year',this)">Année</button>
+    </div>
+    <div class="client-badge">
+      <div class="client-avatar" id="av">JL</div>
+      <span id="cn">Jean-Luc M.</span>
+    </div>
+  </div>
+</nav>
+<div class="main">
+  <div class="greeting fade-in">
+    <div>
+      <div class="greeting-tag">Tableau de bord</div>
+      <h1>Bonjour, <em id="cf">Jean-Luc</em>.</h1>
+    </div>
+    <div class="greeting-meta">Géré par <span style="color:var(--gold)">BALIAGENCIA</span><br>Canggu, Bali · <span id="td"></span></div>
+  </div>
+  <div class="section-title fade-in">Revenus — <span id="pl">mars 2026</span></div>
+  <div class="power-block fade-in">
+    <div class="power-global">
+      <div style="padding:20px 28px 0;">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;" id="gp">mars 2026 · toutes villas</div>
+      </div>
+      <div class="arrow-flow" id="arrow-flow-global">
+        <!-- injected by JS -->
+      </div>
+      <div class="rev-bar-wrap">
+        <div class="rev-bar-label"><span>Revenus nets — progression du mois</span><span id="gf-total-label" style="color:var(--gold)"></span></div>
+        <div class="rev-bar-track" id="gbt">
+          <div class="rev-seg rev-seg-done" id="g-seg-done" style="width:0%"></div>
+          <div class="rev-seg rev-seg-booked" id="g-seg-booked" style="width:0%"></div>
+          <div class="rev-seg rev-seg-lastmin" id="g-seg-lastmin" style="width:0%"></div>
+        </div>
+        <div class="rev-bar-legend">
+          <div class="rev-leg-item"><div class="rev-leg-dot" style="background:#2ECC71"></div>Encaissé</div>
+          <div class="rev-leg-item"><div class="rev-leg-dot" style="background:#3498DB"></div>Booké à venir</div>
+          <div class="rev-leg-item"><div class="rev-leg-dot" style="background:#F4D03F"></div>Last-minute</div>
+        </div>
+      </div>
+      <div id="gdt" style="display:none"></div><div id="gdn" style="display:none"></div>
+      <div class="pg-charges">
+        <button class="pg-charges-toggle" onclick="toggleCharges('g')"><span>Détail frais déduits</span><span id="g-ca">▶</span></button>
+        <div class="pg-charges-body" id="g-cb"></div>
+      </div>
+    </div>
+    <div style="position:relative;" class="timeline-container">
+      <div class="villa-rows" id="vrows"></div>
+      <div class="cursor-line" id="cursor-line" style="display:none;"></div>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;padding:4px 0 0;margin-top:-4px;">
+      <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);"><svg width="10" height="10" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M8,1 L15,7 L13,7 L13,15 L3,15 L3,7 L1,7 Z" fill="#2ECC71" opacity="0.9"/><rect x="6" y="10" width="4" height="5" fill="#2ECC71" opacity="0.6"/></svg> Encaissé</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);"><svg width="10" height="10" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M8,1 L15,7 L13,7 L13,15 L3,15 L3,7 L1,7 Z" fill="#9B59B6" opacity="0.9"/><rect x="6" y="10" width="4" height="5" fill="#9B59B6" opacity="0.6"/></svg> Bradé encaissé</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);"><svg width="10" height="10" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M8,1 L15,7 L13,7 L13,15 L3,15 L3,7 L1,7 Z" fill="#CD5C5C" opacity="0.9"/><rect x="6" y="10" width="4" height="5" fill="#CD5C5C" opacity="0.6"/></svg> Nuit vide perdue</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);"><svg width="10" height="10" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M8,1 L15,7 L13,7 L13,15 L3,15 L3,7 L1,7 Z" fill="#3498DB" opacity="0.9"/><rect x="6" y="10" width="4" height="5" fill="#3498DB" opacity="0.6"/></svg> Booké à venir</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);"><svg width="10" height="10" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M8,1 L15,7 L13,7 L13,15 L3,15 L3,7 L1,7 Z" fill="#2ECC71" opacity="0.9"/><rect x="6" y="10" width="4" height="5" fill="#2ECC71" opacity="0.6"/></svg> Disponible</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:9px;color:var(--muted);"><svg width="10" height="10" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;"><path d="M8,1 L15,7 L13,7 L13,15 L3,15 L3,7 L1,7 Z" fill="#F4D03F" opacity="0.9"/><rect x="6" y="10" width="4" height="5" fill="#F4D03F" opacity="0.6"/></svg> Last-minute ⚡</div>
+    </div>
+  </div>
+  <div class="villa-panel" id="vpanel" style="display:none;">
+    <div class="panel-header">
+      <div><div class="panel-title" id="pt">—</div><div class="panel-sub" id="ps">—</div></div>
+      <button class="panel-close" onclick="closePanel()">✕</button>
+    </div>
+    <div class="panel-kpi-bar" id="pkpis"></div>
+    <div class="staff-clock-wrap" id="pstaff">
+      <canvas id="sc" width="200" height="200" style="flex-shrink:0;"></canvas>
+      <div class="staff-clock-legend" id="scl"></div>
+    </div>
+    <div class="reviews-bar" id="prev"></div>
+    <div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('bookings',this)">📅 Bookings</button>
+        <button class="tab-btn" onclick="showTab('frais',this)">💰 Frais</button>
+        <button class="tab-btn" onclick="showTab('perf',this)">📊 Performance</button>
+      </div>
+      <div class="tab-content active" id="tab-bookings"></div>
+      <div class="tab-content" id="tab-frais"></div>
+      <div class="tab-content" id="tab-perf"></div>
+    </div>
+  </div>
+  <div class="section-title fade-in" style="margin-top:8px;">Vue d'ensemble</div>
+  <div class="clock-section fade-in">
+    <canvas id="main-clock" width="320" height="320"></canvas>
+    <div class="clk-legend" id="clk-legend"></div>
+  </div>
+  <div class="history-section fade-in">
+    <div class="section-title">Historique mensuel</div>
+    <div class="hcw"><div class="hct">Courbe de santé — net mensuel</div><svg style="width:100%;height:80px;display:block;" id="hsvg" viewBox="0 0 800 80" preserveAspectRatio="none"></svg></div>
+    <div class="history-grid" id="hgrid"></div>
+  </div>
+  <div class="tl-section fade-in">
+    <div class="section-title">Timeline annuelle par villa</div>
+    <div id="tls"></div>
+    <div class="tl-legend">
+      <div class="tl-li"><div class="tl-ld tl-green"></div>Bon mois</div>
+      <div class="tl-li"><div class="tl-ld tl-green-light"></div>Excellent</div>
+      <div class="tl-li"><div class="tl-ld tl-orange"></div>Sous-perf.</div>
+      <div class="tl-li"><div class="tl-ld tl-striped"></div>Mitigé</div>
+      <div class="tl-li"><div class="tl-ld tl-red"></div>Inutilisable</div>
+      <div class="tl-li"><div class="tl-ld tl-rose"></div>Travaux</div>
+      <div class="tl-li"><div class="tl-ld tl-violet"></div>Last-minute</div>
+    </div>
+  </div>
+</div>
+<div class="day-tip" id="daytip"></div>
+<div class="modal-ov" id="histmod"><div class="modal-box"><div class="modal-hd"><div class="modal-ttl" id="mttl">—</div><button class="modal-cl" onclick="closeModal()">✕</button></div><div class="modal-bd" id="mbd"></div></div></div>
+<div class="sp-ov" id="spov" onclick="if(event.target===this)this.classList.remove('open')"><div class="sp-box" id="spbox"></div></div>
+<script>
+const CLIENT={first:"Jean-Luc",last:"Moreau",initials:"JL",photo:null};
+const VILLAS=[
+  // Sorted: 7ch → 4ch → 3ch → 3ch → 2ch → 2ch(travaux) → 1ch
+  // TODAY = day 21. Past=1-20, Future=21-31.
+  // Day 21+22 vides = lastmin-active (urgent)
+  // Day 23+ vides = available (bleu)
+
+  // 1 — Villa Surya, 7ch Seminyak — excellent, quasi complet
+  // Past: 20/20 nuits louées sauf le 4 (missed) et deux bradées (9,16)
+  // Future: tout booké sauf jours 21 et 22 = lastmin-active
+  {id:"surya",name:"Villa Surya",location:"Seminyak",type:"7 ch.",beds:7,emoji:"🏰",listingUrl:"https://www.airbnb.com/rooms/demo-surya",status:"green-light",statusLabel:"Excellent mois",alertThreshold:500,adrYear:225,
+   data:{month:{brut:4725,marketing:709,mgmt:236,net:3780,bookings:5,adr:225,occ:95,netConfirmed:3375,netForecast:4500},quarter:{brut:20000,marketing:3000,mgmt:1000,net:16000,bookings:18,adr:222,occ:93,netConfirmed:16000,netForecast:16800},year:{brut:76000,marketing:11400,mgmt:3800,net:60800,bookings:68,adr:225,occ:91,netConfirmed:60800,netForecast:63000}},
+   bookings:[{guest:"Yamamoto Fam.",platform:"Direct",checkin:"1 mars",checkout:"4 mars",nights:3,amount:675,status:"done"},{guest:"Chen Group",platform:"Airbnb",checkin:"5 mars",checkout:"9 mars",nights:4,amount:900,status:"done"},{guest:"Rossi Family",platform:"Booking",checkin:"10 mars",checkout:"16 mars",nights:6,amount:1350,status:"done"},{guest:"Nakamura",platform:"Direct",checkin:"17 mars",checkout:"20 mars",nights:3,amount:675,status:"done"},{guest:"Dubois Party",platform:"Direct",checkin:"23 mars",checkout:"29 mars",nights:6,amount:1350,status:"booked"},{guest:"Patel Group",platform:"Airbnb",checkin:"29 mars",checkout:"31 mars",nights:2,amount:450,status:"booked"}],
+   mgmt:{internet:45,electricite:220,poolman:120,gardener:90,laundry:140,amenities:95,divers:40,prevMonth:{internet:45,electricite:210,poolman:120,gardener:90,laundry:130,amenities:88,divers:34}},
+   exceptionnels:[],
+   staff:{manager:{name:"Ria N.",initials:"RN",photo:null},cleaners:[{name:"Sari M.",days:"Quotidien"},{name:"Wulan P.",days:"Quotidien"}],poolmen:[{name:"Dewa P.",days:"Lun·Mer·Jeu·Sam"}],gardeners:[{name:"Ketut G.",days:"Quotidien"}]},
+   reviews:{config:"best_only",airbnb:{score:4.97,count:56},booking:{score:9.8,count:32},best:{text:"The best villa we have ever stayed in. Ria and the team are exceptional. Back every year.",author:"Yamamoto Fam. · Direct · mars 2026"},alert:null},
+   perfData:[88,90,94,96,98,94,88,84,90,94,96,97],
+   timeline:["green-light","green-light","green-light","green-light","green-light","green-light","green-light","green-light","green-light","green-light","green-light","green-light"],
+   //        1      2      3      4        5      6      7      8      9       10     11     12     13     14     15     16      17     18     19     20     21=T   22     23     24     25     26     27     28     29     30     31
+   days:["done","done","done","missed","done","done","done","done","bradee","done","done","done","done","done","done","bradee","done","done","done","done","lastmin-active","lastmin-active","booked","booked","booked","booked","booked","booked","booked","booked","booked"],
+   nightPrices:[225,225,225,0,225,225,225,225,185,225,225,225,225,225,225,185,225,225,225,225,180,180,225,225,225,225,225,225,225,225,225],
+   priceFloor:160},
+
+  // 2 — Villa Indah, 4ch Pererenan — orange clignotant, clim résolue
+  {id:"indah",name:"Villa Indah",location:"Pererenan",type:"4 ch.",beds:4,emoji:"🏠",listingUrl:"https://www.airbnb.com/rooms/demo-indah",status:"blink-og",statusLabel:"Résolution en cours",alertThreshold:350,adrYear:148,
+   data:{month:{brut:1924,marketing:289,mgmt:96,net:1539,bookings:4,adr:148,occ:58,netConfirmed:888,netForecast:1776},quarter:{brut:9500,marketing:1425,mgmt:475,net:7600,bookings:17,adr:145,occ:62,netConfirmed:7600,netForecast:8200},year:{brut:37000,marketing:5550,mgmt:1850,net:29600,bookings:64,adr:148,occ:68,netConfirmed:29600,netForecast:31000}},
+   bookings:[{guest:"Pierre L.",platform:"Airbnb",checkin:"2 mars",checkout:"6 mars",nights:4,amount:592,status:"done"},{guest:"Ana B.",platform:"Booking",checkin:"8 mars",checkout:"12 mars",nights:4,amount:592,status:"done"},{guest:"Mei C.",platform:"Direct",checkin:"22 mars",checkout:"26 mars",nights:4,amount:592,status:"booked"},{guest:"Sam R.",platform:"Airbnb",checkin:"28 mars",checkout:"31 mars",nights:3,amount:444,status:"booked"}],
+   mgmt:{internet:40,electricite:110,poolman:90,gardener:60,laundry:78,amenities:48,divers:22,prevMonth:{internet:40,electricite:105,poolman:90,gardener:60,laundry:72,amenities:44,divers:16}},
+   exceptionnels:[{icon:"❄️",name:"Réparation clim — 3 unités",desc:"Panne suite humidité — résolue en 48h",date:"14 mars 2026",amount:740,type:"orange"}],
+   staff:{manager:{name:"Ria N.",initials:"RN",photo:null},cleaners:[{name:"Ni Luh S.",days:"Quotidien"}],poolmen:[{name:"Made R.",days:"Lun·Jeu"}],gardeners:[{name:"Nyoman G.",days:"Mar·Sam"}]},
+   reviews:{config:"best_and_alert",airbnb:{score:4.80,count:35},booking:{score:9.0,count:18},best:{text:"Stunning villa, perfect for families. Garden magical at sunset.",author:"Pierre L. · Airbnb · mars 2026"},alert:{text:"AC units failed on night 2.",handled:"Technicien J+1, 3 unités remplacées. Guest remboursé 2 nuits."}},
+   perfData:[70,72,68,80,84,78,66,62,68,72,76,60],
+   timeline:["green","green","striped","green","green","green","orange","green","green","green","striped","green"],
+   //        1       2      3      4      5      6       7       8      9     10     11     12      13     14     15     16     17     18     19     20     21=T   22     23     24     25     26     27     28     29     30     31
+   days:["missed","done","done","done","done","missed","missed","done","done","done","done","missed","missed","done","done","done","missed","missed","missed","missed","lastmin-active","booked","booked","booked","booked","available","available","booked","booked","booked","available"],
+   nightPrices:[0,148,148,148,148,0,0,148,148,148,148,0,0,148,148,148,0,0,0,0,120,148,148,148,148,0,0,148,148,148,0],
+   priceFloor:100},
+
+  // 3 — Villa Karma, 3ch Kerobokan — bon mois
+  {id:"karma",name:"Villa Karma",location:"Kerobokan",type:"3 ch.",beds:3,emoji:"🏠",listingUrl:"https://www.airbnb.com/rooms/demo-karma",status:"green",statusLabel:"Bon mois",alertThreshold:300,adrYear:115,
+   data:{month:{brut:2185,marketing:328,mgmt:109,net:1748,bookings:5,adr:115,occ:76,netConfirmed:1150,netForecast:1978},quarter:{brut:7600,marketing:1140,mgmt:380,net:6080,bookings:18,adr:113,occ:74,netConfirmed:6080,netForecast:6500},year:{brut:29000,marketing:4350,mgmt:1450,net:23200,bookings:70,adr:115,occ:73,netConfirmed:23200,netForecast:24500}},
+   bookings:[{guest:"Alex D.",platform:"Airbnb",checkin:"2 mars",checkout:"6 mars",nights:4,amount:460,status:"done"},{guest:"Sophie M.",platform:"Booking",checkin:"7 mars",checkout:"11 mars",nights:4,amount:460,status:"done"},{guest:"Luca R.",platform:"Airbnb",checkin:"13 mars",checkout:"17 mars",nights:4,amount:460,status:"done"},{guest:"Ana K.",platform:"Direct",checkin:"23 mars",checkout:"27 mars",nights:4,amount:460,status:"booked"},{guest:"Mark T.",platform:"Airbnb",checkin:"28 mars",checkout:"31 mars",nights:3,amount:345,status:"booked"}],
+   mgmt:{internet:40,electricite:90,poolman:90,gardener:55,laundry:68,amenities:42,divers:16,prevMonth:{internet:40,electricite:86,poolman:90,gardener:55,laundry:64,amenities:38,divers:12}},
+   exceptionnels:[],
+   staff:{manager:{name:"Ria N.",initials:"RN",photo:null},cleaners:[{name:"Eka W.",days:"Lun·Mer·Ven"}],poolmen:[{name:"Putu M.",days:"Mar·Sam"}],gardeners:[{name:"Ketut B.",days:"Mer·Sam"}]},
+   reviews:{config:"best_only",airbnb:{score:4.85,count:31},booking:{score:9.1,count:14},best:{text:"Beautiful villa with amazing garden. Very clean and staff helpful.",author:"Alex D. · Airbnb · mars 2026"},alert:null},
+   perfData:[68,70,76,84,86,80,68,64,70,74,78,76],
+   timeline:["green","green","green","green","green","green","green","green","green","green","green","green"],
+   //        1       2      3      4      5      6       7      8      9     10     11      12      13     14     15     16     17      18     19     20     21=T    22      23     24     25     26     27     28     29     30     31
+   days:["missed","done","done","done","done","missed","done","done","done","done","missed","missed","done","done","done","done","missed","missed","missed","missed","lastmin-active","lastmin-active","booked","booked","booked","booked","available","booked","booked","booked","booked"],
+   nightPrices:[0,115,115,115,115,0,115,115,115,115,0,0,115,115,115,115,0,0,0,0,92,92,115,115,115,115,0,115,115,115,115],
+   priceFloor:82},
+
+  // 4 — Lotus House, 3ch Ubud — légère sous-perf
+  {id:"lotus",name:"Lotus House",location:"Ubud",type:"3 ch.",beds:3,emoji:"🏠",listingUrl:"https://www.airbnb.com/rooms/demo-lotus",status:"striped",statusLabel:"Légère sous-perf",alertThreshold:300,adrYear:108,
+   data:{month:{brut:1296,marketing:194,mgmt:65,net:1037,bookings:4,adr:108,occ:55,netConfirmed:648,netForecast:1166},quarter:{brut:6500,marketing:975,mgmt:325,net:5200,bookings:16,adr:108,occ:60,netConfirmed:5200,netForecast:5700},year:{brut:26000,marketing:3900,mgmt:1300,net:20800,bookings:62,adr:108,occ:65,netConfirmed:20800,netForecast:22000}},
+   bookings:[{guest:"Pierre M.",platform:"Booking",checkin:"3 mars",checkout:"6 mars",nights:3,amount:324,status:"done"},{guest:"Sofia A.",platform:"Airbnb",checkin:"9 mars",checkout:"12 mars",nights:3,amount:324,status:"done"},{guest:"David K.",platform:"Direct",checkin:"15 mars",checkout:"18 mars",nights:3,amount:324,status:"done"},{guest:"Maria H.",platform:"Airbnb",checkin:"24 mars",checkout:"27 mars",nights:3,amount:324,status:"booked"}],
+   mgmt:{internet:40,electricite:85,poolman:90,gardener:55,laundry:65,amenities:42,divers:16,prevMonth:{internet:40,electricite:82,poolman:90,gardener:55,laundry:60,amenities:38,divers:12}},
+   exceptionnels:[{icon:"🔧",name:"Pompe piscine",desc:"Remplacement pompe — usure normale",date:"11 mars 2026",amount:280,type:"orange"}],
+   staff:{manager:{name:"Sophie A.",initials:"SA",photo:null},cleaners:[{name:"Putu D.",days:"Lun·Jeu·Sam"}],poolmen:[{name:"Budi S.",days:"Mer·Sam"}],gardeners:[{name:"Wayan K.",days:"Mar·Ven"}]},
+   reviews:{config:"score_only",airbnb:{score:4.78,count:29},booking:{score:8.9,count:13},best:null,alert:null},
+   perfData:[55,58,58,72,76,70,56,52,58,62,66,61],
+   timeline:["green","striped","orange","green","green","striped","orange","green","striped","orange","green","green"],
+   //        1       2       3      4      5       6       7       8       9      10     11     12      13     14     15     16     17      18     19     20     21=T    22      23     24     25     26     27     28     29     30     31
+   days:["missed","missed","done","done","done","missed","missed","missed","done","done","done","missed","missed","done","done","done","missed","missed","missed","missed","lastmin-active","lastmin-active","available","booked","booked","booked","available","available","available","available","available"],
+   nightPrices:[0,0,108,108,108,0,0,0,108,108,108,0,0,108,108,108,0,0,0,0,88,88,0,108,108,108,0,0,0,0,0],
+   priceFloor:76},
+
+  // 5 — Villa Serenity, 2ch Seminyak — top, quasi tout loué
+  {id:"serenity",name:"Villa Serenity",location:"Seminyak",type:"2 ch.",beds:2,emoji:"🏠",listingUrl:"https://www.airbnb.com/rooms/demo-serenity",status:"green",statusLabel:"En forme",alertThreshold:200,adrYear:90,
+   data:{month:{brut:1710,marketing:257,mgmt:86,net:1367,bookings:5,adr:90,occ:90,netConfirmed:1278,netForecast:1547},quarter:{brut:7500,marketing:1125,mgmt:375,net:6000,bookings:22,adr:90,occ:84,netConfirmed:6000,netForecast:6400},year:{brut:28500,marketing:4275,mgmt:1425,net:22800,bookings:81,adr:90,occ:82,netConfirmed:22800,netForecast:24000}},
+   bookings:[{guest:"Thomas B.",platform:"Airbnb",checkin:"1 mars",checkout:"5 mars",nights:4,amount:360,status:"done"},{guest:"Camille R.",platform:"Airbnb",checkin:"5 mars",checkout:"9 mars",nights:4,amount:360,status:"done"},{guest:"James K.",platform:"Booking",checkin:"9 mars",checkout:"14 mars",nights:5,amount:450,status:"done"},{guest:"Lucas M.",platform:"Airbnb",checkin:"15 mars",checkout:"20 mars",nights:5,amount:450,status:"done"},{guest:"Emma S.",platform:"Direct",checkin:"22 mars",checkout:"27 mars",nights:5,amount:450,status:"booked"},{guest:"Sophie L.",platform:"Airbnb",checkin:"28 mars",checkout:"31 mars",nights:3,amount:270,status:"booked"}],
+   mgmt:{internet:40,electricite:75,poolman:90,gardener:50,laundry:60,amenities:38,divers:15,prevMonth:{internet:40,electricite:70,poolman:90,gardener:50,laundry:55,amenities:35,divers:12}},
+   exceptionnels:[],
+   staff:{manager:{name:"Sophie A.",initials:"SA",photo:null},cleaners:[{name:"Dewi W.",days:"Lun·Mer·Ven"},{name:"Ayu R.",days:"Mar·Jeu·Sam"}],poolmen:[{name:"Made K.",days:"Lun·Jeu"}],gardeners:[{name:"Wayan S.",days:"Mar·Sam"}]},
+   reviews:{config:"best_and_alert",airbnb:{score:4.92,count:38},booking:{score:9.4,count:21},best:{text:"Magical stay. Pool, staff, everything perfect. Sophie incredibly responsive.",author:"Thomas B. · Airbnb · mars 2026"},alert:{text:"AC in bedroom 2 noisy at night.",handled:"Technicien J+1, remplacé. Guest remboursé 1 nuit."}},
+   perfData:[74,76,80,88,92,86,74,70,76,82,86,87],
+   timeline:["green","green","green","green","green","green-light","green","green","green","green","green","green"],
+   //        1      2      3      4      5      6      7      8      9     10     11     12     13     14     15     16     17     18     19     20     21=T    22      23     24     25     26     27     28     29     30     31
+   days:["done","done","done","done","done","done","done","done","done","done","done","done","done","done","done","done","done","done","done","done","lastmin-active","booked","booked","booked","booked","booked","available","booked","booked","booked","booked"],
+   nightPrices:[90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,90,72,90,90,90,90,90,0,90,90,90,90],
+   priceFloor:64},
+
+  // 6 — Villa Agung, 2ch Uluwatu — TRAVAUX, zéro revenu
+  {id:"agung",name:"Villa Agung",location:"Uluwatu",type:"2 ch.",beds:2,emoji:"🏠",listingUrl:null,status:"red",statusLabel:"Rénovation — fermée",alertThreshold:300,adrYear:88,
+   data:{month:{brut:0,marketing:0,mgmt:0,net:0,bookings:0,adr:0,occ:0,netConfirmed:0,netForecast:0},quarter:{brut:2640,marketing:396,mgmt:132,net:2112,bookings:10,adr:88,occ:30,netConfirmed:2112,netForecast:2112},year:{brut:22000,marketing:3300,mgmt:1100,net:17600,bookings:65,adr:88,occ:68,netConfirmed:17600,netForecast:17600}},
+   bookings:[],
+   mgmt:{internet:35,electricite:40,poolman:0,gardener:40,laundry:0,amenities:0,divers:60,prevMonth:{internet:35,electricite:70,poolman:90,gardener:40,laundry:55,amenities:30,divers:18}},
+   exceptionnels:[{icon:"🏗️",name:"Rénovation structurelle",desc:"Toiture, plomberie, électricité — chantier 6 semaines",date:"1 mars – 14 avr 2026",amount:8500,type:"orange"}],
+   staff:{manager:{name:"Sophie A.",initials:"SA",photo:null},cleaners:[],poolmen:[],gardeners:[{name:"Wayan B.",days:"Surveillance chantier"}]},
+   reviews:{config:"score_only",airbnb:{score:4.89,count:44},booking:{score:9.4,count:26},best:null,alert:null},
+   perfData:[80,82,84,88,90,86,78,74,78,82,0,0],
+   timeline:["green","green","green","green","green-light","green","green","green","green","green","red","red"],
+   days:["works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works","works"],
+   nightPrices:[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+   priceFloor:0},
+
+  // 7 — Studio Bulan, 1ch Canggu — sain
+  {id:"bulan",name:"Studio Bulan",location:"Canggu",type:"1 ch.",beds:1,emoji:"🏠",listingUrl:"https://www.airbnb.com/rooms/demo-bulan",status:"green",statusLabel:"En forme",alertThreshold:150,adrYear:65,
+   data:{month:{brut:780,marketing:117,mgmt:39,net:624,bookings:4,adr:65,occ:58,netConfirmed:468,netForecast:780},quarter:{brut:3900,marketing:585,mgmt:195,net:3120,bookings:18,adr:64,occ:66,netConfirmed:3120,netForecast:3400},year:{brut:15600,marketing:2340,mgmt:780,net:12480,bookings:72,adr:65,occ:68,netConfirmed:12480,netForecast:13000}},
+   bookings:[{guest:"Nina V.",platform:"Airbnb",checkin:"2 mars",checkout:"5 mars",nights:3,amount:195,status:"done"},{guest:"Leo M.",platform:"Airbnb",checkin:"7 mars",checkout:"10 mars",nights:3,amount:195,status:"done"},{guest:"Sara K.",platform:"Direct",checkin:"12 mars",checkout:"15 mars",nights:3,amount:195,status:"done"},{guest:"Yuki T.",platform:"Airbnb",checkin:"17 mars",checkout:"20 mars",nights:3,amount:195,status:"done"},{guest:"Paul R.",platform:"Booking",checkin:"23 mars",checkout:"26 mars",nights:3,amount:195,status:"booked"}],
+   mgmt:{internet:35,electricite:45,poolman:0,gardener:25,laundry:35,amenities:20,divers:8,prevMonth:{internet:35,electricite:42,poolman:0,gardener:25,laundry:32,amenities:18,divers:6}},
+   exceptionnels:[],
+   staff:{manager:{name:"Sophie A.",initials:"SA",photo:null},cleaners:[{name:"Ketut R.",days:"Lun·Mer·Ven"}],poolmen:[],gardeners:[]},
+   reviews:{config:"best_only",airbnb:{score:4.88,count:22},booking:{score:9.1,count:9},best:{text:"Cosy and perfectly located. Super clean, great value for Canggu.",author:"Nina V. · Airbnb · mars 2026"},alert:null},
+   perfData:[62,65,68,75,78,74,62,58,64,68,72,68],
+   timeline:["green","green","green","green","green","green","green","green","green","green","green","green"],
+   //        1       2      3      4      5       6      7      8      9      10      11     12     13     14     15      16     17     18     19     20     21=T    22      23     24     25     26      27     28     29     30     31
+   days:["missed","done","done","done","missed","missed","done","done","done","missed","missed","done","done","done","missed","missed","done","done","done","missed","lastmin-active","lastmin-active","booked","booked","booked","available","available","available","available","available","available"],
+   nightPrices:[0,65,65,65,0,0,65,65,65,0,0,65,65,65,0,0,65,65,65,0,52,52,65,65,65,0,0,0,0,0,0],
+   priceFloor:45}
+];
+
+const HISTORY=[{month:"Oct 2025",net:9800,occ:76,trend:"+12%",color:"green"},{month:"Nov 2025",net:10400,occ:79,trend:"+6%",color:"green"},{month:"Déc 2025",net:11200,occ:84,trend:"+8%",color:"green"},{month:"Jan 2026",net:9100,occ:71,trend:"−19%",color:"orange"},{month:"Fév 2026",net:10600,occ:78,trend:"+16%",color:"green"},{month:"Mars 2026",net:8640,occ:61,trend:"−18%",color:"orange",current:true}];
+const SC={green:"#2ECC71","green-light":"#1a7a44",orange:"#F39C12",striped:"#F39C12",red:"#E74C3C",rose:"#E91E8C",violet:"#9B59B6"};
+const SI=[{key:"cleaners",icon:"🧹",label:"Ménage",color:"#ddeeff"},{key:"poolmen",icon:"🐬",label:"Piscine",color:"#3498DB"},{key:"gardeners",icon:"🌴",label:"Jardin",color:"#2ECC71"},{key:"_laundry",icon:"👕",label:"Laundry",color:"#9B59B6"},{key:"_internet",icon:"📡",label:"Internet",color:"#5DADE2"},{key:"_elec",icon:"⚡",label:"Électricité",color:"#F4D03F"},{key:"_amenities",icon:"🛁",label:"Amenities",color:"#E8DCC8"},{key:"_security",icon:"🔒",label:"Sécurité",color:"#AAB7B8"},{key:"_guest",icon:"🛎️",label:"Guest exp.",color:"#C9A84C"},{key:"_reporting",icon:"📊",label:"Reporting",color:"#58D68D"}];
+let period="month",activeVilla=null,scRAF=null,mcRAF=null,vOrbs=[];
+const TODAY_DAY = 21; // 21 mars 2026 — jour de demo
+const PL={month:"mars 2026",quarter:"T1 2026",year:"2026"};
+window.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("td").textContent=new Date(2026,2,31).toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+  renderPower();renderMainClock();renderHistory();renderTimelines();
+  setTimeout(()=>document.querySelectorAll(".fade-in").forEach((el,i)=>setTimeout(()=>el.classList.add("visible"),i*70)),50);
+});
+function setPeriod(p,btn){period=p;document.querySelectorAll(".pill").forEach(b=>b.classList.remove("active"));btn.classList.add("active");document.getElementById("pl").textContent=PL[p];renderPower();if(activeVilla!==null)renderPanel(activeVilla);}
+function renderPower(){
+  const today=TODAY_DAY, total=31;
+
+  // ── Revenue segments — same logic everywhere ──
+  let totalDone=0, totalBooked=0, totalLM=0;
+  VILLAS.forEach(v=>{
+    const np=v.nightPrices||[];
+    const adr=v.adrYear||0;
+    v.days.forEach((s,i)=>{
+      if(s==="done"||s==="bradee"||s==="lastmin") totalDone+=(np[i]||adr)*0.80;
+      else if(s==="booked")                        totalBooked+=(np[i]||adr)*0.80;
+      else if(s==="lastmin-active")                totalLM+=(np[i]||adr*0.82)*0.80;
+    });
+  });
+  const totalPlusBooked = totalDone + totalBooked;
+  const totalObjectif   = totalDone + totalBooked + totalLM;
+
+  const tb  = VILLAS.reduce((s,v)=>s+v.data[period].brut,0);
+  const tm  = VILLAS.reduce((s,v)=>s+v.data[period].marketing,0);
+  const tmg = VILLAS.reduce((s,v)=>s+v.data[period].mgmt,0);
+  const tx  = VILLAS.reduce((s,v)=>s+v.exceptionnels.reduce((e,x)=>e+x.amount,0),0);
+
+  document.getElementById("gp").textContent=PL[period]+" · toutes villas";
+  document.getElementById("gf-total-label").textContent="";
+
+  renderArrowFlow("arrow-flow-global", Math.round(totalDone), Math.round(totalPlusBooked), Math.round(totalObjectif));
+
+  document.getElementById("g-seg-done").style.width=(totalDone/Math.max(totalObjectif,1)*100)+"%";
+  document.getElementById("g-seg-booked").style.width=(totalBooked/Math.max(totalObjectif,1)*100)+"%";
+  document.getElementById("g-seg-lastmin").style.width=(totalLM/Math.max(totalObjectif,1)*100)+"%";
+
+  document.getElementById("g-cb").innerHTML=`
+    <div class="charge-row"><span class="charge-label">Revenus bruts</span><span style="color:var(--gold-light);font-family:'DM Mono',monospace">${fmt(tb)}</span></div>
+    <div class="charge-row"><span class="charge-label">Marketing (15%)</span><span class="charge-amt">−${fmt(tm)}</span></div>
+    <div class="charge-row"><span class="charge-label">Management (5%)</span><span class="charge-amt">−${fmt(tmg)}</span></div>
+    ${tx>0?`<div class="charge-row"><span class="charge-label" style="color:var(--orange)">Frais exceptionnels</span><span class="charge-amt" style="color:var(--orange)">−${fmt(tx)}</span></div>`:""}
+    <div class="charge-total"><span style="color:var(--text)">Net encaissé</span><span style="color:#2ECC71;font-family:'DM Mono',monospace">${fmt(Math.round(totalDone))}</span></div>`;
+
+  // Villa rows
+  document.getElementById("vrows").innerHTML=VILLAS.map((v,i)=>{
+    const d=v.data[period];
+    const np=v.nightPrices||[];
+    const col=SC[v.status==="blink-og"?"orange":v.status]||"#2ECC71";
+    const pricedNights=np.filter(p=>p>0);
+    const currentAdr=pricedNights.length?Math.round(pricedNights.reduce((s,p)=>s+p,0)/pricedNights.length):d.adr;
+    const adrDiff=currentAdr-(v.adrYear||d.adr);
+    const adrClass=adrDiff>=0?"vrc-adr-up":"vrc-adr-dn";
+    const adrSign=adrDiff>=0?"+":"";
+
+    // Per-villa net segments
+    const doneNet    = v.days.reduce((s,st,i)=>s+((st==="done"||st==="bradee"||st==="lastmin")?(np[i]||currentAdr)*0.80:0),0);
+    const bookedNet  = v.days.reduce((s,st,i)=>s+(st==="booked"?(np[i]||currentAdr)*0.80:0),0);
+    const lmNet      = v.days.reduce((s,st,i)=>s+(st==="lastmin-active"?(np[i]||currentAdr*0.82)*0.80:0),0);
+    const totalQC    = doneNet + bookedNet;
+    const totalObj   = doneNet + bookedNet + lmNet;
+
+    const dotStyle=v.status==="striped"?"background:repeating-linear-gradient(45deg,#2ECC71,#2ECC71 4px,#F39C12 4px,#F39C12 8px)":`background:${col}`;
+
+    return`<div class="villa-row-card${activeVilla===i?" active":""}" id="vrc${i}">
+      <div class="vrc-header" onclick="toggleVilla(${i})">
+        <div class="vrc-status-dot" style="${dotStyle}"></div>
+        <div style="font-size:20px;flex-shrink:0;">${houseSVG(col,20)}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="vrc-name" style="display:flex;align-items:center;gap:8px;">
+            ${v.name}
+            ${v.listingUrl?`<a href="${v.listingUrl}" target="_blank" class="villa-link">Voir annonce →</a>`:""}
+          </div>
+          <div class="vrc-location">${v.location} · ${v.statusLabel}</div>
+        </div>
+        <div style="flex-shrink:0;text-align:right;margin-right:8px;">
+          <div class="adr-badge">${d.adr>0?fmt(d.adr)+"/nuit":"—"}</div>
+          <div class="adr-label">Prix moyen</div>
+        </div>
+        <div class="vrc-net-wrap">
+          <div style="display:flex;flex-direction:column;align-items:flex-end;">
+            <div style="font-family:'Playfair Display',serif;font-size:22px;color:#2ECC71;line-height:1;">${fmt(Math.round(doneNet))}</div>
+            <div style="font-size:9px;color:rgba(46,204,113,0.55);margin-top:1px;">${currentAdr>0?fmt(currentAdr)+"/nuit":""}</div>
+          </div>
+          <div style="font-size:18px;color:var(--muted);align-self:flex-start;padding-top:4px;margin:0 4px;">/</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;">
+            <div style="font-family:'Playfair Display',serif;font-size:19px;color:#3498DB;line-height:1;">${fmt(Math.round(totalQC))}</div>
+            <div style="font-size:9px;color:rgba(52,152,219,0.55);margin-top:1px;">${fmt(Math.round(bookedNet))} à venir</div>
+          </div>
+          <div style="font-size:18px;color:var(--muted);align-self:flex-start;padding-top:4px;margin:0 4px;">/</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;">
+            <div style="font-family:'Playfair Display',serif;font-size:16px;color:#9B59B6;line-height:1;">${lmNet>0?fmt(Math.round(totalObj)):"—"}</div>
+            <div style="font-size:9px;color:rgba(155,89,182,0.55);margin-top:1px;">${v.priceFloor>0?"~"+fmt(v.priceFloor)+"/nuit":""}</div>
+          </div>
+        </div>
+      </div>
+      <div class="vrc-timeline" onclick="toggleDayDetail(${i})" title="Cliquer pour détail prix" style="gap:2px;padding:0 16px 10px;display:flex;flex-wrap:nowrap;overflow-x:auto;">
+        ${v.days.map((s,di)=>{
+          const col2=s==="done"?"#2ECC71":s==="booked"?"#3498DB":s==="available"?"#82E0AA":s==="lastmin"?"#8E44AD":s==="lastmin-active"?"#F4D03F":s==="bradee"?"#9B59B6":s==="missed"?"#CD5C5C":s==="works"?"#F4D03F":"rgba(255,255,255,0.10)";
+          return `<div style="flex-shrink:0;${di===TODAY_DAY-1?"outline:1.5px solid var(--gold);border-radius:2px;":""}" onmouseenter="showTip(event,${di+1},'${s}',${np[di]||0},${v.priceFloor||0},${currentAdr})" onmouseleave="hideTip()">${houseSVG(col2,14)}</div>`;
+        }).join("")}
+      </div>
+      <div class="day-detail-panel" id="ddp${i}">
+        <div class="ddp-title">Prix par nuit · cliquer pour détail</div>
+        <div class="ddp-grid">
+          ${v.days.map((s,di)=>{
+            const price=np[di]||0;
+            const col3=s==="done"?"#2ECC71":s==="booked"?"#3498DB":s==="available"?"#82E0AA":s==="lastmin-active"?"#F4D03F":s==="bradee"?"#9B59B6":s==="missed"?"#CD5C5C":s==="works"?"#F4D03F":"rgba(255,255,255,0.06)";
+            return`<div class="ddp-day"><div class="ddp-sq" style="background:${col3}"></div><div class="ddp-price" style="color:${price>0?"var(--text)":"var(--muted)"}">${price>0?"$"+price:""}</div><div class="ddp-num" style="color:${di===TODAY_DAY-1?"var(--gold)":"var(--muted)"}">${di+1}</div></div>`;
+          }).join("")}
+        </div>
+        <div style="margin-top:10px;display:flex;gap:20px;flex-wrap:wrap;font-size:10px;color:var(--muted)">
+          <span>ADR actuel: <strong style="color:var(--text)">${fmt(currentAdr)}</strong></span>
+          <span>Moy. annuelle: <strong style="color:var(--text)">${fmt(v.adrYear||d.adr)}</strong></span>
+          <span style="color:${adrClass==="vrc-adr-up"?"#2ECC71":"var(--orange)"}">${adrSign}${adrDiff} vs moy. annuelle</span>
+          ${lmNet>0?`<span style="color:#F4D03F">⚡ Last-min: ~${fmt(v.priceFloor)}/nuit</span>`:""}
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+
+  // Cursor line position
+  setTimeout(()=>{
+    const rows=document.querySelectorAll(".vrc-timeline");
+    if(!rows.length) return;
+    const firstRow=rows[0];
+    const houses=firstRow.querySelectorAll("div[style]");
+    if(houses.length>=TODAY_DAY){
+      const container=document.querySelector(".timeline-container");
+      const hRect=houses[TODAY_DAY-1].getBoundingClientRect();
+      const cRect=container?container.getBoundingClientRect():null;
+      if(cRect){
+        const cl=document.getElementById("cursor-line");
+        if(cl){cl.style.display="block";cl.style.left=(hRect.left-cRect.left+hRect.width/2)+"px";}
+      }
+    }
+  },200);
+}
+
+function toggleDayDetail(i){
+  const panel=document.getElementById("ddp"+i);
+  panel.classList.toggle("open");
+}
+
+
+// ══════════════════════════════════════
+// ARROW FLOW — fat gradient arrows
+// ══════════════════════════════════════
+function renderArrowFlow(containerId, done, plusBooked, objectif) {
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  // Proportional sizes based on position in month
+  // Done = biggest (past earned), booked = medium, objectif = smallest (uncertain)
+  const dayRatio = TODAY_DAY / 31; // 0.68 at day 21
+  const sizeDone = Math.round(38 + dayRatio * 10); // bigger later in month
+  const sizeBooked = Math.round(sizeDone * 0.72);
+  const sizeObj = Math.round(sizeDone * 0.55);
+  el.innerHTML = `
+    <div class="af-num">
+      <div style="font-size:10px;color:#2ECC71;letter-spacing:1px;margin-bottom:4px;font-family:'DM Mono',monospace;">21 MARS 2026</div>
+      <div class="af-val" style="font-size:${sizeDone}px;color:#2ECC71">${fmt(done)}</div>
+      <div class="af-label" style="color:#2ECC71">Encaissé</div>
+    </div>
+    <div class="af-arrow">
+      <svg viewBox="0 0 100 28" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="ag1" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#2ECC71" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#3498DB" stop-opacity="0.9"/>
+        </linearGradient></defs>
+        <path d="M0,8 L78,8 L78,2 L100,14 L78,26 L78,20 L0,20 Z" fill="url(#ag1)"/>
+      </svg>
+    </div>
+    <div class="af-num">
+      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;font-family:'DM Mono',monospace;">+ BOOKÉ</div>
+      <div class="af-val" style="font-size:${sizeBooked}px;color:#3498DB">${fmt(plusBooked)}</div>
+      <div class="af-label" style="color:#3498DB">À encaisser</div>
+    </div>
+    <div class="af-arrow">
+      <svg viewBox="0 0 100 28" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="ag2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#3498DB" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#9B59B6" stop-opacity="0.9"/>
+        </linearGradient></defs>
+        <path d="M0,8 L78,8 L78,2 L100,14 L78,26 L78,20 L0,20 Z" fill="url(#ag2)"/>
+      </svg>
+    </div>
+    <div class="af-num">
+      <div style="font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px;font-family:'DM Mono',monospace;">OBJECTIF</div>
+      <div class="af-val" style="font-size:${sizeObj}px;color:#9B59B6">${fmt(objectif)}</div>
+      <div class="af-label" style="color:#9B59B6">Fin de mois</div>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════
+// HOUSE SVG — monochrome house shape
+// ══════════════════════════════════════
+function houseSVG(color, size=16) {
+  const s = size;
+  const w = s, h = s;
+  // roof peak at top center, walls, door
+  return `<svg width="${w}" height="${h}" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle;flex-shrink:0;">
+    <path d="M8,1 L15,7 L13,7 L13,15 L3,15 L3,7 L1,7 Z" fill="${color}" opacity="0.9"/>
+    <rect x="6" y="10" width="4" height="5" fill="${color}" opacity="0.6"/>
+  </svg>`;
+}
+
+function mergeDays(arr){
+  const len=Math.max(...arr.map(a=>a.length));
+  return Array.from({length:len},(_,i)=>{
+    const st=arr.map(a=>a[i]||"empty");
+    if(st.includes("alert"))return"alert";
+    if(st.includes("works"))return"works";
+    if(st.some(s=>s==="done"))return"done";
+    if(st.some(s=>s==="missed"))return"missed";
+    if(st.some(s=>s==="booked"))return"booked";
+    if(st.some(s=>s==="lastmin-active"))return"lastmin-active";
+    if(st.some(s=>s==="lastmin"))return"lastmin";
+    if(st.some(s=>s==="available"))return"available";
+    return"empty";
+  });
+}
+function renderDayTrack(tid,nid,days,total,today){
+  const t=document.getElementById(tid);const n=document.getElementById(nid);
+  if(!t)return;
+  t.innerHTML=days.slice(0,total).map((s,i)=>`<div class="day-sq ds-${s}${i===today-1?" ds-today":""}" onmouseenter="showTip(event,${i+1},'${s}')" onmouseleave="hideTip()"></div>`).join("");
+  if(n)n.innerHTML=Array.from({length:total},(_,i)=>`<div class="day-num${i===today-1?" today":""}">${(i+1)%5===0||i===0||i===today-1?i+1:""}</div>`).join("");
+}
+function toggleCharges(id){const b=document.getElementById(id+"-cb");const a=document.getElementById(id+"-ca");b.classList.toggle("open");a.textContent=b.classList.contains("open")?"▼":"▶";}
+function toggleVilla(i){if(activeVilla===i){closePanel();return;}activeVilla=i;document.querySelectorAll(".villa-row-card").forEach((el,j)=>el.classList.toggle("active",j===i));renderPanel(i);const p=document.getElementById("vpanel");p.style.display="block";setTimeout(()=>p.scrollIntoView({behavior:"smooth",block:"start"}),80);}
+function closePanel(){activeVilla=null;document.getElementById("vpanel").style.display="none";document.querySelectorAll(".villa-row-card").forEach(el=>el.classList.remove("active"));if(scRAF){cancelAnimationFrame(scRAF);scRAF=null;}}
+function renderPanel(i){
+  const v=VILLAS[i];const d=v.data[period];
+  document.getElementById("pt").textContent=v.name;document.getElementById("ps").textContent=v.location+" · "+v.type;
+  document.getElementById("pkpis").innerHTML=`<div class="pkpi"><div class="pkpi-label">Net confirmé</div><div class="pkpi-num green">${fmt(d.netConfirmed)}</div><div class="pkpi-sub">Bookings sûrs</div></div><div class="pkpi"><div class="pkpi-label">Objectif mois</div><div class="pkpi-num gold">${fmt(d.netForecast)}</div><div class="pkpi-sub">Réaliste last-min.</div></div><div class="pkpi"><div class="pkpi-label">Occupation</div><div class="pkpi-num">${d.occ}%</div><div class="pkpi-sub">${d.bookings} séjours</div></div><div class="pkpi"><div class="pkpi-label">ADR moyen</div><div class="pkpi-num">${fmt(d.adr)}</div><div class="pkpi-sub">Par nuit</div></div>`;
+  renderStaffClock(v);renderReviews(v);renderBk(v);renderFr(v,d);renderPf(v);showTab("bookings",document.querySelector(".tab-btn"));
+}
+let sOrbs=[];
+function renderStaffClock(v){
+  const icons=SI.filter(s=>s.key.startsWith("_")||(v.staff[s.key]&&v.staff[s.key].length>0));
+  sOrbs=icons.map((_,i)=>({angle:(i/icons.length)*Math.PI*2,speed:0.00022+i*0.000012}));
+  document.getElementById("scl").innerHTML=icons.slice(0,6).map(s=>{
+    const isS=!s.key.startsWith("_");const mb=isS?v.staff[s.key]:null;const sub=mb?mb.map(m=>m.name).join(", "):"Service actif";
+    return`<div class="clg-item"${isS&&mb&&mb.length?` onclick="openSP('${v.id}','${s.key}')" style="cursor:pointer"`:""}><div class="clg-dot" style="background:${s.color}"></div><div><div style="font-size:11px;color:var(--text)">${s.icon} ${s.label}</div><div style="font-size:9px;color:var(--muted)">${sub}</div></div></div>`;
+  }).join("");
+  if(scRAF){cancelAnimationFrame(scRAF);scRAF=null;}
+  drawSC(document.getElementById("sc"),v,icons);
+}
+function drawSC(canvas,v,icons){
+  const ctx=canvas.getContext("2d");const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=W/2-12,oR=R*0.61;
+  function draw(){
+    ctx.clearRect(0,0,W,H);const now=new Date();const s=now.getSeconds()+now.getMilliseconds()/1000;const m=now.getMinutes()+s/60;const h=(now.getHours()%12)+m/60;
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle="rgba(201,168,76,0.1)";ctx.lineWidth=1;ctx.stroke();
+    ctx.beginPath();ctx.arc(cx,cy,oR,0,Math.PI*2);ctx.strokeStyle="rgba(201,168,76,0.06)";ctx.setLineDash([2,5]);ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+    for(let i=0;i<12;i++){const a=(i/12)*Math.PI*2-Math.PI/2;ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*(R-3),cy+Math.sin(a)*(R-3));ctx.lineTo(cx+Math.cos(a)*(R-8),cy+Math.sin(a)*(R-8));ctx.strokeStyle="rgba(201,168,76,0.25)";ctx.lineWidth=1.5;ctx.stroke();}
+    dH(ctx,cx,cy,(h/12)*Math.PI*2-Math.PI/2,R*0.30,2.5,"rgba(232,220,200,0.85)");
+    dH(ctx,cx,cy,(m/60)*Math.PI*2-Math.PI/2,R*0.42,1.5,"rgba(232,220,200,0.65)");
+    dH(ctx,cx,cy,(s/60)*Math.PI*2-Math.PI/2,R*0.48,1,"rgba(201,168,76,0.95)");
+    ctx.beginPath();ctx.arc(cx,cy,16,0,Math.PI*2);ctx.fillStyle="rgba(201,168,76,0.15)";ctx.fill();ctx.strokeStyle="rgba(201,168,76,0.5)";ctx.lineWidth=1.5;ctx.stroke();
+    ctx.font="13px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("🧑‍💼",cx,cy);
+    ctx.beginPath();ctx.arc(cx,cy,2.5,0,Math.PI*2);ctx.fillStyle="rgba(201,168,76,0.9)";ctx.fill();
+    icons.forEach((si,i)=>{
+      sOrbs[i].angle+=sOrbs[i].speed;const a=sOrbs[i].angle;const ix=cx+Math.cos(a)*oR;const iy=cy+Math.sin(a)*oR;
+      ctx.beginPath();ctx.arc(ix,iy,12,0,Math.PI*2);ctx.fillStyle=si.color+"15";ctx.fill();ctx.strokeStyle=si.color+"50";ctx.lineWidth=1;ctx.stroke();
+      ctx.font="10px serif";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(si.icon,ix,iy);
+    });
+    scRAF=requestAnimationFrame(draw);
+  }draw();
+}
+function renderMainClock(){
+  if(vOrbs.length!==VILLAS.length){const nudge=[0,0.05,-0.04,0.03,-0.06,0.04,-0.02];vOrbs=VILLAS.map((_,i)=>({angle:(i/VILLAS.length)*Math.PI*2+(nudge[i]||0),speed:0}));}
+  document.getElementById("clk-legend").innerHTML=VILLAS.map((v,i)=>{
+    const d=v.data[period];
+    const statusKey=v.status==="blink-og"?"orange":v.status;
+    const col=SC[statusKey]||"#C9A84C";
+    const statusDot=v.status==="blink-og"?`<div style="width:8px;height:8px;border-radius:50%;background:#F39C12;animation:blink-og 2s infinite;flex-shrink:0"></div>`:v.status==="red"?`<div style="width:8px;height:8px;border-radius:50%;background:#E74C3C;flex-shrink:0"></div>`:`<div style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0"></div>`;
+    return`<div class="clk-li" onclick="toggleVilla(${i})"><div style="display:flex;align-items:center;gap:6px">${statusDot}<div style="font-size:11px;color:var(--text)">${v.emoji} ${v.name}</div></div><div style="font-size:10px;color:var(--muted);padding-left:14px">${v.location} · ${d.occ>0?d.occ+"% occ.":"Fermée"}</div></div>`;
+  }).join("");
+  if(mcRAF){cancelAnimationFrame(mcRAF);mcRAF=null;}
+  drawMC();
+}
+function drawMC(){
+  const canvas=document.getElementById("main-clock");if(!canvas)return;
+  const ctx=canvas.getContext("2d");const W=canvas.width,H=canvas.height,cx=W/2,cy=H/2,R=W/2-16,oR=R-22;
+
+  // Init orbits with slight irregular spacing for natural feel
+  if(vOrbs.length!==VILLAS.length){
+    const nudge=[0,0.05,-0.04,0.03,-0.06,0.04,-0.02];
+    vOrbs=VILLAS.map((_,i)=>({
+      angle:(i/VILLAS.length)*Math.PI*2+(nudge[i]||0),
+      speed:0 // will be set per frame using seconds
+    }));
+  }
+
+  canvas.onclick=(e)=>{const rect=canvas.getBoundingClientRect();const mx=(e.clientX-rect.left)*(W/rect.width);const my=(e.clientY-rect.top)*(H/rect.height);vOrbs.forEach((o,i)=>{const vx=cx+Math.cos(o.angle)*oR;const vy=cy+Math.sin(o.angle)*oR;if(Math.hypot(mx-vx,my-vy)<24)toggleVilla(i);});};
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const now=new Date();
+    const ms=now.getMilliseconds();
+    const sec=now.getSeconds()+ms/1000;
+    const min=now.getMinutes()+sec/60;
+    const hour=(now.getHours()%12)+min/60;
+
+    // Outer ring
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle="rgba(201,168,76,0.15)";ctx.lineWidth=1;ctx.stroke();
+    // Orbit ring — exact perimeter for villas
+    ctx.beginPath();ctx.arc(cx,cy,oR,0,Math.PI*2);ctx.strokeStyle="rgba(201,168,76,0.08)";ctx.setLineDash([3,7]);ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+
+    // Ticks
+    for(let i=0;i<12;i++){const a=(i/12)*Math.PI*2-Math.PI/2;const len=i%3===0?10:5;ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*(R-3),cy+Math.sin(a)*(R-3));ctx.lineTo(cx+Math.cos(a)*(R-3-len),cy+Math.sin(a)*(R-3-len));ctx.strokeStyle=i%3===0?"rgba(201,168,76,0.4)":"rgba(201,168,76,0.12)";ctx.lineWidth=i%3===0?1.5:1;ctx.stroke();}
+    for(let i=0;i<60;i++){if(i%5===0)continue;const a=(i/60)*Math.PI*2-Math.PI/2;ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*(R-2),cy+Math.sin(a)*(R-2));ctx.lineTo(cx+Math.cos(a)*(R-5),cy+Math.sin(a)*(R-5));ctx.strokeStyle="rgba(201,168,76,0.08)";ctx.lineWidth=1;ctx.stroke();}
+
+    // Hour hand
+    dH(ctx,cx,cy,(hour/12)*Math.PI*2-Math.PI/2,R*0.44,3.5,"rgba(232,220,200,0.9)");
+    // Min hand
+    dH(ctx,cx,cy,(min/60)*Math.PI*2-Math.PI/2,R*0.60,2.5,"rgba(232,220,200,0.75)");
+    // Sec hand — continuous smooth
+    dH(ctx,cx,cy,(sec/60)*Math.PI*2-Math.PI/2,R*0.68,1.2,"rgba(201,168,76,1)");
+    // Counter-weight
+    dH(ctx,cx,cy,(sec/60)*Math.PI*2-Math.PI/2+Math.PI,R*0.18,1.2,"rgba(201,168,76,0.5)");
+
+    // Center "YOUR VILLAS"
+    ctx.beginPath();ctx.arc(cx,cy,28,0,Math.PI*2);ctx.fillStyle="rgba(201,168,76,0.1)";ctx.fill();ctx.strokeStyle="rgba(201,168,76,0.4)";ctx.lineWidth=1.5;ctx.stroke();
+    ctx.font="bold 7px DM Mono,monospace";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="rgba(201,168,76,0.8)";ctx.fillText("YOUR",cx,cy-5);ctx.fillText("VILLAS",cx,cy+5);
+    ctx.beginPath();ctx.arc(cx,cy,3.5,0,Math.PI*2);ctx.fillStyle="rgba(201,168,76,0.95)";ctx.fill();
+
+    // Villa orbits — anti-clockwise at half second-hand speed
+    // sec hand moves at 2π per 60s → villa moves at -π per 60s = half speed, reversed
+    const villaAngleDelta = -(sec/60)*Math.PI*2*0.5;
+
+    vOrbs.forEach((o,i)=>{
+      const v=VILLAS[i];
+      const col=SC[v.status==="blink-og"?"orange":v.status]||"#C9A84C";
+      const isRed=v.status==="red";
+      const isOrange=v.status==="orange"||v.status==="blink-og";
+      const isBlinkOg=v.status==="blink-og";
+
+      // Angle: base + slow continuous drift
+      o.angle = o.angle; // keep base; add continuous rotation below
+      const currentAngle = ((i/VILLAS.length)*Math.PI*2+(nudgeArr[i]||0)) + villaAngleDelta;
+
+      const vx=cx+Math.cos(currentAngle)*oR;
+      const vy=cy+Math.sin(currentAngle)*oR;
+
+      // Glow for status
+      const glowColor=isRed?"rgba(231,76,60,0.5)":isBlinkOg?`rgba(${Math.sin(Date.now()/500)>0?"243,156,18":"46,204,113"},0.4)`:"rgba(46,204,113,0.2)";
+      const grad=ctx.createRadialGradient(vx,vy,0,vx,vy,22);
+      grad.addColorStop(0,glowColor);grad.addColorStop(1,"transparent");
+      ctx.beginPath();ctx.arc(vx,vy,22,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();
+
+      // Size proportional to beds (1ch=12, 2ch=15, 3ch=17, 4ch=20, 7ch=26)
+      const bedSizes={1:12,2:15,3:17,4:20,7:26};
+      const r=bedSizes[v.beds]||16;
+
+      // Glow gradient
+      const g2=ctx.createRadialGradient(vx,vy,0,vx,vy,r+8);
+      g2.addColorStop(0,isRed?"rgba(231,76,60,0.35)":isBlinkOg?"rgba(243,156,18,0.25)":"rgba(46,204,113,0.15)");
+      g2.addColorStop(1,"transparent");
+      ctx.beginPath();ctx.arc(vx,vy,r+8,0,Math.PI*2);ctx.fillStyle=g2;ctx.fill();
+
+      // Circle border — status color
+      const borderCol=isRed?"#E74C3C":isBlinkOg?(Math.sin(Date.now()/600)>0?"#F39C12":"#2ECC71"):v.status==="green-light"?"#1a7a44":"#2ECC71";
+      ctx.beginPath();ctx.arc(vx,vy,r,0,Math.PI*2);ctx.fillStyle="rgba(8,12,18,0.9)";ctx.fill();ctx.strokeStyle=borderCol;ctx.lineWidth=2;ctx.stroke();
+
+      // House icon — 🏠 for all villas, 🏰 for 7ch
+      const emojiSize=Math.round(r*0.95);
+      ctx.font=emojiSize+"px serif";ctx.textAlign="center";ctx.textBaseline="middle";
+      ctx.fillText(v.beds>=7?"🏰":"🏠",vx,vy);
+    });
+
+    mcRAF=requestAnimationFrame(draw);
+  }
+  draw();
+}
+const nudgeArr=[0,0.05,-0.04,0.03,-0.06,0.04,-0.02];
+
+
+function dH(ctx,cx,cy,angle,len,width,color){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(angle)*len,cy+Math.sin(angle)*len);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap="round";ctx.stroke();}
+function renderReviews(v){
+  const el=document.getElementById("prev");const r=v.reviews;
+  const stars=n=>"★".repeat(Math.floor(n))+(n%1>=0.5?"½":"")+"☆".repeat(5-Math.floor(n)-(n%1>=0.5?1:0));
+  let extra="";
+  if((r.config==="best_only"||r.config==="best_and_alert")&&r.best)extra+=`<div class="rv-best"><div class="rv-best-label">⭐ Meilleur avis</div><div class="rv-best-text">"${r.best.text}"</div><div class="rv-best-author">${r.best.author}</div></div>`;
+  if(r.config==="best_and_alert"&&r.alert)extra+=`<div class="rv-alert"><div style="font-size:16px">⚠️</div><div><div class="rv-alert-label">Avis négatif — géré</div><div style="font-size:11px;color:var(--text)">"${r.alert.text}"</div><div class="rv-alert-handled">✓ ${r.alert.handled}</div></div></div>`;
+  el.innerHTML=`<div class="rv-platform"><div class="rv-name">Airbnb</div><div class="rv-score">${r.airbnb.score}</div><div style="color:var(--gold);font-size:11px">${stars(r.airbnb.score)}</div><div class="rv-count">${r.airbnb.count} avis</div></div><div class="rv-sep"></div><div class="rv-platform"><div class="rv-name">Booking</div><div class="rv-score">${r.booking.score}</div><div style="color:var(--blue);font-size:11px">${"●".repeat(Math.round(r.booking.score/2))}</div><div class="rv-count">${r.booking.count} avis</div></div>${extra?"<div class='rv-sep'></div>"+extra:""}`;
+}
+function showTab(id,btn){document.querySelectorAll(".tab-content").forEach(t=>t.classList.remove("active"));document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));const el=document.getElementById("tab-"+id);if(el)el.classList.add("active");if(btn)btn.classList.add("active");else document.querySelector(".tab-btn")?.classList.add("active");}
+function renderBk(v){document.getElementById("tab-bookings").innerHTML=`<table class="bk-table"><thead><tr><th>Guest</th><th>Plateforme</th><th>Check-in</th><th>Check-out</th><th>Nuits</th><th>Montant</th><th>Statut</th></tr></thead><tbody>${v.bookings.map(b=>`<tr><td>${b.guest}</td><td><span class="bk-pl">${pE(b.platform)} ${b.platform}</span></td><td>${b.checkin}</td><td>${b.checkout}</td><td>${b.nights}</td><td style="font-family:'DM Mono',monospace;color:var(--gold-light)">${fmt(b.amount)}</td><td><span class="bk-st s-${b.status}">${sL(b.status)}</span></td></tr>`).join("")}</tbody></table>`;}
+function renderFr(v,d){
+  const m=v.mgmt,pm=m.prevMonth;const te=v.exceptionnels.reduce((s,e)=>s+e.amount,0);const nf=d.net-te;
+  const ml=[{label:"Internet",val:m.internet,prev:pm.internet,icon:"📡"},{label:"Électricité",val:m.electricite,prev:pm.electricite,icon:"⚡"},{label:"Pool man",val:m.poolman,prev:pm.poolman,icon:"🐬"},{label:"Gardener",val:m.gardener,prev:pm.gardener,icon:"🌴"},{label:"Laundry",val:m.laundry,prev:pm.laundry,icon:"👕"},{label:"Amenities",val:m.amenities,prev:pm.amenities,icon:"🛁"},{label:"Divers",val:m.divers,prev:pm.divers,icon:"📦"}];
+  document.getElementById("tab-frais").innerHTML=`<div style="display:flex;flex-direction:column;">
+    <div class="fr-row"><div><div class="fr-label">Revenus bruts</div><div class="fr-sub">${d.bookings} séjours</div></div><div class="fr-amt fa-c">${fmt(d.brut)}</div></div>
+    <div class="fr-row"><div><div class="fr-label">Marketing (15%)</div><div class="fr-sub">Listing, contenu, visibilité</div></div><div class="fr-amt fa-d">−${fmt(d.marketing)}</div></div>
+    <div class="fr-row" style="flex-direction:column;gap:8px;"><div style="display:flex;justify-content:space-between"><div><div class="fr-label">Management (5%)</div><div class="fr-sub">Opérationnel, coordination</div></div><div class="fr-amt fa-d">−${fmt(d.mgmt)}</div></div>
+    <button class="mgmt-btn" onclick="tMgmt('${v.id}')"><span id="ma${v.id}">▶</span> Détail charges</button>
+    <div class="mgmt-box" id="mb${v.id}">${ml.map(l=>{const diff=l.val-l.prev;const tc=diff>5?"tr-up":diff<-5?"tr-dn":"";const ts=diff>5?`▲+$${diff}`:diff<-5?`▼−$${Math.abs(diff)}`:"stable";return`<div class="mgmt-ln"><span>${l.icon} ${l.label}</span><span style="color:var(--text);font-family:'DM Mono',monospace">$${l.val} <span class="${tc}">${ts}</span></span></div>`;}).join("")}
+    <div class="mgmt-ln" style="padding-top:8px;border-top:1px solid var(--border)"><span style="color:var(--text)">Total charges</span><span style="color:var(--text);font-family:'DM Mono',monospace">$${ml.reduce((s,l)=>s+l.val,0)}</span></div></div></div>
+    <div style="height:1px;background:var(--border);margin:4px 0"></div>
+    <div class="fr-row"><div><div class="fr-label" style="color:var(--green)">Net après frais agence</div></div><div class="fr-amt fa-c">${fmt(d.net)}</div></div>
+    ${v.exceptionnels.length?`<div style="margin-top:14px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Frais exceptionnels</div>${v.exceptionnels.map(e=>`<div class="exc-card exc-${e.type}"><div style="font-size:18px;flex-shrink:0">${e.icon}</div><div><div class="exc-name">${e.name}</div><div class="exc-desc">${e.desc}</div><div class="exc-date">${e.date}</div></div><div class="exc-amt" style="color:${e.type==="orange"?"var(--orange)":"var(--red)"}">−${fmt(e.amount)}</div></div>`).join("")}<div style="height:1px;background:var(--border);margin:8px 0"></div><div style="display:flex;justify-content:space-between;padding:14px 0 0"><div style="font-family:'Playfair Display',serif;font-size:18px">Net final</div><div style="font-family:'Playfair Display',serif;font-size:26px;color:var(--green)">${fmt(nf)}</div></div>`:`<div style="margin-top:14px;padding:12px 14px;background:rgba(46,204,113,0.04);border:1px solid rgba(46,204,113,0.12);border-radius:6px;font-size:11px;color:var(--muted)">✓ Aucun frais exceptionnel ce mois</div>`}
+  </div>`;
+}
+function tMgmt(vid){const b=document.getElementById("mb"+vid);const a=document.getElementById("ma"+vid);b.classList.toggle("open");a.textContent=b.classList.contains("open")?"▼":"▶";}
+function renderPf(v){const mo=["J","F","M","A","M","J","J","A","S","O","N","D"];const data=v.perfData;document.getElementById("tab-perf").innerHTML=`<div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px">Occupation mensuelle 2026</div><div class="occ-chart">${data.map((val,i)=>`<div class="occ-bc"><div class="occ-b"><div class="occ-f" style="height:${val}%;background:${val>=80?"linear-gradient(180deg,var(--gold-light),var(--gold))":val>=65?"linear-gradient(180deg,#7BAEE0,var(--blue))":"rgba(201,168,76,0.3)"}"></div></div><div class="occ-p">${val}%</div><div class="occ-m">${mo[i]}</div></div>`).join("")}</div><div class="psg"><div class="psc"><div class="psl">Moy. annuelle</div><div class="psn">${Math.round(data.reduce((s,x)=>s+x,0)/12)}%</div></div><div class="psc"><div class="psl">Pic</div><div class="psn" style="color:var(--green)">${Math.max(...data)}%</div></div><div class="psc"><div class="psl">Creux</div><div class="psn" style="color:var(--muted)">${Math.min(...data)}%</div></div></div>`;}
+const SLM={cleaners:"Équipe ménage",poolmen:"Équipe piscine",gardeners:"Équipe jardin"};const SIM={cleaners:"🧹",poolmen:"🐬",gardeners:"🌴"};
+function openSP(vid,gk){const v=VILLAS.find(x=>x.id===vid);const mb=v.staff[gk];document.getElementById("spbox").innerHTML=`<div class="sp-hd"><div class="sp-ttl">${SLM[gk]}</div><button class="sp-cl" onclick="document.getElementById('spov').classList.remove('open')">✕</button></div>${mb.map(m=>`<div class="sp-mb"><div class="sp-ic">${SIM[gk]}</div><div><div class="sp-nm">${m.name}</div><div class="sp-dy">${m.days}</div></div></div>`).join("")}`;document.getElementById("spov").classList.add("open");}
+function renderHistory(){
+  const svg=document.getElementById("hsvg");const vals=HISTORY.map(h=>h.net);const mn=Math.min(...vals)-500,mx=Math.max(...vals)+500;const W=800,H=80,pad=10;
+  const pts=vals.map((v,i)=>[pad+(i/(vals.length-1))*(W-pad*2),H-pad-((v-mn)/(mx-mn))*(H-pad*2)]);
+  const path=pts.map((p,i)=>i===0?`M${p[0]},${p[1]}`:`L${p[0]},${p[1]}`).join(" ");
+  const area=`${path} L${pts[pts.length-1][0]},${H} L${pts[0][0]},${H} Z`;
+  svg.innerHTML=`<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2ECC71" stop-opacity="0.3"/><stop offset="100%" stop-color="#2ECC71" stop-opacity="0"/></linearGradient></defs><path d="${area}" fill="url(#cg)"/><path d="${path}" fill="none" stroke="#2ECC71" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="${HISTORY[i].color==="green"?"#2ECC71":"#F39C12"}" stroke="#0D1420" stroke-width="2" style="cursor:pointer" onclick="openModal(${i})"/>`).join("")}`;
+  document.getElementById("hgrid").innerHTML=HISTORY.map((h,i)=>`<div class="hcard hc-${h.color}" onclick="openModal(${i})">${h.current?`<div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">En cours</div>`:""}<div class="h-mo">${h.month}</div><div class="h-net" style="color:${h.color==="green"?"var(--green)":"var(--orange)"}">${fmt(h.net)}</div><div class="h-occ">${h.occ}% occupation</div><div class="h-tr" style="color:${h.color==="green"?"var(--green)":"var(--orange)"}">${h.trend} vs mois préc.</div></div>`).join("");
+}
+function openModal(i){const h=HISTORY[i];document.getElementById("mttl").textContent=h.month;document.getElementById("mbd").innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px"><div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px">Net propriétaire</div><div style="font-family:'Playfair Display',serif;font-size:26px;color:${h.color==="green"?"var(--green)":"var(--orange)"}">${fmt(h.net)}</div></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px"><div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px">Occupation</div><div style="font-family:'Playfair Display',serif;font-size:26px">${h.occ}%</div></div></div><div style="padding:13px 16px;background:rgba(${h.color==="green"?"46,204,113":"243,156,18"},0.06);border:1px solid rgba(${h.color==="green"?"46,204,113":"243,156,18"},0.2);border-radius:6px;font-size:12px;color:var(--muted);line-height:1.8">${h.color==="green"?"✓ Bon mois — revenus dans la moyenne haute.":"⚠ Mois sous-performance — revenus en baisse de "+h.trend+"."}</div>${h.current?`<div style="margin-top:14px;padding:11px 14px;background:rgba(201,168,76,0.06);border:1px solid var(--border);border-radius:6px;font-size:11px;color:var(--gold)">Mois en cours — résumé définitif en fin de mois.</div>`:""}`; document.getElementById("histmod").classList.add("open");}
+function closeModal(){document.getElementById("histmod").classList.remove("open");}
+function renderTimelines(){const mo=["Jan","Fév","Mar","Avr","Mai","Jun","Jul","Aoû","Sep","Oct","Nov","Déc"];const lb={"green":"Bon mois","green-light":"Excellent","orange":"Sous-perf.","striped":"Mitigé","red":"Inutilisable","rose":"Travaux","violet":"Last-minute"};document.getElementById("tls").innerHTML=VILLAS.map(v=>`<div style="margin-bottom:20px"><div class="tl-vname">${v.name} · ${v.location}</div><div class="tl-track">${v.timeline.map((s,i)=>`<div class="tl-w tl-${s}" title="${mo[i]} — ${lb[s]||s}"></div>`).join("")}</div><div style="display:grid;grid-template-columns:repeat(12,1fr);gap:2px;margin-top:3px">${mo.map(m=>`<div style="font-size:8px;color:var(--muted);text-align:center">${m}</div>`).join("")}</div></div>`).join("");}
+const DL={done:"Loué ✓",booked:"Booké — à venir",lastmin:"Last-min actif 🟣",potential:"Potentiel last-min",empty:"Disponible",exceeded:"Objectif dépassé 🎉",alert:"Alerte ⚠",works:"Travaux 🌸","price-alert":"Prix sous seuil ⚡"};
+function showTip(e,day,state,price,floor,adr){
+  const t=document.getElementById("daytip");
+  const isPast=day<=TODAY_DAY;
+  let extra="";
+  if(state==="lastmin-active"&&price&&floor){
+    extra=`<div style="margin-top:4px;color:#F39C12;">Prix bradé : $${price}/nuit</div><div style="color:var(--muted);font-size:9px;">Prix normal : $${adr} · Seuil : $${floor}</div>`;
+  } else if(state==="available"&&price){
+    extra=`<div style="margin-top:4px;color:#3498DB;">Prix estimé : $${price}/nuit</div>`;
+  } else if((state==="done"||state==="bradee")&&price){
+    extra=`<div style="margin-top:4px;color:#2ECC71;">$${price}/nuit</div>`;
+  }
+  t.innerHTML=`<div><strong>Jour ${day}</strong> — ${DL[state]||state}${extra}</div>`;
+  t.style.display="block";t.style.left=(e.clientX+12)+"px";t.style.top=(e.clientY-38)+"px";
+}
+function hideTip(){document.getElementById("daytip").style.display="none";}
+function fmt(n){return"$"+Math.round(n).toLocaleString("fr-FR").replace(/\s/g," ");}
+function pE(p){return p==="Airbnb"?"🏠":p==="Booking"?"📘":"🤝";}
+function sL(s){return s==="confirmed"?"Confirmé":s==="pending"?"En attente":"Terminé";}
+</script>
+</body>
+</html>

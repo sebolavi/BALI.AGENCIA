@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Your Stay · Villa Surya</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brand:#C9A84C;--brand-light:#E8C97A;--brand-dark:#9C7B2A;
+  --bg:#F7F3ED;--bg2:#EDE8DF;--bg3:#E2DDD3;
+  --dark:#1A1F1C;--dark2:#2C3328;--dark3:#0A100A;
+  --text:#2C2C2C;--muted:#8A8A7A;--muted2:#B0A898;
+  --green:#27AE60;--green-soft:#E8F5EE;--green-mid:#A8D5B8;--green-dark:#1E8449;
+  --gold:#C9A84C;--gold-light:#E8C97A;--gold-dark:#9C7B2A;
+  /* brand aliases */
+  --orange:#E67E22;--orange-soft:#FEF0E3;
+  --red:#C0392B;--red-soft:#FDECEA;
+  --blue:#3498DB;--blue-soft:#EBF5FB;
+  --tropical:#00A693;--tropical-soft:#E0F4F2;
+  --rose:#FDF0F6;--rose-btn:#D4749A;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.05);
+  --shadow:0 2px 12px rgba(0,0,0,0.08);--shadow-lg:0 8px 32px rgba(0,0,0,0.14);
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden;}
+
+/* ── LOGO BANNER ── */
+.logo-banner{background:linear-gradient(135deg,#1A1000,#0A0800);padding:10px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;border-bottom:1px solid rgba(201,168,76,0.15);}
+.logo-banner.loaded{flex-direction:column;align-items:center;padding:20px 16px;gap:12px;}
+.logo-circle{width:140px;height:140px;border-radius:50%;background:#fff;border:4px solid rgba(201,168,76,0.3);display:none;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 6px 28px rgba(0,0,0,0.18);}
+.logo-circle img{width:140px;height:140px;object-fit:cover;}
+.logo-banner.loaded .logo-circle{display:flex;}
+.logo-banner.loaded .lb-icon,.logo-banner.loaded .lb-txt{display:none;}
+.logo-banner.loaded .lb-btn{font-size:10px;}
+.lb-icon{font-size:18px;flex-shrink:0;}
+.lb-txt{flex:1;font-size:11px;color:rgba(255,255,255,0.45);line-height:1.4;}
+.lb-txt strong{color:#E8C97A;display:block;font-size:12px;margin-bottom:1px;}
+.lb-btn{font-size:10px;font-weight:700;color:#C9A84C;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:5px 12px;white-space:nowrap;font-family:'Nunito',sans-serif;}
+#logo-file-input{display:none;}
+#tb-logo-img{height:30px;max-width:110px;object-fit:contain;display:none;}
+
+/* ── TOPBAR ── */
+.topbar{position:sticky;top:0;z-index:200;background:rgba(247,243,237,0.97);border-bottom:1px solid var(--border);padding:0 20px;height:54px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);}
+.tb-left{display:flex;align-items:center;gap:10px;}
+.tb-logo{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:2px;}
+.tb-lang{font-size:10px;font-family:'DM Mono',monospace;color:var(--muted);background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;cursor:pointer;transition:all .2s;user-select:none;}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(160deg,var(--dark2) 0%,#1A2318 55%,#0E1A0E 100%);padding:32px 22px 0;position:relative;overflow:hidden;}
+.hero-leaf{position:absolute;right:-20px;top:-20px;font-size:140px;opacity:0.05;transform:rotate(-20deg);pointer-events:none;}
+.hero-leaf2{position:absolute;left:-15px;bottom:30px;font-size:100px;opacity:0.03;transform:rotate(30deg);pointer-events:none;}
+.hero-rating{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--gold);margin-bottom:12px;}
+.hero-welcome{font-family:'Playfair Display',serif;font-size:28px;color:#fff;line-height:1.25;margin-bottom:8px;}
+.hero-welcome em{color:var(--gold-light);font-style:italic;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:24px;}
+
+/* VILLA HERO CARD */
+.villa-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:var(--radius);padding:16px;margin-bottom:28px;}
+.vc-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.vc-icon{font-size:28px;}
+.vc-name{font-family:'Playfair Display',serif;font-size:20px;color:#fff;}
+.vc-zone{font-size:10px;color:rgba(255,255,255,0.35);font-family:'DM Mono',monospace;letter-spacing:.5px;margin-top:2px;}
+.vc-dates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.vc-date{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 12px;}
+.vc-date-lbl{font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:1.5px;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:3px;}
+.vc-date-val{font-size:16px;font-weight:800;color:#fff;}
+.vc-date-sub{font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;}
+.vc-nights{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.vc-nights-lbl{font-size:11px;color:rgba(255,255,255,0.35);}
+.vc-nights-num{font-family:'Playfair Display',serif;font-size:24px;color:var(--gold-light);font-style:italic;}
+
+/* ── NAV PILLS ── */
+.nav-wrap{padding:16px 20px 0;background:var(--bg);}
+.nav-pills{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;}
+.nav-pills::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;padding:8px 16px;border-radius:24px;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--bg3);color:var(--muted);transition:all .2s;font-family:'Nunito',sans-serif;}
+.pill.active{background:var(--dark2);color:#fff;box-shadow:var(--shadow);}
+
+/* ── SECTIONS ── */
+.section{display:none;}
+.section.active{display:block;}
+
+/* UTIL */
+.pad{padding:0 20px;}
+.mt12{margin-top:12px;}
+.mt16{margin-top:16px;}
+.mt20{margin-top:20px;}
+.spacer{height:48px;}
+
+/* ── CARDS GÉNÉRIQUES ── */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.card-dark{background:linear-gradient(135deg,var(--dark2),#1C2C1A);border-radius:var(--radius);border:1px solid rgba(255,255,255,0.07);}
+
+/* SECTION HEADER */
+.sec-head{padding:18px 20px 0;}
+.sec-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--dark);}
+.sec-title em{color:var(--gold-dark);font-style:italic;}
+.sec-sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.6;}
+
+/* ── ARRIVAL TIME PICKER ── */
+.arrival-block{margin:16px 20px 0;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;}
+.ab-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:10px;}
+.ab-title{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:14px;}
+.ab-slots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.ab-slot{padding:8px 14px;border-radius:10px;background:var(--bg2);border:1.5px solid transparent;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;}
+.ab-slot.sel{background:var(--dark2);color:var(--gold-light);border-color:rgba(201,168,76,0.3);}
+.ab-slot.disabled{opacity:.3;pointer-events:none;}
+.ab-note{font-size:11px;color:var(--muted2);line-height:1.6;font-style:italic;}
+.ab-note strong{color:var(--orange);font-style:normal;}
+
+/* ── COUNTDOWN ── */
+.countdown-block{margin:16px 20px 0;background:linear-gradient(135deg,#1C1000,#120A00);border-radius:var(--radius);padding:20px;border:1px solid rgba(201,168,76,0.15);position:relative;overflow:hidden;}
+.cd-bg{position:absolute;right:-10px;top:-10px;font-size:90px;opacity:0.04;pointer-events:none;}
+.cd-lbl{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);font-family:'DM Mono',monospace;margin-bottom:12px;}
+.cd-nums{display:flex;align-items:flex-end;gap:8px;}
+.cn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:10px 0;text-align:center;flex:1;}
+.cn-n{font-family:'DM Mono',monospace;font-size:30px;color:var(--gold-light);line-height:1;}
+.cn-l{font-size:8px;color:rgba(255,255,255,0.25);margin-top:4px;text-transform:uppercase;letter-spacing:.8px;}
+.cn-sep{font-size:22px;color:rgba(255,255,255,0.15);padding-bottom:16px;flex-shrink:0;}
+.cd-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:12px;line-height:1.65;}
+.cd-location{margin-top:10px;display:flex;align-items:center;gap:8px;background:rgba(52,152,219,0.1);border:1px solid rgba(52,152,219,0.2);border-radius:8px;padding:8px 12px;cursor:pointer;}
+.cd-location-pin{font-size:16px;}
+.cd-location-txt{font-size:12px;font-weight:700;color:var(--blue);}
+.cd-location-sub{font-size:10px;color:rgba(52,152,219,0.6);margin-top:1px;}
+.cd-location-arrow{margin-left:auto;font-size:12px;color:rgba(52,152,219,0.5);}
+
+/* ── VILLA PHOTO ── */
+.villa-photo{margin:16px 20px 0;border-radius:var(--radius);overflow:hidden;position:relative;height:200px;background:linear-gradient(135deg,#162A14,#0A1A09);box-shadow:var(--shadow-lg);}
+.vp-img{width:100%;height:100%;object-fit:cover;display:block;}
+.vp-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+.vp-placeholder-emoji{font-size:60px;opacity:.15;}
+.vp-placeholder-txt{font-size:11px;color:rgba(255,255,255,0.25);font-family:'DM Mono',monospace;letter-spacing:1px;}
+.vp-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,0.75),transparent);padding:20px 16px 12px;}
+.vp-name{font-family:'Playfair Display',serif;font-size:18px;color:#fff;}
+.vp-addr{font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;font-family:'DM Mono',monospace;}
+.vp-maps{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:700;color:#fff;cursor:pointer;backdrop-filter:blur(8px);}
+
+/* ── SOFIA CHAT ── */
+.sofia-bar{margin:16px 20px 0;background:linear-gradient(135deg,#091A09,#122012);border-radius:var(--radius);padding:16px;border:1px solid rgba(39,174,96,0.2);}
+.sb-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.sb-avatar{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#7ECAA8,#2D8C5C);border:2px solid rgba(39,174,96,0.4);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative;}
+.sb-dot{position:absolute;bottom:2px;right:2px;width:10px;height:10px;background:var(--green);border-radius:50%;border:2px solid #091A09;}
+.sb-info{}
+.sb-name{font-size:12px;font-weight:800;color:var(--green-mid);}
+.sb-status{font-size:10px;color:rgba(39,174,96,0.5);margin-top:2px;}
+.sb-bubble{background:rgba(255,255,255,0.06);border-radius:0 12px 12px 12px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.65);line-height:1.65;margin-bottom:12px;}
+
+/* CHAT DIALOG */
+.chat-thread{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:10px;padding:4px 0;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent;}
+.chat-thread::-webkit-scrollbar{width:3px;}
+.chat-thread::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px;}
+.chat-msg{display:flex;flex-direction:column;max-width:80%;}
+.chat-msg.me{align-self:flex-end;align-items:flex-end;}
+.chat-msg.sofia{align-self:flex-start;align-items:flex-start;}
+.chat-bubble{padding:9px 13px;border-radius:12px;font-size:12px;line-height:1.55;}
+.chat-msg.me .chat-bubble{background:var(--green-dark);color:#fff;border-radius:12px 12px 2px 12px;}
+.chat-msg.sofia .chat-bubble{background:rgba(255,255,255,0.09);color:rgba(255,255,255,0.8);border-radius:2px 12px 12px 12px;}
+.chat-time{font-size:9px;color:rgba(255,255,255,0.25);margin-top:3px;font-family:'DM Mono',monospace;}
+.chat-receipt{font-size:9px;color:rgba(39,174,96,0.6);margin-top:2px;}
+.chat-typing{display:flex;gap:3px;align-items:center;padding:8px 12px;background:rgba(255,255,255,0.06);border-radius:2px 12px 12px 12px;width:fit-content;}
+.chat-typing span{width:5px;height:5px;background:rgba(255,255,255,0.3);border-radius:50%;animation:blink 1.2s infinite;}
+.chat-typing span:nth-child(2){animation-delay:.2s;}
+.chat-typing span:nth-child(3){animation-delay:.4s;}
+@keyframes blink{0%,60%,100%{opacity:.3;}30%{opacity:1;}}
+.chat-hidden{display:none;}
+
+.chat-input-row{display:flex;gap:8px;align-items:center;}
+.chat-input{flex:1;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:22px;padding:9px 16px;font-family:'Nunito',sans-serif;font-size:13px;color:#fff;outline:none;transition:border-color .2s;}
+.chat-input::placeholder{color:rgba(255,255,255,0.3);}
+.chat-input:focus{border-color:rgba(39,174,96,0.4);}
+.chat-send{width:38px;height:38px;background:var(--green);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s;font-size:16px;}
+.chat-send:active{transform:scale(.9);}
+.chat-wa{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;padding:7px;background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.2);border-radius:10px;cursor:pointer;font-size:11px;font-weight:700;color:rgba(37,211,102,0.7);}
+
+/* ── CHECK-IN INSTRUCTIONS ── */
+.checkin-block{margin:16px 20px 0;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.cb-head{background:linear-gradient(135deg,var(--tropical),#007A6B);padding:14px 18px;display:flex;align-items:center;gap:10px;}
+.cb-head-icon{font-size:20px;}
+.cb-head-title{font-size:13px;font-weight:800;color:#fff;}
+.cb-head-sub{font-size:10px;color:rgba(255,255,255,0.5);margin-top:2px;}
+
+/* STEP */
+.ci-step{border-bottom:1px solid var(--border2);}
+.ci-step:last-child{border-bottom:none;}
+.ci-step-header{display:flex;align-items:flex-start;gap:14px;padding:14px 18px;cursor:pointer;}
+.ci-num{font-family:'DM Mono',monospace;font-size:20px;color:var(--tropical);flex-shrink:0;width:28px;line-height:1.2;}
+.ci-step-info{flex:1;}
+.ci-step-title{font-size:14px;font-weight:800;color:var(--dark);}
+.ci-step-sub{font-size:11px;color:var(--muted2);margin-top:3px;}
+/* big code */
+.ci-code{font-family:'DM Mono',monospace;font-size:32px;font-weight:400;color:var(--dark);letter-spacing:6px;margin-top:6px;background:var(--bg2);display:inline-block;padding:6px 14px;border-radius:8px;}
+.ci-step-chevron{font-size:14px;color:var(--muted2);transition:transform .3s;margin-top:4px;flex-shrink:0;}
+.ci-step.open .ci-step-chevron{transform:rotate(180deg);}
+.ci-step-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
+.ci-step.open .ci-step-body{max-height:600px;}
+.ci-step-inner{padding:0 18px 16px 60px;}
+
+/* PHOTO STRIP */
+.photo-strip{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
+.photo-strip::-webkit-scrollbar{display:none;}
+.photo-thumb{flex-shrink:0;width:100px;height:72px;border-radius:10px;overflow:hidden;background:var(--bg3);cursor:pointer;position:relative;}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.photo-thumb-lbl{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.55);font-size:8px;color:rgba(255,255,255,0.7);padding:3px 5px;text-align:center;}
+.video-thumb{background:linear-gradient(135deg,#1A1A30,#0A0A20);}
+.video-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;}
+
+/* ── ESSENTIALS ── */
+.essentials-block{margin:16px 20px 0;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.eb-head{padding:14px 18px;background:linear-gradient(135deg,var(--dark2),var(--dark3));display:flex;align-items:center;gap:10px;}
+.eb-head-title{font-size:13px;font-weight:800;color:#fff;}
+.eb-head-sub{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
+
+.ess-row{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border2);cursor:pointer;}
+.ess-row:last-child{border-bottom:none;}
+.ess-icon{font-size:24px;flex-shrink:0;margin-top:1px;}
+.ess-info{flex:1;}
+.ess-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-family:'DM Mono',monospace;margin-bottom:4px;}
+/* big bold values */
+.ess-val{font-size:20px;font-weight:800;color:var(--dark);font-family:'DM Mono',monospace;letter-spacing:2px;}
+.ess-val-sm{font-size:16px;font-weight:800;color:var(--dark);}
+.ess-note{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.6;}
+.ess-chevron{font-size:14px;color:var(--muted2);margin-top:4px;transition:transform .3s;flex-shrink:0;}
+.ess-row.open .ess-chevron{transform:rotate(180deg);}
+.ess-detail{max-height:0;overflow:hidden;transition:max-height .4s;padding:0 18px;}
+.ess-row.open + .ess-detail{max-height:300px;}
+
+/* SAFE */
+.safe-block{margin:16px 20px 0;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+
+/* ── STAFF STRIP (in Stay tab) ── */
+.staff-strip-wrap{margin:20px 20px 0;}
+.strip-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.strip-title{font-size:14px;font-weight:800;color:var(--dark);}
+.strip-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.strip-cta{font-size:11px;font-weight:700;color:var(--tropical);background:var(--tropical-soft);padding:5px 12px;border-radius:20px;cursor:pointer;border:none;font-family:'Nunito',sans-serif;}
+.staff-strip{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
+.staff-strip::-webkit-scrollbar{display:none;}
+.staff-chip{flex-shrink:0;width:74px;cursor:pointer;text-align:center;}
+.staff-chip-avatar{width:56px;height:56px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:24px;position:relative;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.12);}
+.staff-chip-avatar.cleaner{background:radial-gradient(circle,#B8ECC8,#7ECBA8);}
+.staff-chip-avatar.poolman{background:radial-gradient(circle,#A0D4FF,#4099E0);}
+.staff-chip-avatar.tukang{background:radial-gradient(circle,#FFCCA0,#E07840);}
+.staff-chip-avatar.gardener{background:radial-gradient(circle,#C8E8A0,#78C040);}
+.staff-chip-avatar.butler{background:radial-gradient(circle,#E8C880,#C8A440);}
+.staff-status{position:absolute;bottom:1px;right:1px;width:13px;height:13px;border-radius:50%;border:2.5px solid #fff;}
+.staff-status.today{background:var(--green);}
+.staff-status.standby{background:var(--orange);}
+.staff-chip-name{font-size:11px;font-weight:700;color:var(--dark);}
+.staff-chip-role{font-size:9px;color:var(--muted);margin-top:1px;}
+
+/* STAFF MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:300;align-items:flex-end;}
+.modal-overlay.show{display:flex;animation:fadeIn .2s ease;}
+.modal-sheet{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:430px;margin:0 auto;max-height:85vh;overflow-y:auto;animation:slideUp .3s cubic-bezier(.4,0,.2,1);}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:none;opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-handle{width:40px;height:4px;background:var(--bg3);border-radius:2px;margin:12px auto 0;}
+.modal-close{position:absolute;top:16px;right:20px;font-size:20px;color:var(--muted);cursor:pointer;z-index:10;background:var(--bg2);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;}
+
+/* STAFF CARD in modal */
+.smodal-avatar{width:80px;height:80px;border-radius:50%;margin:20px auto 12px;display:flex;align-items:center;justify-content:center;font-size:38px;border:4px solid #fff;box-shadow:0 4px 16px rgba(0,0,0,0.12);}
+.smodal-role{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-family:'DM Mono',monospace;text-align:center;}
+.smodal-name{font-family:'Playfair Display',serif;font-size:26px;color:var(--dark);text-align:center;margin:4px 0;}
+.smodal-origin{font-size:12px;color:var(--muted2);text-align:center;font-style:italic;margin-bottom:16px;}
+.smodal-status{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:16px;}
+.smodal-status-dot{width:8px;height:8px;border-radius:50%;}
+.smodal-status-dot.today{background:var(--green);}
+.smodal-status-dot.standby{background:var(--orange);}
+.smodal-status-txt{font-size:11px;font-weight:700;}
+.smodal-status-txt.today{color:var(--green);}
+.smodal-status-txt.standby{color:var(--orange);}
+.smodal-body{padding:0 24px 32px;}
+.smodal-bio{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:14px;}
+.smodal-traits{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.smodal-trait{background:var(--bg2);color:var(--dark2);font-size:11px;font-weight:700;padding:5px 12px;border-radius:20px;}
+.smodal-schedule{background:var(--bg2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+
+/* ── ORBITAL CLOCK — bg adapts to logo color ── */
+.clock-section{background:var(--orbit-bg,#030803);padding:28px 20px 0;display:flex;flex-direction:column;align-items:center;}
+.clock-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--orbit-text-muted,rgba(255,255,255,0.18));margin-bottom:16px;font-family:'DM Mono',monospace;}
+.clock-wrap{position:relative;width:290px;height:290px;}
+#orbitCanvas{position:absolute;top:0;left:0;width:290px;height:290px;}
+.clock-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,0.14),rgba(201,168,76,0.02));border:1.5px solid rgba(201,168,76,0.4);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;box-shadow:0 0 36px rgba(201,168,76,0.1);}
+.clock-center-emoji{font-size:28px;line-height:1;}
+.clock-center-lbl{font-size:7px;color:var(--orbit-accent,var(--gold-light));font-family:'DM Mono',monospace;letter-spacing:.8px;margin-top:3px;text-align:center;opacity:.9;}
+.clock-tagline{font-size:11px;color:var(--orbit-text-muted,rgba(255,255,255,0.22));margin-top:16px;text-align:center;max-width:260px;line-height:1.8;font-style:italic;}
+.clock-tagline strong{color:var(--orbit-accent,var(--gold-light));font-style:normal;}
+
+/* CREW CARDS under orbit — bg adapts to logo color */
+.orbit-crew{padding:0 20px;background:var(--orbit-bg,#030803);display:flex;flex-direction:column;gap:10px;padding-bottom:24px;}
+.crew-card{background:var(--orbit-card-bg,rgba(255,255,255,0.04));border:1px solid var(--orbit-card-border,rgba(255,255,255,0.08));border-radius:var(--radius);overflow:hidden;}
+.crew-card-header{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;}
+/* colored crew avatars */
+.crew-emoji{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.crew-emoji.cleaner{background:radial-gradient(circle,#B8ECC8,#5CB88A);}
+.crew-emoji.poolman{background:radial-gradient(circle,#A0D4FF,#3090D8);}
+.crew-emoji.tukang{background:radial-gradient(circle,#FFCCA0,#D06830);}
+.crew-emoji.gardener{background:radial-gradient(circle,#C8E8A0,#60B030);}
+.crew-emoji.butler{background:radial-gradient(circle,#E8C880,#C09030);}
+.crew-emoji.nanny{background:radial-gradient(circle,#F0B8D8,#C060A0);}
+.crew-emoji.massage{background:radial-gradient(circle,#D8B8A0,#A07858);}
+.crew-emoji.laundry{background:radial-gradient(circle,#B8D0F8,#6080C8);}
+.crew-info{flex:1;}
+.crew-role{font-size:9px;color:var(--orbit-text-muted,rgba(255,255,255,0.3));letter-spacing:1.2px;text-transform:uppercase;font-family:'DM Mono',monospace;}
+.crew-name{font-size:14px;font-weight:800;color:var(--orbit-text,rgba(255,255,255,0.85));}
+.crew-when{font-size:10px;color:var(--orbit-text-muted,rgba(255,255,255,0.3));margin-top:2px;}
+.crew-chevron{font-size:14px;color:var(--orbit-text-muted,rgba(255,255,255,0.2));transition:transform .3s;}
+.crew-card.open .crew-chevron{transform:rotate(180deg);}
+.crew-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
+.crew-card.open .crew-body{max-height:300px;}
+.crew-inner{padding:0 16px 14px 68px;}
+.crew-bio{font-size:12px;color:var(--orbit-text-muted,rgba(255,255,255,0.4));line-height:1.7;margin-bottom:8px;}
+.crew-traits{display:flex;gap:6px;flex-wrap:wrap;}
+.crew-trait{font-size:10px;color:var(--orbit-text-muted,rgba(255,255,255,0.35));background:var(--orbit-card-bg,rgba(255,255,255,0.05));padding:4px 10px;border-radius:20px;border:1px solid var(--orbit-card-border,rgba(255,255,255,0.07));}
+
+/* ── TEAM TAB ── */
+.team-intro-card{margin:16px 20px 0;padding:18px;background:linear-gradient(135deg,var(--dark2),#1C2C1A);border-radius:var(--radius);border:1px solid rgba(255,255,255,0.06);}
+.tic-title{font-family:'Playfair Display',serif;font-size:20px;color:#fff;margin-bottom:6px;}
+.tic-title em{color:var(--gold-light);font-style:italic;}
+.tic-sub{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.65;}
+
+.team-full-cards{padding:12px 20px 0;display:flex;flex-direction:column;gap:12px;}
+.tfc{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.tfc-header{display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;}
+.tfc-avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;}
+.tfc-avatar.cleaner{background:radial-gradient(circle,#B8ECC8,#7ECBA8);}
+.tfc-avatar.poolman{background:radial-gradient(circle,#A0D4FF,#4099E0);}
+.tfc-avatar.tukang{background:radial-gradient(circle,#FFCCA0,#E07840);}
+.tfc-avatar.gardener{background:radial-gradient(circle,#C8E8A0,#78C040);}
+.tfc-avatar.butler{background:radial-gradient(circle,#E8C880,#C8A440);}
+.tfc-sdot{position:absolute;bottom:2px;right:2px;width:13px;height:13px;border-radius:50%;border:2.5px solid #fff;}
+.tfc-sdot.today{background:var(--green);}
+.tfc-sdot.standby{background:var(--orange);}
+.tfc-info{flex:1;}
+.tfc-role{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:2px;}
+.tfc-name{font-size:16px;font-weight:800;color:var(--dark);}
+.tfc-origin{font-size:11px;color:var(--muted2);margin-top:3px;font-style:italic;}
+.tfc-chevron{font-size:16px;color:var(--muted2);transition:transform .3s;}
+.tfc.open .tfc-chevron{transform:rotate(180deg);}
+.tfc-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
+.tfc.open .tfc-body{max-height:400px;}
+.tfc-inner{padding:0 18px 18px;}
+.tfc-div{height:1px;background:var(--border2);margin-bottom:14px;}
+.tfc-bio{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:12px;}
+.tfc-traits{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.tfc-trait{background:var(--bg2);color:var(--dark2);font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;}
+.tfc-sched{background:var(--bg2);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.tfc-sched-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.tfc-sched-dot.today{background:var(--green);}
+.tfc-sched-dot.standby{background:var(--orange);}
+
+/* TIP */
+.tip-block{margin:16px 20px 0;background:linear-gradient(135deg,#FDF6E8,#F9EFD4);border:1px solid rgba(201,168,76,0.22);border-radius:var(--radius);padding:18px;position:relative;overflow:hidden;}
+.tip-bg{position:absolute;right:-5px;bottom:-10px;font-size:60px;opacity:0.07;}
+.tip-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--dark2);margin-bottom:6px;}
+.tip-sub{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:14px;}
+.tip-amounts{display:flex;gap:8px;}
+.tip-amt{flex:1;text-align:center;background:rgba(201,168,76,0.1);border:2px solid rgba(201,168,76,0.2);border-radius:10px;padding:10px 6px;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif;}
+.tip-amt.sel{background:var(--gold);border-color:var(--gold);box-shadow:0 4px 12px rgba(201,168,76,0.3);}
+.tip-amt.sel .ta-v{color:#fff;}
+.tip-amt.sel .ta-l{color:rgba(255,255,255,0.7);}
+.ta-v{font-family:'DM Mono',monospace;font-size:16px;font-weight:700;color:var(--gold-dark);}
+.ta-l{font-size:9px;color:var(--muted2);margin-top:3px;}
+.tip-note{margin-top:10px;font-size:10px;color:var(--muted2);font-style:italic;line-height:1.6;}
+
+/* ── EXPLORE TAB ── */
+.explore-intro{margin:16px 20px 0;background:linear-gradient(135deg,var(--dark2),#1C2C1A);border-radius:var(--radius);padding:18px;border:1px solid rgba(255,255,255,0.06);}
+.ei-title{font-family:'Playfair Display',serif;font-size:20px;color:#fff;margin-bottom:6px;}
+.ei-title em{color:var(--gold-light);font-style:italic;}
+.ei-sub{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.65;}
+
+.explore-grid{padding:14px 20px 0;display:flex;flex-direction:column;gap:10px;}
+.ex-cat{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.ex-cat-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;}
+.ex-cat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ex-cat-icon.services{background:#EEF5FF;}
+.ex-cat-icon.food{background:#FFF5EE;}
+.ex-cat-icon.beaches{background:#E8F8FF;}
+.ex-cat-icon.market{background:#F0FFF0;}
+.ex-cat-icon.health{background:#FFF0F0;}
+.ex-cat-icon.nightlife{background:#F8F0FF;}
+.ex-cat-icon.visa{background:#FFF8E8;}
+.ex-cat-icon.transport{background:#F0F0FF;}
+.ex-cat-title{font-size:14px;font-weight:800;color:var(--dark);}
+.ex-cat-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.ex-cat-chevron{margin-left:auto;font-size:14px;color:var(--muted2);transition:transform .3s;}
+.ex-cat.open .ex-cat-chevron{transform:rotate(180deg);}
+.ex-cat-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1);}
+.ex-cat.open .ex-cat-body{max-height:800px;}
+.ex-cat-inner{padding:0 18px 16px;}
+.ex-div{height:1px;background:var(--border2);margin-bottom:14px;}
+.ex-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border2);}
+.ex-item:last-child{border-bottom:none;}
+.ex-item-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.ex-item-info{flex:1;}
+.ex-item-name{font-size:13px;font-weight:800;color:var(--dark);}
+.ex-item-desc{font-size:11px;color:var(--muted2);margin-top:3px;line-height:1.55;}
+.ex-item-action{display:flex;gap:6px;margin-top:6px;}
+.ex-btn{font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .2s;}
+.ex-btn.maps{background:var(--blue-soft);color:var(--blue);}
+.ex-btn.link{background:var(--bg2);color:var(--muted);}
+.ex-btn.sofia{background:var(--green-soft);color:var(--green-dark);}
+.ex-btn.call{background:var(--orange-soft);color:var(--orange);}
+.ex-item-tag{font-size:9px;padding:2px 8px;border-radius:12px;font-weight:700;display:inline-block;margin-top:4px;}
+.tag-free{background:var(--green-soft);color:var(--green-dark);}
+.tag-near{background:var(--blue-soft);color:var(--blue);}
+.tag-best{background:rgba(201,168,76,0.15);color:var(--gold-dark);}
+.tag-urgent{background:var(--red-soft);color:var(--red);}
+
+/* VISA BLOCK */
+.visa-info{background:var(--bg2);border-radius:10px;padding:12px 14px;margin-bottom:10px;}
+.visa-info-title{font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.visa-info-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);padding:4px 0;}
+.visa-info-key{font-weight:700;color:var(--dark2);min-width:80px;}
+
+/* ── REPORT TAB ── */
+.report-intro{margin:16px 20px 0;background:linear-gradient(135deg,var(--dark2),#1C2C1A);border-radius:var(--radius);padding:18px;border:1px solid rgba(255,255,255,0.06);}
+.ri-title{font-size:14px;font-weight:800;color:#fff;margin-bottom:5px;}
+.ri-sub{font-size:12px;color:rgba(255,255,255,0.4);line-height:1.65;}
+
+.report-cats{padding:14px 20px 0;display:flex;flex-direction:column;gap:10px;}
+.rcat{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:2px solid transparent;transition:border-color .25s;}
+.rcat.sel-green{border-color:var(--green);}
+.rcat.sel-orange{border-color:var(--orange);}
+.rcat.sel-red{border-color:var(--red);}
+.rcat-header{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;}
+.rcat-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.rcat-icon.green{background:var(--green-soft);}
+.rcat-icon.orange{background:var(--orange-soft);}
+.rcat-icon.red{background:var(--red-soft);}
+.rcat-info{flex:1;}
+.rcat-name{font-size:14px;font-weight:800;color:var(--dark);}
+.rcat-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.rcat-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--bg3);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .25s;}
+.rcat.sel-green .rcat-check,.rcat.sel-orange .rcat-check,.rcat.sel-red .rcat-check{color:#fff;}
+.rcat.sel-green .rcat-check{background:var(--green);border-color:var(--green);}
+.rcat.sel-orange .rcat-check{background:var(--orange);border-color:var(--orange);}
+.rcat.sel-red .rcat-check{background:var(--red);border-color:var(--red);}
+.rcat-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1);}
+.rcat.open .rcat-body{max-height:600px;}
+.rcat-inner{padding:0 18px 18px;}
+.rcat-div{height:1px;background:var(--border2);margin-bottom:12px;}
+
+.urgency-row{display:flex;gap:7px;margin-bottom:12px;}
+.urg-btn{flex:1;padding:9px 4px;border-radius:10px;border:1.5px solid transparent;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;cursor:pointer;background:var(--bg2);color:var(--muted);transition:all .2s;}
+.urg-btn.on-low{background:var(--green-soft);color:var(--green-dark);border-color:var(--green-mid);}
+.urg-btn.on-med{background:var(--orange-soft);color:var(--orange);border-color:rgba(230,126,34,0.3);}
+.urg-btn.on-high{background:var(--red-soft);color:var(--red);border-color:rgba(192,57,43,0.3);}
+.report-field{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--dark);background:var(--bg);resize:none;outline:none;min-height:80px;transition:border-color .2s;}
+.report-field:focus{border-color:var(--gold);}
+.photo-upload-row{margin-top:10px;}
+.pul{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1.5px dashed var(--bg3);border-radius:10px;padding:11px 14px;cursor:pointer;font-size:12px;font-weight:700;color:var(--muted);}
+.pul input{display:none;}
+.photos-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.pm{position:relative;width:70px;height:70px;border-radius:10px;overflow:hidden;}
+.pm img{width:100%;height:100%;object-fit:cover;}
+.pm-rm{position:absolute;top:3px;right:3px;background:rgba(0,0,0,0.55);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+.all-good-btn{margin:14px 20px 0;width:calc(100% - 40px);padding:17px;background:linear-gradient(135deg,var(--green-soft),#D0EDD8);border:2px solid var(--green-mid);border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--green-dark);cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.all-good-btn.on{background:linear-gradient(135deg,var(--green-dark),var(--green));color:#fff;border-color:var(--green-dark);box-shadow:0 8px 24px rgba(39,174,96,0.28);}
+.send-btn{margin:14px 20px 0;width:calc(100% - 40px);padding:16px;background:linear-gradient(135deg,var(--orange),#D35400);border:none;border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(230,126,34,0.28);display:flex;align-items:center;justify-content:center;gap:8px;}
+.confirm-card{margin:16px 20px 0;background:linear-gradient(135deg,#0D1F0D,#152A12);border-radius:var(--radius);padding:22px;border:1px solid rgba(39,174,96,0.3);display:none;}
+.confirm-card.show{display:block;animation:fadeIn .4s ease;}
+.cc-icon{font-size:40px;text-align:center;margin-bottom:10px;}
+.cc-title{font-family:'Playfair Display',serif;font-size:20px;color:#fff;text-align:center;margin-bottom:7px;}
+.cc-sub{font-size:12px;color:rgba(255,255,255,0.45);text-align:center;line-height:1.7;margin-bottom:14px;}
+.cc-eta-box{background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.2);border-radius:10px;padding:14px;text-align:center;}
+.cc-eta-lbl{font-size:9px;color:var(--green-mid);letter-spacing:1.5px;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:5px;}
+.cc-eta-val{font-family:'DM Mono',monospace;font-size:22px;color:var(--green);}
+.emergency-btn{margin:12px 20px 0;width:calc(100% - 40px);padding:13px;background:transparent;border:2px solid var(--red);border-radius:var(--radius);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--red);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
+
+/* FI reveal */
+.fi{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease;}
+.fi.v{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+
+<!-- LOGO UPLOAD BANNER (manager setup — remove in production) -->
+<div class="logo-banner" id="logo-banner" onclick="document.getElementById('logo-file-input').click()">
+  <div class="lb-icon">🎨</div>
+  <div class="lb-txt"><strong>Agency / Villa branding</strong>Upload your logo — colors adapt automatically</div>
+  <div class="logo-circle" id="logo-circle"><img id="logo-circle-img" alt="logo"></div>
+  <div class="lb-btn" id="lb-btn-txt">Upload logo</div>
+  <input type="file" id="logo-file-input" accept="image/*" onchange="handleLogo(this)">
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-left">
+    <img id="tb-logo-img" alt="logo">
+    <div class="tb-logo" id="tb-logo-txt">BALIAGENCIA</div>
+  </div>
+  <div class="tb-lang" id="lang-btn" onclick="cycleLang()">🌐 EN</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-leaf">🌴</div>
+  <div class="hero-leaf2">🌺</div>
+  <div class="hero-rating">✦ ✦ ✦ ✦ ✦ &nbsp;LUXURY VILLA STAYS · BALI</div>
+  <div class="hero-welcome">Welcome to paradise,<br><em>Emma & James.</em></div>
+  <div class="hero-sub">Your home in Bali is ready. Everything has been prepared with care — just for you.</div>
+  <div class="villa-card">
+    <div class="vc-top">
+      <div class="vc-icon">🌺</div>
+      <div>
+        <div class="vc-name">Villa Surya</div>
+        <div class="vc-zone">7 BEDROOMS · SEMINYAK · BALI</div>
+      </div>
+    </div>
+    <div class="vc-dates">
+      <div class="vc-date">
+        <div class="vc-date-lbl">Check-in</div>
+        <div class="vc-date-val">Apr 3</div>
+        <div class="vc-date-sub">Thursday · from 2:00 PM</div>
+      </div>
+      <div class="vc-date">
+        <div class="vc-date-lbl">Check-out</div>
+        <div class="vc-date-val">Apr 10</div>
+        <div class="vc-date-sub">Thursday · by 11:00 AM</div>
+      </div>
+    </div>
+    <div class="vc-nights">
+      <div class="vc-nights-lbl">Duration of stay</div>
+      <div class="vc-nights-num">7 nights</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <div class="nav-pills">
+    <button class="pill active" onclick="showSection('stay',this)">🏡 Stay</button>
+    <button class="pill" onclick="showSection('team',this)">👥 Team</button>
+    <button class="pill" onclick="showSection('explore',this)">🎯 Explore</button>
+    <button class="pill" onclick="showSection('report',this)">🔧 Help</button>
+  </div>
+</div>
+
+<!-- ══════════ STAY ══════════ -->
+<div class="section active" id="sec-stay">
+
+  <!-- ARRIVAL TIME -->
+  <div class="arrival-block fi mt16" style="margin:16px 20px 0;">
+    <div class="ab-lbl">Before your arrival</div>
+    <div class="ab-title">What time do you plan to arrive? 🕐</div>
+    <div class="ab-slots" id="arrival-slots">
+      <div class="ab-slot disabled">Before 2pm</div>
+      <div class="ab-slot" onclick="selectArrival(this,'2pm')">2:00 PM</div>
+      <div class="ab-slot" onclick="selectArrival(this,'3pm')">3:00 PM</div>
+      <div class="ab-slot" onclick="selectArrival(this,'4pm')">4:00 PM</div>
+      <div class="ab-slot" onclick="selectArrival(this,'5pm')">5:00 PM</div>
+      <div class="ab-slot" onclick="selectArrival(this,'late')">After 5pm</div>
+    </div>
+    <div class="ab-note" id="arrival-note">Check-in is from 2:00 PM. <strong>After 5pm:</strong> Wayan may not be available — Sofia will arrange someone else. Please let us know.</div>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="countdown-block fi" style="transition-delay:.04s">
+    <div class="cd-bg">⏳</div>
+    <div class="cd-lbl">Time until your arrival</div>
+    <div class="cd-nums">
+      <div class="cn"><div class="cn-n" id="cd-days">02</div><div class="cn-l">days</div></div>
+      <div class="cn-sep">:</div>
+      <div class="cn"><div class="cn-n" id="cd-hours">14</div><div class="cn-l">hours</div></div>
+      <div class="cn-sep">:</div>
+      <div class="cn"><div class="cn-n" id="cd-mins">37</div><div class="cn-l">mins</div></div>
+      <div class="cn-sep">:</div>
+      <div class="cn"><div class="cn-n" id="cd-secs">22</div><div class="cn-l">secs</div></div>
+    </div>
+    <div class="cd-sub">Villa Surya is being prepared right now. Your team will welcome you from Thursday at 2:00 PM.</div>
+    <div class="cd-location" onclick="openMaps()">
+      <div class="cd-location-pin">📍</div>
+      <div>
+        <div class="cd-location-txt">Villa Surya · Seminyak</div>
+        <div class="cd-location-sub">Jl. Umalas I No.55, Kerobokan Kelod</div>
+      </div>
+      <div class="cd-location-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- VILLA PHOTO -->
+  <div class="villa-photo fi" style="transition-delay:.06s;margin:16px 20px 0;">
+    <div class="vp-placeholder">
+      <div class="vp-placeholder-emoji">🏡</div>
+      <div class="vp-placeholder-txt">Villa exterior photo</div>
+    </div>
+    <div class="vp-label">
+      <div class="vp-name">Villa Surya</div>
+      <div class="vp-addr">Jl. Umalas I No.55, Seminyak · Look for the black wooden gate</div>
+    </div>
+    <div class="vp-maps" onclick="openMaps()">📍 Maps</div>
+  </div>
+
+  <!-- SOFIA CHAT -->
+  <div class="sofia-bar fi" style="transition-delay:.07s;margin:16px 20px 0;">
+    <div class="sb-top">
+      <div class="sb-avatar">✨<div class="sb-dot"></div></div>
+      <div class="sb-info">
+        <div class="sb-name">Sofia · Your personal assistant</div>
+        <div class="sb-status">● Online now · responds in seconds</div>
+      </div>
+    </div>
+    <!-- CHAT THREAD -->
+    <div class="chat-thread" id="chat-thread">
+      <div class="chat-msg sofia">
+        <div class="chat-bubble">Hi Emma & James! 🌺 I'm Sofia, your personal assistant for this stay. I never sleep and I'm always here. Need airport transfer, early check-in, restaurant reservations? Just ask!</div>
+        <div class="chat-time" id="sofia-init-time">Just now</div>
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chat-input" type="text" placeholder="Message Sofia…" onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+    <div class="chat-wa" onclick="openWhatsApp()">
+      <span>💬</span> Also reachable on WhatsApp
+    </div>
+  </div>
+
+  <!-- CHECK-IN INSTRUCTIONS -->
+  <div class="checkin-block fi" style="transition-delay:.09s;margin:16px 20px 0;">
+    <div class="cb-head">
+      <div class="cb-head-icon">🗝️</div>
+      <div>
+        <div class="cb-head-title">Check-in instructions</div>
+        <div class="cb-head-sub">Everything you need for a smooth arrival</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Gate code -->
+    <div class="ci-step" onclick="toggleStep(this)">
+      <div class="ci-step-header">
+        <div class="ci-num">01</div>
+        <div class="ci-step-info">
+          <div class="ci-step-title">Main gate code</div>
+          <div class="ci-step-sub">Enter this on the keypad at the black gate</div>
+          <div class="ci-code">4728</div>
+        </div>
+        <div class="ci-step-chevron">⌄</div>
+      </div>
+      <div class="ci-step-body">
+        <div class="ci-step-inner">
+          <div class="photo-strip">
+            <div class="photo-thumb"><div class="photo-thumb-placeholder">🚪</div><div class="photo-thumb-lbl">The gate</div></div>
+            <div class="photo-thumb"><div class="photo-thumb-placeholder">🔢</div><div class="photo-thumb-lbl">Keypad location</div></div>
+            <div class="photo-thumb video-thumb"><div class="video-play">▶</div><div class="photo-thumb-lbl">Video guide</div></div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.65;">The keypad is on the right side of the gate. Enter the 4-digit code and press ✓. The gate opens inward. If it doesn't respond, press the intercom — Wayan will open it remotely.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Key lockbox -->
+    <div class="ci-step" onclick="toggleStep(this)">
+      <div class="ci-step-header">
+        <div class="ci-num">02</div>
+        <div class="ci-step-info">
+          <div class="ci-step-title">Key lockbox code</div>
+          <div class="ci-step-sub">The lockbox is mounted on the left pillar inside the gate</div>
+          <div class="ci-code">8814</div>
+        </div>
+        <div class="ci-step-chevron">⌄</div>
+      </div>
+      <div class="ci-step-body">
+        <div class="ci-step-inner">
+          <div class="photo-strip">
+            <div class="photo-thumb"><div class="photo-thumb-placeholder">📦</div><div class="photo-thumb-lbl">Lockbox location</div></div>
+            <div class="photo-thumb"><div class="photo-thumb-placeholder">👆</div><div class="photo-thumb-lbl">Enter the code</div></div>
+            <div class="photo-thumb"><div class="photo-thumb-placeholder">✅</div><div class="photo-thumb-lbl">Box open</div></div>
+            <div class="photo-thumb video-thumb"><div class="video-play">▶</div><div class="photo-thumb-lbl">Video guide</div></div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:10px;line-height:1.65;">Pull down the shutter, enter 8814 and press the button. The box swings open. Take all 3 keys — one master key, one pool gate key, and one spare. Please return all keys on checkout.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Wayan -->
+    <div class="ci-step" onclick="toggleStep(this)">
+      <div class="ci-step-header">
+        <div class="ci-num">03</div>
+        <div class="ci-step-info">
+          <div class="ci-step-title">Wayan will meet you</div>
+          <div class="ci-step-sub">He's been notified of your arrival time by Sofia</div>
+        </div>
+        <div class="ci-step-chevron">⌄</div>
+      </div>
+      <div class="ci-step-body">
+        <div class="ci-step-inner">
+          <p style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:8px;">Wayan is available to greet you on arrival if you arrive before 5pm. He'll give you a quick tour and answer any questions about the villa. After 5pm, Sofia will make sure someone is available for you — just send her a message.</p>
+          <div style="background:var(--bg2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;">
+            <span>📞</span>
+            <span>Wayan · <strong style="color:var(--dark);">+62 812 3456 789</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Welcome -->
+    <div class="ci-step" onclick="toggleStep(this)">
+      <div class="ci-step-header">
+        <div class="ci-num">04</div>
+        <div class="ci-step-info">
+          <div class="ci-step-title">Welcome drink is waiting 🥥</div>
+          <div class="ci-step-sub">Cold coconuts & Bintang in the main fridge</div>
+        </div>
+        <div class="ci-step-chevron">⌄</div>
+      </div>
+      <div class="ci-step-body">
+        <div class="ci-step-inner">
+          <p style="font-size:12px;color:var(--muted);line-height:1.65;">Your welcome drinks are in the kitchen fridge — the big stainless one on the right. Fresh young coconuts, chilled Bintang, and a fruit platter. Help yourselves, it's all for you. 🌺</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VILLA ESSENTIALS -->
+  <div class="essentials-block fi" style="transition-delay:.1s;margin:16px 20px 0;">
+    <div class="eb-head">
+      <div class="eb-head-icon" style="font-size:20px;">🏡</div>
+      <div>
+        <div class="eb-head-title">Villa essentials</div>
+        <div class="eb-head-sub">Tap any row for details</div>
+      </div>
+    </div>
+
+    <!-- WiFi: always visible -->
+    <div class="ess-row" style="cursor:default;pointer-events:none;">
+      <div class="ess-icon">📶</div>
+      <div class="ess-info">
+        <div class="ess-label" style="color:#3498DB;">WiFi network</div>
+        <div class="ess-val">VillaSurya_5G</div>
+        <div style="background:var(--bg2);border-radius:10px;padding:10px 14px;margin-top:8px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;font-family:'DM Mono',monospace;">Password</div>
+          <div style="font-family:'DM Mono',monospace;font-size:24px;font-weight:800;color:var(--dark);letter-spacing:3px;">tropical2024</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:5px;">Also: <strong>SuryaGuest</strong> · same password</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Safe -->
+    <div class="ess-row" onclick="toggleEss(this)">
+      <div class="ess-icon">🔐</div>
+      <div class="ess-info">
+        <div class="ess-label" style="color:#E67E22;font-size:13px;font-weight:800;text-transform:none;letter-spacing:0;">In-room safe</div>
+        <div class="ess-val-sm">In each bedroom wardrobe</div>
+        <div class="ess-note">Tap for instructions & photos</div>
+      </div>
+      <div class="ess-chevron">⌄</div>
+    </div>
+    <div class="ess-detail"><div style="padding:4px 18px 14px 52px;">
+      <div style="background:var(--bg2);border-radius:10px;padding:12px 14px;margin-bottom:8px;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:700;">How to set your own code</div>
+        <div style="font-size:13px;font-weight:700;color:var(--dark);line-height:1.8;">Press <strong>0</strong> → Enter 4-digit code → Press <strong>#</strong> → Close door.<br>To open: your code + <strong>#</strong>.</div>
+      </div>
+      <div class="photo-strip">
+        <div class="photo-thumb"><div class="photo-thumb-placeholder">🗄️</div><div class="photo-thumb-lbl">Safe location</div></div>
+        <div class="photo-thumb"><div class="photo-thumb-placeholder">🔢</div><div class="photo-thumb-lbl">Keypad close-up</div></div>
+      </div>
+    </div></div>
+
+    <!-- Cleaner schedule -->
+    <div class="ess-row" onclick="toggleEss(this)">
+      <div class="ess-icon">🧹</div>
+      <div class="ess-info">
+        <div class="ess-label" style="color:#27AE60;font-size:13px;font-weight:800;text-transform:none;letter-spacing:0;">Daily cleaning · Putu</div>
+        <div class="ess-val-sm">Every day at 10:00 AM</div>
+        <div class="ess-note">Tap to adjust schedule or add extra cleaning</div>
+      </div>
+      <div class="ess-chevron">⌄</div>
+    </div>
+    <div class="ess-detail"><div style="padding:4px 18px 16px 52px;">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.65;">Putu cleans every morning. Let us know if you prefer a different time, want to skip a day, or need an extra cleaning.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button onclick="chatSofia('We\'d like to change the cleaning time')" style="background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--dark);cursor:pointer;text-align:left;">🕐 Change cleaning time</button>
+        <button onclick="chatSofia('Please skip cleaning tomorrow')" style="background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--dark);cursor:pointer;text-align:left;">🚫 Skip cleaning tomorrow</button>
+        <button onclick="chatSofia('We\'d like an extra cleaning session')" style="background:var(--green-soft);border:1.5px solid var(--green-mid);border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--green-dark);cursor:pointer;text-align:left;">✨ Request extra cleaning (charged)</button>
+      </div>
+    </div></div>
+
+    <!-- Swimming pool -->
+    <div class="ess-row" onclick="toggleEss(this)">
+      <div class="ess-icon">🏊</div>
+      <div class="ess-info">
+        <div class="ess-label" style="color:#3498DB;font-size:13px;font-weight:800;text-transform:none;letter-spacing:0;">Swimming pool</div>
+        <div class="ess-val-sm">Cleaned daily · 7:30 AM</div>
+        <div class="ess-note">29°C heated · Tap for lights & controls</div>
+      </div>
+      <div class="ess-chevron">⌄</div>
+    </div>
+    <div class="ess-detail"><div style="padding:4px 18px 14px 52px;font-size:12px;color:var(--muted);line-height:1.7;">
+      Pool lights switch: right side of the outdoor kitchen column — white panel, bottom switch. Towels refreshed every morning. Please no glass near the pool edge.
+    </div></div>
+
+    <!-- Garden -->
+    <div class="ess-row" onclick="toggleEss(this)">
+      <div class="ess-icon">🌿</div>
+      <div class="ess-info">
+        <div class="ess-label" style="color:#27AE60;font-size:13px;font-weight:800;text-transform:none;letter-spacing:0;">Garden & outdoor lighting</div>
+        <div class="ess-val-sm">Automatic from 6:30 PM</div>
+        <div class="ess-note">Tap for manual switch location</div>
+      </div>
+      <div class="ess-chevron">⌄</div>
+    </div>
+    <div class="ess-detail"><div style="padding:4px 18px 14px 52px;font-size:12px;color:var(--muted);line-height:1.7;">
+      Manual override: entrance corridor, 2nd switch from left. Timer: 6:30–11:30 PM. Different schedule? Ask Sofia.
+    </div></div>
+
+    <!-- AC — last -->
+    <div class="ess-row" onclick="toggleEss(this)">
+      <div class="ess-icon">❄️</div>
+      <div class="ess-info">
+        <div class="ess-label" style="color:#5DADE2;font-size:13px;font-weight:800;text-transform:none;letter-spacing:0;">Air conditioning</div>
+        <div class="ess-val-sm">Every bedroom · remote in drawer</div>
+        <div class="ess-note">Tap for usage tips</div>
+      </div>
+      <div class="ess-chevron">⌄</div>
+    </div>
+    <div class="ess-detail"><div style="padding:4px 18px 14px 52px;font-size:12px;color:var(--muted);line-height:1.7;">
+      Set between 22–25°C. Press <strong>MODE</strong> until ❄️ appears for cooling. Remote is in the bedside drawer. If a unit doesn't respond, message Sofia.
+    </div></div>
+
+  </div>
+
+  <!-- STAFF STRIP -->
+  <div class="staff-strip-wrap fi" style="transition-delay:.12s;">
+    <div class="strip-head">
+      <div>
+        <div class="strip-title">Your team today</div>
+        <div class="strip-sub">Tap a face to learn more</div>
+      </div>
+      <button class="strip-cta" onclick="showSection('team',document.querySelectorAll('.pill')[1])">Meet everyone →</button>
+    </div>
+    <div class="staff-strip">
+      <div class="staff-chip" onclick="openStaffModal('putu')">
+        <div class="staff-chip-avatar cleaner">🧹<div class="staff-status today"></div></div>
+        <div class="staff-chip-name">Putu</div>
+        <div class="staff-chip-role">Cleaner</div>
+      </div>
+      <div class="staff-chip" onclick="openStaffModal('kadek')">
+        <div class="staff-chip-avatar poolman">🌊<div class="staff-status today"></div></div>
+        <div class="staff-chip-name">Kadek</div>
+        <div class="staff-chip-role">Pool</div>
+      </div>
+      <div class="staff-chip" onclick="openStaffModal('wayan')">
+        <div class="staff-chip-avatar tukang">🔧<div class="staff-status standby"></div></div>
+        <div class="staff-chip-name">Wayan</div>
+        <div class="staff-chip-role">Tukang</div>
+      </div>
+      <div class="staff-chip" onclick="openStaffModal('made')">
+        <div class="staff-chip-avatar gardener">🌿<div class="staff-status today"></div></div>
+        <div class="staff-chip-name">Made</div>
+        <div class="staff-chip-role">Garden</div>
+      </div>
+      <div class="staff-chip" onclick="openStaffModal('nyoman')">
+        <div class="staff-chip-avatar butler">🛎️<div class="staff-status standby"></div></div>
+        <div class="staff-chip-name">Nyoman</div>
+        <div class="staff-chip-role">Butler</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORBITAL CLOCK -->
+  <div class="clock-section fi" style="transition-delay:.14s;">
+    <div class="clock-lbl">Your team — always orbiting around you</div>
+    <div class="clock-wrap">
+      <canvas id="orbitCanvas"></canvas>
+      <div class="clock-center">
+        <div class="clock-center-emoji">🌟</div>
+        <div class="clock-center-lbl">Emma &amp; James</div>
+      </div>
+    </div>
+    <div class="clock-tagline">"<strong>You are the sun.</strong><br>We revolve around your happiness."</div>
+  </div>
+
+  <!-- CREW CARDS under clock -->
+  <div class="orbit-crew">
+    <div class="crew-card" onclick="this.classList.toggle('open')">
+      <div class="crew-card-header">
+        <div class="crew-emoji cleaner">🧹</div>
+        <div class="crew-info"><div class="crew-role">Cleaner · Today</div><div class="crew-name">Putu Ayu</div><div class="crew-when">10:00 AM – 1:00 PM</div></div>
+        <div class="crew-chevron">⌄</div>
+      </div>
+      <div class="crew-body"><div class="crew-inner">
+        <div class="crew-bio">Putu has been caring for Villa Surya for 3 years. She knows every corner and takes pride in leaving it perfect each morning.</div>
+        <div class="crew-traits"><span class="crew-trait">🌸 Gentle</span><span class="crew-trait">✨ Detail-oriented</span><span class="crew-trait">☕ Early bird</span></div>
+      </div></div>
+    </div>
+    <div class="crew-card" onclick="this.classList.toggle('open')">
+      <div class="crew-card-header">
+        <div class="crew-emoji poolman">🌊</div>
+        <div class="crew-info"><div class="crew-role">Pool man · Daily</div><div class="crew-name">Kadek Surya</div><div class="crew-when">7:30 AM – done</div></div>
+        <div class="crew-chevron">⌄</div>
+      </div>
+      <div class="crew-body"><div class="crew-inner">
+        <div class="crew-bio">Kadek arrives before anyone wakes up. He checks the pH, skims the surface, and makes sure your pool is perfect every single day.</div>
+        <div class="crew-traits"><span class="crew-trait">🌊 Meticulous</span><span class="crew-trait">🌅 Before sunrise</span><span class="crew-trait">😌 Calm</span></div>
+      </div></div>
+    </div>
+    <div class="crew-card" onclick="this.classList.toggle('open')">
+      <div class="crew-card-header">
+        <div class="crew-emoji tukang">🔧</div>
+        <div class="crew-info"><div class="crew-role">Tukang · On call</div><div class="crew-name">Wayan Darta</div><div class="crew-when">Available via Sofia</div></div>
+        <div class="crew-chevron">⌄</div>
+      </div>
+      <div class="crew-body"><div class="crew-inner">
+        <div class="crew-bio">Wayan can fix anything. Electricity, plumbing, a broken latch. He arrives within the hour, always leaves things better than found.</div>
+        <div class="crew-traits"><span class="crew-trait">🔧 Resourceful</span><span class="crew-trait">⚡ Quick</span><span class="crew-trait">🙏 Reliable</span></div>
+      </div></div>
+    </div>
+    <div class="crew-card" onclick="this.classList.toggle('open')">
+      <div class="crew-card-header">
+        <div class="crew-emoji gardener">🌿</div>
+        <div class="crew-info"><div class="crew-role">Gardener · 3× week</div><div class="crew-name">Made Sari</div><div class="crew-when">Mon · Wed · Fri · 7am</div></div>
+        <div class="crew-chevron">⌄</div>
+      </div>
+      <div class="crew-body"><div class="crew-inner">
+        <div class="crew-bio">Made has grown Balinese gardens her whole life. The frangipani, the heliconias — everything you see passed through her hands.</div>
+        <div class="crew-traits"><span class="crew-trait">🌺 Artistic</span><span class="crew-trait">🌿 Wise</span><span class="crew-trait">🌙 Patient</span></div>
+      </div></div>
+    </div>
+    <div class="crew-card" onclick="this.classList.toggle('open')">
+      <div class="crew-card-header">
+        <div class="crew-emoji butler">🛎️</div>
+        <div class="crew-info"><div class="crew-role">Butler · On request</div><div class="crew-name">Nyoman Aditya</div><div class="crew-when">Ask Sofia to reach him</div></div>
+        <div class="crew-chevron">⌄</div>
+      </div>
+      <div class="crew-body"><div class="crew-inner">
+        <div class="crew-bio">Nyoman knows everyone in Seminyak. Private dinners, hidden restaurants, sunset boats, temple ceremonies — he makes the impossible easy.</div>
+        <div class="crew-traits"><span class="crew-trait">🎩 Discreet</span><span class="crew-trait">🍽️ Foodie</span><span class="crew-trait">🗺️ Local expert</span></div>
+      </div></div>
+    </div>
+    <div class="crew-card" onclick="this.classList.toggle('open')">
+      <div class="crew-card-header">
+        <div class="crew-emoji nanny">👶</div>
+        <div class="crew-info"><div class="crew-role">Nanny · On request</div><div class="crew-name">Komang Dewi</div><div class="crew-when">24h notice preferred</div></div>
+        <div class="crew-chevron">⌄</div>
+      </div>
+      <div class="crew-body"><div class="crew-inner">
+        <div class="crew-bio">Gentle, experienced, loved by kids. Available days and evenings. Ask Sofia to arrange.</div>
+        <div class="crew-traits"><span class="crew-trait">👶 Caring</span><span class="crew-trait">🎈 Fun</span><span class="crew-trait">🌸 Patient</span></div>
+      </div></div>
+    </div>
+    <div class="crew-card" onclick="this.classList.toggle('open')">
+      <div class="crew-card-header">
+        <div class="crew-emoji massage">💆</div>
+        <div class="crew-info"><div class="crew-role">Massage · On request</div><div class="crew-name">Balinese therapist</div><div class="crew-when">In-villa · 60 or 90 min</div></div>
+        <div class="crew-chevron">⌄</div>
+      </div>
+      <div class="crew-body"><div class="crew-inner">
+        <div class="crew-bio">Full body traditional Balinese massage at the villa. Solo or couples. Book via Sofia 2h ahead.</div>
+        <div class="crew-traits"><span class="crew-trait">💆 Traditional</span><span class="crew-trait">🌺 Relaxing</span></div>
+      </div></div>
+    </div>
+    <div class="crew-card" onclick="this.classList.toggle('open')">
+      <div class="crew-card-header">
+        <div class="crew-emoji laundry">👗</div>
+        <div class="crew-info"><div class="crew-role">Laundry · Daily</div><div class="crew-name">Same-day service</div><div class="crew-when">Leave bag before 9am</div></div>
+        <div class="crew-chevron">⌄</div>
+      </div>
+      <div class="crew-body"><div class="crew-inner">
+        <div class="crew-bio">Leave your laundry bag on the door handle before 9am — washed, folded, back by evening.</div>
+        <div class="crew-traits"><span class="crew-trait">✨ Fresh</span><span class="crew-trait">⚡ Same day</span></div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- FOOTER WARM MESSAGE -->
+  <div style="background:linear-gradient(135deg,var(--dark2),var(--dark3));margin:24px 20px 0;border-radius:var(--radius);padding:24px;text-align:center;border:1px solid rgba(201,168,76,0.15);">
+    <div style="display:flex;justify-content:center;margin-bottom:14px;"><div style="width:80px;height:80px;border-radius:50%;overflow:hidden;border:3px solid rgba(201,168,76,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;background:#fff;" id="footer-logo-circle"><img id="footer-logo-img" src="" alt="" style="width:80px;height:80px;object-fit:cover;display:none;"><span id="footer-logo-fallback" style="font-size:32px;">🌴</span></div></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:#fff;margin-bottom:8px;">Your stay is our <em style="color:var(--gold-light);font-style:italic;">everything</em></div>
+    <div style="font-size:12px;color:rgba(255,255,255,0.4);line-height:1.8;margin-bottom:16px;">You sacrificed all year for this. These few days in Bali are yours completely. Our team is here to make every moment feel effortless and magical. You deserve every second of it.</div>
+    <div style="display:flex;align-items:flex-start;gap:12px;background:rgba(39,174,96,0.08);border:1px solid rgba(39,174,96,0.18);border-radius:12px;padding:12px 14px;margin-bottom:10px;text-align:left;">
+      <div style="width:36px;height:36px;border-radius:50%;background:radial-gradient(circle,#7ECAA8,#2D8C5C);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">✨</div>
+      <div><div style="font-size:10px;font-weight:800;color:var(--green-mid);margin-bottom:3px;">Sofia · Always here</div><div style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.55;" id="fw-sofia-msg">Need anything — any hour, any question. I'm one message away. 🙏</div></div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:22px;padding:10px 16px;font-family:'Nunito',sans-serif;font-size:13px;color:#fff;outline:none;" type="text" placeholder="Message Sofia…" id="fw-input" onkeydown="if(event.key==='Enter')sendFooterChat()">
+      <button style="width:40px;height:40px;background:var(--green);border:none;border-radius:50%;cursor:pointer;font-size:15px;flex-shrink:0;" onclick="sendFooterChat()">➤</button>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+</div>
+
+<!-- ══════════ TEAM ══════════ -->
+<div class="section" id="sec-team">
+  <div class="team-intro-card fi" style="margin:16px 20px 0;">
+    <div class="tic-title">Meet your <em>team</em></div>
+    <div class="tic-sub">These people will make your stay extraordinary. Each one is a specialist, each one proud of their craft. They are the soul of Villa Surya.</div>
+  </div>
+
+  <div class="team-full-cards fi" style="transition-delay:.04s">
+    <div class="tfc" onclick="this.classList.toggle('open')">
+      <div class="tfc-header">
+        <div class="tfc-avatar cleaner">🧹<div class="tfc-sdot today"></div></div>
+        <div class="tfc-info"><div class="tfc-role">Cleaner · Today</div><div class="tfc-name">Putu Ayu</div><div class="tfc-origin">Mum of 3 · from Tabanan · 8 years experience</div></div>
+        <div class="tfc-chevron">⌄</div>
+      </div>
+      <div class="tfc-body"><div class="tfc-inner"><div class="tfc-div"></div>
+        <div class="tfc-bio">Putu has been taking care of Villa Surya for 3 years. She knows every corner of this house and takes pride in leaving it perfect every morning. She says her favourite moment is opening the blinds and watching the garden fill with light.</div>
+        <div class="tfc-traits"><span class="tfc-trait">🌸 Gentle</span><span class="tfc-trait">✨ Detail-oriented</span><span class="tfc-trait">☕ Early bird</span><span class="tfc-trait">🇮🇩 Speaks English</span></div>
+        <div class="tfc-sched"><div class="tfc-sched-dot today"></div>Here today · 10:00 AM – 1:00 PM</div>
+      </div></div>
+    </div>
+
+    <div class="tfc" onclick="this.classList.toggle('open')">
+      <div class="tfc-header">
+        <div class="tfc-avatar poolman">🌊<div class="tfc-sdot today"></div></div>
+        <div class="tfc-info"><div class="tfc-role">Pool maintenance · Daily</div><div class="tfc-name">Kadek Surya</div><div class="tfc-origin">Dad of 2 · from Badung · 5 years experience</div></div>
+        <div class="tfc-chevron">⌄</div>
+      </div>
+      <div class="tfc-body"><div class="tfc-inner"><div class="tfc-div"></div>
+        <div class="tfc-bio">Kadek arrives every morning before anyone wakes up to check the pH, skim the surface, and make sure your pool is crystal clear. He's quiet, meticulous, and genuinely happy when guests enjoy the water.</div>
+        <div class="tfc-traits"><span class="tfc-trait">🌊 Meticulous</span><span class="tfc-trait">🌅 Before sunrise</span><span class="tfc-trait">😌 Calm</span></div>
+        <div class="tfc-sched"><div class="tfc-sched-dot today"></div>Arrives daily · 7:30 AM</div>
+      </div></div>
+    </div>
+
+    <div class="tfc" onclick="this.classList.toggle('open')">
+      <div class="tfc-header">
+        <div class="tfc-avatar tukang">🔧<div class="tfc-sdot standby"></div></div>
+        <div class="tfc-info"><div class="tfc-role">Handyman · On call</div><div class="tfc-name">Wayan Darta</div><div class="tfc-origin">Father of 4 · from Gianyar · 12 years experience</div></div>
+        <div class="tfc-chevron">⌄</div>
+      </div>
+      <div class="tfc-body"><div class="tfc-inner"><div class="tfc-div"></div>
+        <div class="tfc-bio">Wayan can fix anything. Electricity, plumbing, a loose shutter or a broken latch — nothing is too big or too small. He arrives within the hour and always leaves things better than he found them.</div>
+        <div class="tfc-traits"><span class="tfc-trait">🔧 Resourceful</span><span class="tfc-trait">⚡ Quick</span><span class="tfc-trait">🙏 Reliable</span><span class="tfc-trait">🇮🇩 Speaks English</span></div>
+        <div class="tfc-sched"><div class="tfc-sched-dot standby"></div>On standby — reach via Sofia</div>
+      </div></div>
+    </div>
+
+    <div class="tfc" onclick="this.classList.toggle('open')">
+      <div class="tfc-header">
+        <div class="tfc-avatar gardener">🌿<div class="tfc-sdot today"></div></div>
+        <div class="tfc-info"><div class="tfc-role">Gardener · 3× a week</div><div class="tfc-name">Made Sari</div><div class="tfc-origin">Grandmother of 5 · from Ubud · 15 years experience</div></div>
+        <div class="tfc-chevron">⌄</div>
+      </div>
+      <div class="tfc-body"><div class="tfc-inner"><div class="tfc-div"></div>
+        <div class="tfc-bio">Made has been growing and tending Balinese gardens her whole life. The frangipani, the heliconias, the sacred temple flowers — everything you see in the garden passed through her hands. She works in comfortable silence.</div>
+        <div class="tfc-traits"><span class="tfc-trait">🌺 Artistic</span><span class="tfc-trait">🌿 Wise</span><span class="tfc-trait">🌙 Patient</span></div>
+        <div class="tfc-sched"><div class="tfc-sched-dot today"></div>Mon · Wed · Fri · 7:00–10:00 AM</div>
+      </div></div>
+    </div>
+
+    <div class="tfc" onclick="this.classList.toggle('open')">
+      <div class="tfc-header">
+        <div class="tfc-avatar butler">🛎️<div class="tfc-sdot standby"></div></div>
+        <div class="tfc-info"><div class="tfc-role">Butler · On request</div><div class="tfc-name">Nyoman Aditya</div><div class="tfc-origin">Husband & father · from Seminyak · 7 years experience</div></div>
+        <div class="tfc-chevron">⌄</div>
+      </div>
+      <div class="tfc-body"><div class="tfc-inner"><div class="tfc-div"></div>
+        <div class="tfc-bio">Nyoman is your concierge: private dinners on the terrace, reservations at the best hidden restaurants in Seminyak, a sunset boat or a temple ceremony visit. He knows everyone in the neighbourhood.</div>
+        <div class="tfc-traits"><span class="tfc-trait">🎩 Discreet</span><span class="tfc-trait">🍽️ Foodie</span><span class="tfc-trait">🗺️ Local expert</span><span class="tfc-trait">🇮🇩 Speaks English</span></div>
+        <div class="tfc-sched"><div class="tfc-sched-dot standby"></div>On request — ask Sofia</div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- TIP NUDGE -->
+  <div class="tip-block fi" style="transition-delay:.08s;margin-bottom:8px;">
+    <div class="tip-bg">🙏</div>
+    <div class="tip-title">A gesture of gratitude</div>
+    <div class="tip-sub">Your team has prepared everything with heart. A small tip goes a very long way for a Balinese family — the easiest way is to leave cash directly. They will genuinely treasure it.</div>
+    <div class="tip-amounts">
+      <div class="tip-amt" onclick="selTip(this)"><div class="ta-v">50K</div><div class="ta-l">Rp · kind</div></div>
+      <div class="tip-amt" onclick="selTip(this)"><div class="ta-v">100K</div><div class="ta-l">Rp · generous</div></div>
+      <div class="tip-amt" onclick="selTip(this)"><div class="ta-v">200K</div><div class="ta-l">Rp · exceptional</div></div>
+    </div>
+    <div class="tip-note">That's roughly $3–$12 USD. Best moment: checkout morning, with a smile and a thank you. Their faces will light up. 🙏</div>
+  </div>
+
+  <div class="spacer"></div>
+</div>
+
+<!-- ══════════ EXPLORE ══════════ -->
+<div class="section" id="sec-explore">
+  <div class="explore-intro fi" style="margin:16px 20px 0;">
+    <div class="ei-title">Explore <em>Bali</em></div>
+    <div class="ei-sub">Handpicked by Nyoman and the local team. Everything within reach of Villa Surya in Seminyak.</div>
+  </div>
+
+  <div class="explore-grid fi" style="transition-delay:.04s;">
+
+    <!-- SERVICES -->
+    <div class="ex-cat" id="excat-services">
+      <div class="ex-cat-header" onclick="toggleExCat('services')">
+        <div class="ex-cat-icon services">🛁</div>
+        <div><div class="ex-cat-title">Villa services</div><div class="ex-cat-sub">On-site experiences — ask Sofia</div></div>
+        <div class="ex-cat-chevron">⌄</div>
+      </div>
+      <div class="ex-cat-body"><div class="ex-cat-inner"><div class="ex-div"></div>
+        <div class="ex-item">
+          <div class="ex-item-icon">💆</div>
+          <div class="ex-item-info"><div class="ex-item-name">In-villa Balinese massage</div><div class="ex-item-desc">Full body traditional massage at the villa. Solo or couples. 60 or 90 min.</div><div class="ex-item-tag tag-best">⭐ Most popular</div><div class="ex-item-action"><button class="ex-btn sofia" onclick="chatSofia('I\'d like to book an in-villa massage')">Ask Sofia to book</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">👶</div>
+          <div class="ex-item-info"><div class="ex-item-name">Babysitter / Nanny</div><div class="ex-item-desc">Experienced, gentle, Balinese nanny. Available day or evening. 24h notice preferred.</div><div class="ex-item-action"><button class="ex-btn sofia" onclick="chatSofia('Can you arrange a babysitter for us?')">Ask Sofia</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">👗</div>
+          <div class="ex-item-info"><div class="ex-item-name">Extra laundry</div><div class="ex-item-desc">Same-day wash & fold service. Leave in the bag on your door handle before 9am.</div><div class="ex-item-action"><button class="ex-btn sofia" onclick="chatSofia('I need extra laundry service')">Ask Sofia</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">👨‍🍳</div>
+          <div class="ex-item-info"><div class="ex-item-name">Private chef</div><div class="ex-item-desc">Balinese or international menu. Breakfast, dinner, or full-day. Market tour option available.</div><div class="ex-item-action"><button class="ex-btn sofia" onclick="chatSofia('I\'d like to hire a private chef')">Ask Sofia</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🚗</div>
+          <div class="ex-item-info"><div class="ex-item-name">Driver for the day</div><div class="ex-item-desc">Reliable Balinese driver, AC car, full day or half day. Perfect for temple tours or Ubud trips.</div><div class="ex-item-action"><button class="ex-btn sofia" onclick="chatSofia('Can you arrange a driver for us?')">Ask Sofia</button></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- FOOD -->
+    <div class="ex-cat" id="excat-food">
+      <div class="ex-cat-header" onclick="toggleExCat('food')">
+        <div class="ex-cat-icon food">🍜</div>
+        <div><div class="ex-cat-title">Restaurants & cafés</div><div class="ex-cat-sub">Nyoman's personal picks near Seminyak</div></div>
+        <div class="ex-cat-chevron">⌄</div>
+      </div>
+      <div class="ex-cat-body"><div class="ex-cat-inner"><div class="ex-div"></div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🌅</div>
+          <div class="ex-item-info"><div class="ex-item-name">Ku De Ta</div><div class="ex-item-desc">Iconic sunset spot on the beach. Arrive at 5:30pm for the best seat. Book in advance.</div><div class="ex-item-tag tag-best">⭐ Best sunset</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Ku De Ta Seminyak')">Maps</button><button class="ex-btn sofia" onclick="chatSofia('Can you book a table at Ku De Ta tonight?')">Book via Sofia</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🍣</div>
+          <div class="ex-item-info"><div class="ex-item-name">Merah Putih</div><div class="ex-item-desc">Award-winning Indonesian fine dining. Modern nusantara cuisine in a stunning rice barn venue.</div><div class="ex-item-tag tag-best">⭐ Special occasion</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Merah Putih Bali')">Maps</button><button class="ex-btn sofia" onclick="chatSofia('Book Merah Putih for dinner please')">Book via Sofia</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🥐</div>
+          <div class="ex-item-info"><div class="ex-item-name">Sisterfields</div><div class="ex-item-desc">Best brunch in Seminyak. Busy on weekends — go early or ask Sofia to book.</div><div class="ex-item-tag tag-near">📍 8 min walk</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Sisterfields Seminyak')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🏖️</div>
+          <div class="ex-item-info"><div class="ex-item-name">La Laguna</div><div class="ex-item-desc">Hidden gem on the beach at Canggu. Gypsy market vibes, amazing cocktails, fire dancers at night.</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('La Laguna Bali')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🍚</div>
+          <div class="ex-item-info"><div class="ex-item-name">Warung Sulawesi</div><div class="ex-item-desc">Authentic local warung, cash only, no menu — just point at what looks good. Under $3 a meal.</div><div class="ex-item-tag tag-free">🤫 Local secret</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Warung Sulawesi Seminyak')">Maps</button></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- BEACHES -->
+    <div class="ex-cat" id="excat-beaches">
+      <div class="ex-cat-header" onclick="toggleExCat('beaches')">
+        <div class="ex-cat-icon beaches">🏖️</div>
+        <div><div class="ex-cat-title">Beaches nearby</div><div class="ex-cat-sub">Seminyak · Canggu · Uluwatu · Nusa Dua</div></div>
+        <div class="ex-cat-chevron">⌄</div>
+      </div>
+      <div class="ex-cat-body"><div class="ex-cat-inner"><div class="ex-div"></div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🌊</div>
+          <div class="ex-item-info"><div class="ex-item-name">Seminyak Beach</div><div class="ex-item-desc">Your closest beach — 10 min walk. Sunbeds at W Hotel or Ku De Ta. Best at sunset.</div><div class="ex-item-tag tag-near">📍 10 min walk</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Seminyak Beach')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🏄</div>
+          <div class="ex-item-info"><div class="ex-item-name">Canggu / Echo Beach</div><div class="ex-item-desc">Best surf in the area. Boards for hire. Cooler vibe with beach bars and cafés.</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Echo Beach Canggu')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🤿</div>
+          <div class="ex-item-info"><div class="ex-item-name">Padang Padang (Uluwatu)</div><div class="ex-item-desc">Iconic hidden cove with crystal clear water. 45min drive. Go before 9am to avoid crowds.</div><div class="ex-item-tag tag-best">⭐ Most beautiful</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Padang Padang Beach Uluwatu')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🧘</div>
+          <div class="ex-item-info"><div class="ex-item-name">Nusa Dua</div><div class="ex-item-desc">Calm, shallow, blue water. Best for families and snorkelling. 45 min drive.</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Nusa Dua Beach Bali')">Maps</button></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- MARKET / ESSENTIALS -->
+    <div class="ex-cat" id="excat-market">
+      <div class="ex-cat-header" onclick="toggleExCat('market')">
+        <div class="ex-cat-icon market">🛒</div>
+        <div><div class="ex-cat-title">Markets & essentials</div><div class="ex-cat-sub">Groceries, pharmacy, ATM nearby</div></div>
+        <div class="ex-cat-chevron">⌄</div>
+      </div>
+      <div class="ex-cat-body"><div class="ex-cat-inner"><div class="ex-div"></div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🏪</div>
+          <div class="ex-item-info"><div class="ex-item-name">Pepito Market Seminyak</div><div class="ex-item-desc">Best expat supermarket. Imported goods, cheese, wine, fresh produce. Open 7am–10pm.</div><div class="ex-item-tag tag-near">📍 3 min by scooter</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Pepito Market Seminyak')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">💊</div>
+          <div class="ex-item-info"><div class="ex-item-name">Guardian Pharmacy</div><div class="ex-item-desc">24h pharmacy chain. English-speaking staff. Most medications available without prescription.</div><div class="ex-item-tag tag-near">📍 5 min</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Guardian Pharmacy Seminyak')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">💵</div>
+          <div class="ex-item-info"><div class="ex-item-name">Money exchange</div><div class="ex-item-desc">Only use official booths (Central Kuta Money Changer). Never exchange from street vendors.</div><div class="ex-item-tag tag-best">⚠️ Official only</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Central Kuta Money Changer')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">📦</div>
+          <div class="ex-item-info"><div class="ex-item-name">Grab / Gojek</div><div class="ex-item-desc">Bali's Uber equivalent. Download Grab or Gojek app. Always shows the real price upfront — safe and reliable.</div><div class="ex-item-action"><button class="ex-btn link" onclick="window.open('https://www.grab.com','_blank')">Grab app</button><button class="ex-btn link" onclick="window.open('https://www.gojek.com','_blank')">Gojek app</button></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- HEALTH & EMERGENCY -->
+    <div class="ex-cat" id="excat-health">
+      <div class="ex-cat-header" onclick="toggleExCat('health')">
+        <div class="ex-cat-icon health">🏥</div>
+        <div><div class="ex-cat-title">Health & emergency</div><div class="ex-cat-sub">Hospitals, clinics, urgent care</div></div>
+        <div class="ex-cat-chevron">⌄</div>
+      </div>
+      <div class="ex-cat-body"><div class="ex-cat-inner"><div class="ex-div"></div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🚨</div>
+          <div class="ex-item-info"><div class="ex-item-name">BIMC Hospital Kuta</div><div class="ex-item-desc">Best international hospital in Bali. English staff, 24h ER, ambulance. Travel insurance accepted.</div><div class="ex-item-tag tag-urgent">📞 24/7 Emergency</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('BIMC Hospital Kuta Bali')">Maps</button><button class="ex-btn call" onclick="window.location='tel:+623613761263'">Call ER</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🩺</div>
+          <div class="ex-item-info"><div class="ex-item-name">SOS Medika Clinic Seminyak</div><div class="ex-item-desc">Walk-in clinic, no appointment needed. Great for minor issues, stomach bugs, bites. Fast and friendly.</div><div class="ex-item-tag tag-near">📍 12 min</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('SOS Medika Seminyak')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">📞</div>
+          <div class="ex-item-info"><div class="ex-item-name">Emergency numbers</div><div class="ex-item-desc">Bali Police: 110 · Ambulance: 118 · Fire: 113 · Tourist Police: +62 361 754599</div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- NIGHTLIFE -->
+    <div class="ex-cat" id="excat-nightlife">
+      <div class="ex-cat-header" onclick="toggleExCat('nightlife')">
+        <div class="ex-cat-icon nightlife">🎉</div>
+        <div><div class="ex-cat-title">Nightlife & events</div><div class="ex-cat-sub">What's on tonight in Bali</div></div>
+        <div class="ex-cat-chevron">⌄</div>
+      </div>
+      <div class="ex-cat-body"><div class="ex-cat-inner"><div class="ex-div"></div>
+        <div class="ex-item">
+          <div class="ex-item-icon">📅</div>
+          <div class="ex-item-info"><div class="ex-item-name">SeeBali.com</div><div class="ex-item-desc">The best events, parties, and cultural nights in Bali — updated daily. From beach clubs to full moon parties to traditional ceremonies.</div><div class="ex-item-action"><button class="ex-btn link" onclick="window.open('https://www.seebali.com','_blank')">Open SeeBali.com ↗</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🎵</div>
+          <div class="ex-item-info"><div class="ex-item-name">Potato Head Beach Club</div><div class="ex-item-desc">Most iconic beach club in Bali. Arrive at 4pm, stay for sunset. Book a daybed in advance.</div><div class="ex-item-tag tag-best">⭐ Iconic</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Potato Head Beach Club Bali')">Maps</button><button class="ex-btn sofia" onclick="chatSofia('Can you book a daybed at Potato Head for us?')">Book via Sofia</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🔥</div>
+          <div class="ex-item-info"><div class="ex-item-name">Atlas Beach Club</div><div class="ex-item-desc">World's largest beach club (Canggu). Massive pool, world-class DJs. Free entry before noon.</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Atlas Beach Club Bali')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🕌</div>
+          <div class="ex-item-info"><div class="ex-item-name">Kecak fire dance (Uluwatu)</div><div class="ex-item-desc">Traditional Balinese ceremony at Uluwatu temple at sunset. Unmissable. Every evening at 6pm.</div><div class="ex-item-tag tag-best">🎭 Cultural must</div><div class="ex-item-action"><button class="ex-btn sofia" onclick="chatSofia('Can you arrange Kecak dance tickets at Uluwatu?')">Book via Sofia</button></div></div>
+        </div>
+      </div></div>
+    </div>
+
+    <!-- VISA EXTENSION -->
+    <div class="ex-cat" id="excat-visa">
+      <div class="ex-cat-header" onclick="toggleExCat('visa')">
+        <div class="ex-cat-icon visa">🛂</div>
+        <div><div class="ex-cat-title">Visa extension</div><div class="ex-cat-sub">Stay longer in Bali — tourist visa info</div></div>
+        <div class="ex-cat-chevron">⌄</div>
+      </div>
+      <div class="ex-cat-body"><div class="ex-cat-inner"><div class="ex-div"></div>
+        <div class="visa-info">
+          <div class="visa-info-title">Tourist visa (VOA) extension</div>
+          <div class="visa-info-row"><span class="visa-info-key">Base stay</span><span>30 days on arrival (VOA)</span></div>
+          <div class="visa-info-row"><span class="visa-info-key">Extension</span><span>+30 days, once only</span></div>
+          <div class="visa-info-row"><span class="visa-info-key">Cost</span><span>~$35 USD (Rp 500,000)</span></div>
+          <div class="visa-info-row"><span class="visa-info-key">When</span><span>Apply 7 days before expiry</span></div>
+          <div class="visa-info-row"><span class="visa-info-key">Via agency</span><span>~$25–40 USD, same day</span></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🏢</div>
+          <div class="ex-item-info"><div class="ex-item-name">Bali Immigration Office (Renon)</div><div class="ex-item-desc">Official immigration office. Go in person. Bring passport + copy, 2 photos, filled form. Open Mon–Fri 8am–3pm. Can be slow — go early.</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('Bali Immigration Office Renon')">Maps</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">⚡</div>
+          <div class="ex-item-info"><div class="ex-item-name">Indo Visa Agency (Seminyak)</div><div class="ex-item-desc">Trusted local agent. They handle everything for you — same day or next day. ~$35 USD all-in. 5 min from the villa. Just bring your passport.</div><div class="ex-item-tag tag-near">📍 5 min away</div><div class="ex-item-tag tag-best">⭐ Easiest option</div><div class="ex-item-action"><button class="ex-btn maps" onclick="openMaps('visa extension agent Seminyak Bali')">Maps</button><button class="ex-btn sofia" onclick="chatSofia('I need help extending my visa — can you help?')">Ask Sofia</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">💻</div>
+          <div class="ex-item-info"><div class="ex-item-name">Online via evisa.imigrasi.go.id</div><div class="ex-item-desc">Indonesia's official e-visa portal. Can be done online but website can be slow. Allow 3–5 days for processing online.</div><div class="ex-item-action"><button class="ex-btn link" onclick="window.open('https://evisa.imigrasi.go.id','_blank')">Official portal ↗</button></div></div>
+        </div>
+        <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:10px 12px;font-size:11px;color:var(--gold-dark);line-height:1.65;margin-top:4px;">⚠️ After 60 days, you must leave Indonesia and re-enter for a new VOA. Most people do a "visa run" to Singapore or KL — cheap and easy. Ask Sofia if you need help.</div>
+      </div></div>
+    </div>
+
+    <!-- TRANSPORT -->
+    <div class="ex-cat" id="excat-transport">
+      <div class="ex-cat-header" onclick="toggleExCat('transport')">
+        <div class="ex-cat-icon transport">🛵</div>
+        <div><div class="ex-cat-title">Getting around</div><div class="ex-cat-sub">Transport, scooters, airport</div></div>
+        <div class="ex-cat-chevron">⌄</div>
+      </div>
+      <div class="ex-cat-body"><div class="ex-cat-inner"><div class="ex-div"></div>
+        <div class="ex-item">
+          <div class="ex-item-icon">📱</div>
+          <div class="ex-item-info"><div class="ex-item-name">Grab / Gojek apps</div><div class="ex-item-desc">Always show the price before you confirm. Safe, reliable. GrabCar for AC car, GojekGo for motorbike (fast, cheap).</div><div class="ex-item-action"><button class="ex-btn link" onclick="window.open('https://grab.com','_blank')">Grab</button><button class="ex-btn link" onclick="window.open('https://gojek.com','_blank')">Gojek</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">🛵</div>
+          <div class="ex-item-info"><div class="ex-item-name">Scooter rental</div><div class="ex-item-desc">~$5–8/day. Ask Wayan or Sofia — we have a trusted contact. You need an international license. Helmets mandatory.</div><div class="ex-item-action"><button class="ex-btn sofia" onclick="chatSofia('Can you arrange a scooter rental for us?')">Ask Sofia</button></div></div>
+        </div>
+        <div class="ex-item">
+          <div class="ex-item-icon">✈️</div>
+          <div class="ex-item-info"><div class="ex-item-name">Airport transfer</div><div class="ex-item-desc">Ngurah Rai Airport is 15 min from the villa. Fixed price to/from villa: ~$10 USD. Book via Sofia for a reliable driver.</div><div class="ex-item-action"><button class="ex-btn sofia" onclick="chatSofia('I need an airport transfer — can you arrange?')">Book via Sofia</button></div></div>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+  <div class="spacer"></div>
+</div>
+
+<!-- ══════════ REPORT ══════════ -->
+<div class="section" id="sec-report">
+  <div class="report-intro fi" style="margin:16px 20px 0;">
+    <div class="ri-title">Something not right?</div>
+    <div class="ri-sub">Tell us anything — we fix it fast. Sofia classifies every request and dispatches the right person immediately. You won't have to follow up.</div>
+  </div>
+
+  <!-- Sofia in report -->
+  <div class="sofia-bar fi" style="transition-delay:.04s;margin:14px 20px 0;">
+    <div class="sb-top">
+      <div class="sb-avatar">✨<div class="sb-dot"></div></div>
+      <div class="sb-info">
+        <div class="sb-name">Sofia · Always here</div>
+        <div class="sb-status">● For anything urgent — broken AC, no water — message her directly</div>
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="report-chat-input" type="text" placeholder="Message Sofia directly…" onkeydown="if(event.key==='Enter')sendReportChat()">
+      <button class="chat-send" onclick="sendReportChat()">➤</button>
+    </div>
+  </div>
+
+  <button class="all-good-btn fi" id="all-good-btn" style="transition-delay:.06s" onclick="toggleAllGood()">
+    ✅ Everything is perfect — nothing to report
+  </button>
+
+  <div class="report-cats fi" style="transition-delay:.08s">
+    <div class="rcat" id="rcat-maintenance">
+      <div class="rcat-header" onclick="toggleRcat('maintenance','orange')">
+        <div class="rcat-icon orange">🔧</div>
+        <div class="rcat-info"><div class="rcat-name">Maintenance issue</div><div class="rcat-sub">AC, plumbing, electricity, broken furniture</div></div>
+        <div class="rcat-check">○</div>
+      </div>
+      <div class="rcat-body"><div class="rcat-inner"><div class="rcat-div"></div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">How urgent?</div>
+        <div class="urgency-row">
+          <button class="urg-btn" onclick="setUrg(this,'low')">🟢 Can wait</button>
+          <button class="urg-btn" onclick="setUrg(this,'med')">🟠 Today please</button>
+          <button class="urg-btn" onclick="setUrg(this,'high')">🔴 Urgent now</button>
+        </div>
+        <textarea class="report-field" placeholder="Describe the issue…" rows="3"></textarea>
+        <div class="photo-upload-row"><label class="pul"><span>📷</span> Add a photo (optional)<input type="file" accept="image/*" capture="environment" onchange="addPhoto(this,'pm-maint')"></label></div>
+        <div class="photos-row" id="pm-maint"></div>
+      </div></div>
+    </div>
+
+    <div class="rcat" id="rcat-clean">
+      <div class="rcat-header" onclick="toggleRcat('clean','orange')">
+        <div class="rcat-icon orange">🧹</div>
+        <div class="rcat-info"><div class="rcat-name">Cleanliness concern</div><div class="rcat-sub">Room not clean, missed area, supplies low</div></div>
+        <div class="rcat-check">○</div>
+      </div>
+      <div class="rcat-body"><div class="rcat-inner"><div class="rcat-div"></div>
+        <textarea class="report-field" placeholder="Which room? What did you notice?" rows="3"></textarea>
+        <div class="photo-upload-row"><label class="pul"><span>📷</span> Add a photo<input type="file" accept="image/*" capture="environment" onchange="addPhoto(this,'pm-clean')"></label></div>
+        <div class="photos-row" id="pm-clean"></div>
+      </div></div>
+    </div>
+
+    <div class="rcat" id="rcat-security">
+      <div class="rcat-header" onclick="toggleRcat('security','red')">
+        <div class="rcat-icon red">🔐</div>
+        <div class="rcat-info"><div class="rcat-name">Safety or security</div><div class="rcat-sub">Lock issue, stranger on property, something suspicious</div></div>
+        <div class="rcat-check">○</div>
+      </div>
+      <div class="rcat-body"><div class="rcat-inner"><div class="rcat-div"></div>
+        <div style="background:var(--red-soft);border-left:3px solid var(--red);border-radius:0 8px 8px 0;padding:12px;font-size:12px;color:var(--red);font-weight:700;margin-bottom:12px;">This will alert the manager immediately. Stay calm — we call you within 2 minutes.</div>
+        <textarea class="report-field" placeholder="Tell us what happened…" rows="3"></textarea>
+      </div></div>
+    </div>
+
+    <div class="rcat" id="rcat-other">
+      <div class="rcat-header" onclick="toggleRcat('other','green')">
+        <div class="rcat-icon green">💬</div>
+        <div class="rcat-info"><div class="rcat-name">Other request</div><div class="rcat-sub">Extra supplies, schedule change, anything else</div></div>
+        <div class="rcat-check">○</div>
+      </div>
+      <div class="rcat-body"><div class="rcat-inner"><div class="rcat-div"></div>
+        <textarea class="report-field" placeholder="Tell us anything — we read every message." rows="3"></textarea>
+      </div></div>
+    </div>
+  </div>
+
+  <button class="send-btn fi" id="send-btn" style="transition-delay:.1s" onclick="sendReport()">📤 Send to our team</button>
+
+  <div class="confirm-card fi" id="confirm-card">
+    <div class="cc-icon">✅</div>
+    <div class="cc-title">Got it, Emma.</div>
+    <div class="cc-sub">Sofia has your message. The right person is already on it. You don't need to do anything — we'll keep you updated.</div>
+    <div class="cc-eta-box">
+      <div class="cc-eta-lbl">Estimated response</div>
+      <div class="cc-eta-val" id="confirm-eta">within 45 min</div>
+    </div>
+  </div>
+
+  <button class="emergency-btn fi" style="transition-delay:.12s" onclick="callEmergency()">🆘 Emergency — call manager directly</button>
+  <div class="spacer"></div>
+</div>
+
+<!-- STAFF MODAL -->
+<div class="modal-overlay" id="staff-modal" onclick="closeModal(event)">
+  <div class="modal-sheet" id="modal-sheet" style="position:relative;">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const STAFF = {
+  putu:{role:'Cleaner',name:'Putu Ayu',origin:'Mum of 3 · from Tabanan · 8 years',status:'today',statusTxt:'Here today · 10:00 AM – 1:00 PM',cls:'cleaner',emoji:'🧹',bio:"Putu has been taking care of Villa Surya for 3 years. She knows every corner of this house and takes pride in leaving it perfect every morning. She says her favourite moment is opening the blinds and watching the garden fill with light.",traits:['🌸 Gentle','✨ Detail-oriented','☕ Early bird','🇮🇩 Speaks English']},
+  kadek:{role:'Pool maintenance',name:'Kadek Surya',origin:'Dad of 2 · from Badung · 5 years',status:'today',statusTxt:'Arrives daily · 7:30 AM',cls:'poolman',emoji:'🌊',bio:"Kadek arrives every morning before anyone wakes up to check the pH, skim the surface, and make sure your pool is crystal clear. He's quiet, meticulous, and genuinely happy when guests enjoy the water.",traits:['🌊 Meticulous','🌅 Before sunrise','😌 Calm']},
+  wayan:{role:'Handyman',name:'Wayan Darta',origin:'Father of 4 · from Gianyar · 12 years',status:'standby',statusTxt:'On standby — reach via Sofia',cls:'tukang',emoji:'🔧',bio:"Wayan can fix anything. Electricity, plumbing, a loose shutter or a broken latch — nothing is too big or too small. He arrives within the hour and always leaves things better than he found them.",traits:['🔧 Resourceful','⚡ Quick','🙏 Reliable','🇮🇩 Speaks English']},
+  made:{role:'Gardener',name:'Made Sari',origin:'Grandmother of 5 · from Ubud · 15 years',status:'today',statusTxt:'Mon · Wed · Fri · 7:00–10:00 AM',cls:'gardener',emoji:'🌿',bio:"Made has been growing and tending Balinese gardens her whole life. The frangipani, the heliconias, the sacred temple flowers — everything you see in the garden passed through her hands.",traits:['🌺 Artistic','🌿 Wise','🌙 Patient']},
+  nyoman:{role:'Butler',name:'Nyoman Aditya',origin:'Husband & father · from Seminyak · 7 years',status:'standby',statusTxt:'On request — ask Sofia',cls:'butler',emoji:'🛎️',bio:"Nyoman is your concierge: private dinners on the terrace, reservations at the best hidden restaurants in Seminyak, a sunset boat or a temple ceremony visit. He knows everyone in the neighbourhood.",traits:['🎩 Discreet','🍽️ Foodie','🗺️ Local expert','🇮🇩 Speaks English']}
+};
+
+// ── LANG ──
+const LANGS=['EN','ID','BALI'];let langIdx=parseInt(localStorage.getItem('gl')||'0');
+function cycleLang(){langIdx=(langIdx+1)%LANGS.length;localStorage.setItem('gl',langIdx);document.getElementById('lang-btn').textContent='🌐 '+LANGS[langIdx];}
+
+// ── NAV ──
+function showSection(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(triggerReveal,80);
+}
+
+// ── ARRIVAL ──
+function selectArrival(el,slot){
+  document.querySelectorAll('.ab-slot:not(.disabled)').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+  const notes={
+    '2pm':'Perfect. Wayan will meet you at 2pm. Your villa will be freshly prepared.',
+    '3pm':'Great. Wayan will be at the villa to welcome you at 3pm.',
+    '4pm':'No problem. Wayan will meet you at 4pm and show you around.',
+    '5pm':'Fine, but this is the last slot for Wayan. He will make sure everything is ready.',
+    'late':'<strong>After 5pm:</strong> Wayan may not be available — Sofia will arrange someone else to greet you. Please confirm via Sofia.'
+  };
+  document.getElementById('arrival-note').innerHTML='✅ Noted! '+notes[slot];
+}
+
+// ── COUNTDOWN ──
+const CHECK_IN=new Date('2026-04-03T14:00:00+08:00');
+function updateCountdown(){
+  const diff=Math.max(0,CHECK_IN-new Date());
+  const pad=n=>String(n).padStart(2,'0');
+  document.getElementById('cd-days').textContent=pad(Math.floor(diff/86400000));
+  document.getElementById('cd-hours').textContent=pad(Math.floor((diff%86400000)/3600000));
+  document.getElementById('cd-mins').textContent=pad(Math.floor((diff%3600000)/60000));
+  document.getElementById('cd-secs').textContent=pad(Math.floor((diff%60000)/1000));
+}
+setInterval(updateCountdown,1000);updateCountdown();
+
+// ── MAPS ──
+function openMaps(q){window.open('https://maps.google.com/?q='+(q||'Villa+Surya+Seminyak+Bali'),'_blank');}
+
+// ── CHECK-IN STEPS ──
+function toggleStep(step){step.classList.toggle('open');}
+
+// ── ESSENTIALS ──
+function toggleEss(row){
+  const wasOpen=row.classList.contains('open');
+  document.querySelectorAll('.ess-row').forEach(r=>r.classList.remove('open'));
+  if(!wasOpen)row.classList.add('open');
+}
+
+// ── STAFF MODAL ──
+function openStaffModal(id){
+  const s=STAFF[id];if(!s)return;
+  const traitsHTML=s.traits.map(t=>`<span class="smodal-trait">${t}</span>`).join('');
+  document.getElementById('modal-content').innerHTML=`
+    <div class="smodal-avatar ${s.cls}">${s.emoji}</div>
+    <div class="smodal-role">${s.role}</div>
+    <div class="smodal-name">${s.name}</div>
+    <div class="smodal-origin">${s.origin}</div>
+    <div class="smodal-status">
+      <div class="smodal-status-dot ${s.status}"></div>
+      <div class="smodal-status-txt ${s.status}">${s.status==='today'?'Working today':'On standby'}</div>
+    </div>
+    <div class="smodal-body">
+      <div class="smodal-bio">${s.bio}</div>
+      <div class="smodal-traits">${traitsHTML}</div>
+      <div class="smodal-schedule"><div class="tfc-sched-dot ${s.status}" style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:${s.status==='today'?'var(--green)':'var(--orange)'}"></div>${s.statusTxt}</div>
+    </div>
+  `;
+  document.getElementById('staff-modal').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){if(e.target===document.getElementById('staff-modal')){closeModalBtn();}}
+function closeModalBtn(){document.getElementById('staff-modal').classList.remove('show');document.body.style.overflow='';}
+
+// ── CHAT ──
+const SOFIA_REPLIES=[
+  "Of course! I'll take care of that right away 🌺",
+  "On it! I'll send you an update shortly.",
+  "Great, noted! Expect a confirmation within a few minutes.",
+  "Done — I've dispatched the right person. You'll hear from me soon.",
+  "Perfect, I'll arrange that for you. Anything else I can help with?",
+  "Consider it done 🙏 I'll keep you posted.",
+];
+let chatCount=0;
+
+function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const msg=inp.value.trim();
+  if(!msg)return;
+  addChatBubble('me',msg,'chat-thread');
+  inp.value='';
+  // typing indicator
+  const thread=document.getElementById('chat-thread');
+  const typing=document.createElement('div');
+  typing.className='chat-msg sofia';typing.id='typing-indicator';
+  typing.innerHTML='<div class="chat-typing"><span></span><span></span><span></span></div>';
+  thread.appendChild(typing);
+  thread.scrollTop=thread.scrollHeight;
+  setTimeout(()=>{
+    const ti=document.getElementById('typing-indicator');
+    if(ti)ti.remove();
+    const reply=SOFIA_REPLIES[chatCount%SOFIA_REPLIES.length];chatCount++;
+    addChatBubble('sofia',reply,'chat-thread');
+  },1400+Math.random()*800);
+}
+
+function addChatBubble(who,msg,threadId){
+  const thread=document.getElementById(threadId);
+  const now=new Date();
+  const t=`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const d=document.createElement('div');
+  d.className=`chat-msg ${who}`;
+  const receipt=who==='me'?`<div class="chat-receipt">✓✓ Delivered</div>`:'';
+  d.innerHTML=`<div class="chat-bubble">${msg}</div><div class="chat-time">${t}</div>${receipt}`;
+  thread.appendChild(d);
+  thread.scrollTop=thread.scrollHeight;
+}
+
+function sendReportChat(){
+  const inp=document.getElementById('report-chat-input');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';
+  // switch to stay tab and open chat
+  showSection('stay',document.querySelectorAll('.pill')[0]);
+  setTimeout(()=>{
+    addChatBubble('me',msg,'chat-thread');
+    setTimeout(()=>addChatBubble('sofia',"Got it! I'm on it right away 🌺",'chat-thread'),1200);
+  },300);
+}
+
+function chatSofia(msg){
+  showSection('stay',document.querySelectorAll('.pill')[0]);
+  setTimeout(()=>{
+    document.getElementById('chat-input').value=msg;
+    sendChat();
+  },400);
+}
+
+function openWhatsApp(){window.open('https://wa.me/6281234567890?text=Hi+Sofia!+I%27m+staying+at+Villa+Surya.','_blank');}
+
+// ── TIP ──
+function selTip(el){document.querySelectorAll('.tip-amt').forEach(a=>a.classList.remove('sel'));el.classList.toggle('sel');}
+
+// ── EXPLORE CATS ──
+function toggleExCat(id){
+  const el=document.getElementById('excat-'+id);
+  const wasOpen=el.classList.contains('open');
+  document.querySelectorAll('.ex-cat').forEach(c=>c.classList.remove('open'));
+  if(!wasOpen)el.classList.add('open');
+}
+
+// ── REPORT ──
+function toggleRcat(id,color){
+  const el=document.getElementById('rcat-'+id);
+  const wasOpen=el.classList.contains('open');
+  document.querySelectorAll('.rcat').forEach(r=>{r.classList.remove('open','sel-green','sel-orange','sel-red');r.querySelector('.rcat-check').textContent='○';});
+  if(!wasOpen){
+    el.classList.add('open','sel-'+color);
+    el.querySelector('.rcat-check').textContent='✓';
+    document.getElementById('all-good-btn').classList.remove('on');
+  }
+}
+function setUrg(btn,level){
+  btn.closest('.urgency-row').querySelectorAll('.urg-btn').forEach(b=>b.className='urg-btn');
+  btn.classList.add('on-'+level);
+}
+function addPhoto(input,id){
+  Array.from(input.files).forEach(file=>{
+    const r=new FileReader();r.onload=e=>{
+      const el=document.createElement('div');el.className='pm';
+      el.innerHTML=`<img src="${e.target.result}"><div class="pm-rm" onclick="this.parentElement.remove()">✕</div>`;
+      document.getElementById(id).appendChild(el);
+    };r.readAsDataURL(file);
+  });input.value='';
+}
+function toggleAllGood(){
+  const btn=document.getElementById('all-good-btn');btn.classList.toggle('on');
+  if(btn.classList.contains('on')){
+    document.querySelectorAll('.rcat').forEach(r=>{r.classList.remove('open','sel-green','sel-orange','sel-red');r.querySelector('.rcat-check').textContent='○';});
+  }
+}
+function sendReport(){
+  const hasSelection=document.querySelector('.rcat.open')||document.getElementById('all-good-btn').classList.contains('on');
+  if(!hasSelection){document.getElementById('all-good-btn').style.animation='none';setTimeout(()=>document.getElementById('all-good-btn').style.animation='',200);alert('Please select a category or confirm all is fine.');return;}
+  const isGood=document.getElementById('all-good-btn').classList.contains('on');
+  const urgHigh=document.querySelector('.urg-btn.on-high');
+  const urgMed=document.querySelector('.urg-btn.on-med');
+  const isSec=document.getElementById('rcat-security').classList.contains('open');
+  const eta=isSec||urgHigh?'within 10 min':urgMed?'within 30 min':isGood?'no action needed 🌸':'within 45 min';
+  document.getElementById('confirm-eta').textContent=eta;
+  document.getElementById('send-btn').style.display='none';
+  const cc=document.getElementById('confirm-card');cc.style.display='block';cc.classList.add('show');
+  cc.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function callEmergency(){if(confirm('Call manager directly?'))window.location.href='tel:+6281234567890';}
+
+// ── LOGO HANDLER ──
+function handleLogo(input){
+  if(!input.files[0])return;
+  const url=URL.createObjectURL(input.files[0]);
+
+  // Show big logo in circle inside banner
+  const circleImg=document.getElementById('logo-circle-img');
+  circleImg.src=url;
+  document.getElementById('logo-banner').classList.add('loaded');
+  document.getElementById('lb-btn-txt').textContent='Change logo';
+
+  // Sync to footer circle
+  const footerImg=document.getElementById('footer-logo-img');
+  footerImg.src=url;footerImg.style.display='block';
+  const footerFallback=document.getElementById('footer-logo-fallback');
+  if(footerFallback)footerFallback.style.display='none';
+
+  // Also show small version in topbar
+  const tbImg=document.getElementById('tb-logo-img');
+  tbImg.src=url;tbImg.style.display='block';
+  document.getElementById('tb-logo-txt').style.display='none';
+
+  // Extract dominant color and apply to page + orbit
+  const ci=new Image();ci.onload=()=>{
+    const cv=document.createElement('canvas');cv.width=ci.width;cv.height=ci.height;
+    const cx=cv.getContext('2d');cx.drawImage(ci,0,0);
+    const d=cx.getImageData(0,0,cv.width,cv.height).data;
+    let r=0,g=0,b=0,cnt=0;
+    // sample every 8 pixels, skip near-white and near-transparent
+    for(let i=0;i<d.length;i+=32){
+      const a=d[i+3],rr=d[i],gg=d[i+1],bb=d[i+2];
+      const brightness=(rr+gg+bb)/3;
+      if(a>80&&brightness<230){r+=rr;g+=gg;b+=bb;cnt++;}
+    }
+    if(cnt>0){
+      r=Math.round(r/cnt);g=Math.round(g/cnt);b=Math.round(b/cnt);
+    } else {
+      // fallback: sample all including light colors (logo on white bg)
+      let r2=0,g2=0,b2=0,c2=0;
+      for(let i=0;i<d.length;i+=32){if(d[i+3]>80){r2+=d[i];g2+=d[i+1];b2+=d[i+2];c2++;}}
+      if(c2>0){r=Math.round(r2/c2);g=Math.round(g2/c2);b=Math.round(b2/c2);}
+    }
+
+    // Page background color (light version)
+    const bgR=Math.round(r*0.15+240);
+    const bgG=Math.round(g*0.15+235);
+    const bgB=Math.round(b*0.15+228);
+    const bgStr=`rgb(${bgR},${bgG},${bgB})`;
+
+    // Apply CSS vars
+    document.documentElement.style.setProperty('--bg',bgStr);
+    document.documentElement.style.setProperty('--bg2',`rgb(${bgR-10},${bgG-10},${bgB-10})`);
+    document.documentElement.style.setProperty('--bg3',`rgb(${bgR-22},${bgG-22},${bgB-22})`);
+    document.documentElement.style.setProperty('--brand',`rgb(${r},${g},${b})`);
+    document.documentElement.style.setProperty('--gold',`rgb(${r},${g},${b})`);
+    document.documentElement.style.setProperty('--gold-light',`rgb(${Math.min(255,r+50)},${Math.min(255,g+50)},${Math.min(255,b+50)})`);
+    document.documentElement.style.setProperty('--gold-dark',`rgb(${Math.max(0,r-40)},${Math.max(0,g-40)},${Math.max(0,b-40)})`);
+    document.documentElement.style.setProperty('--brand-light',`rgb(${Math.min(255,r+50)},${Math.min(255,g+50)},${Math.min(255,b+50)})`);
+    document.documentElement.style.setProperty('--brand-dark',`rgb(${Math.max(0,r-40)},${Math.max(0,g-40)},${Math.max(0,b-40)})`);
+
+    // Update orbit section background
+    window._orbitBg=bgStr;
+    document.documentElement.style.setProperty('--orbit-bg',bgStr);
+
+    // Detect luminance to pick text colors
+    const lum=(r*299+g*587+b*114)/1000;
+    const isLightBg=lum>160;
+    if(isLightBg){
+      // dark text on light bg
+      document.documentElement.style.setProperty('--orbit-text','rgba(0,0,0,0.85)');
+      document.documentElement.style.setProperty('--orbit-text-muted','rgba(0,0,0,0.45)');
+      document.documentElement.style.setProperty('--orbit-accent',`rgb(${Math.max(0,r-60)},${Math.max(0,g-60)},${Math.max(0,b-60)})`);
+      document.documentElement.style.setProperty('--orbit-card-bg','rgba(0,0,0,0.05)');
+      document.documentElement.style.setProperty('--orbit-card-border','rgba(0,0,0,0.1)');
+    } else {
+      // white text on dark bg (default)
+      document.documentElement.style.setProperty('--orbit-text','rgba(255,255,255,0.85)');
+      document.documentElement.style.setProperty('--orbit-text-muted','rgba(255,255,255,0.35)');
+      document.documentElement.style.setProperty('--orbit-accent',`rgb(${Math.min(255,r+50)},${Math.min(255,g+50)},${Math.min(255,b+50)})`);
+      document.documentElement.style.setProperty('--orbit-card-bg','rgba(255,255,255,0.05)');
+      document.documentElement.style.setProperty('--orbit-card-border','rgba(255,255,255,0.09)');
+    }
+
+    // Update logo banner background to match
+    document.getElementById('logo-banner').style.background=bgStr;
+    document.getElementById('logo-banner').style.borderBottomColor=`rgba(${r},${g},${b},0.2)`;
+  };ci.src=url;
+}
+
+// ── FOOTER CHAT ──
+function sendFooterChat(){
+  const inp=document.getElementById('fw-input');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';
+  addChatBubble('me',msg,'chat-thread');
+  const thread=document.getElementById('chat-thread');
+  const typing=document.createElement('div');typing.className='chat-msg sofia';typing.id='typing-fw';
+  typing.innerHTML='<div class="chat-typing"><span></span><span></span><span></span></div>';
+  thread.appendChild(typing);thread.scrollTop=thread.scrollHeight;
+  setTimeout(()=>{
+    const ti=document.getElementById('typing-fw');if(ti)ti.remove();
+    addChatBubble('sofia',SOFIA_REPLIES[chatCount%SOFIA_REPLIES.length],'chat-thread');
+    chatCount++;
+  },1300+Math.random()*600);
+  const fwMsg=document.getElementById('fw-sofia-msg');
+  if(fwMsg){const orig=fwMsg.textContent;fwMsg.textContent='✅ Message sent! Check above for my reply.';setTimeout(()=>fwMsg.textContent=orig,4000);}
+}
+
+// ── ORBITAL CLOCK — slow + colored bubbles ──
+const canvas=document.getElementById('orbitCanvas');
+const ctx=canvas.getContext('2d');
+const DPR=window.devicePixelRatio||1;
+canvas.width=290*DPR;canvas.height=290*DPR;
+canvas.style.width='290px';canvas.style.height='290px';
+ctx.scale(DPR,DPR);
+const CX=145,CY=145,OR=115;
+
+const CREW=[
+  {emoji:'🧹',label:'Putu',  bg:['#B8ECC8','#5CB88A'],stroke:'rgba(92,184,138,0.8)'},
+  {emoji:'🌊',label:'Kadek', bg:['#A0D4FF','#3090D8'],stroke:'rgba(48,144,216,0.8)'},
+  {emoji:'🌿',label:'Made',  bg:['#C8E8A0','#60B030'],stroke:'rgba(96,176,48,0.8)'},
+  {emoji:'🔧',label:'Wayan', bg:['#FFCCA0','#D06830'],stroke:'rgba(208,104,48,0.8)'},
+  {emoji:'👶',label:'Nanny', bg:['#F0B8D8','#C060A0'],stroke:'rgba(192,96,160,0.8)'},
+  {emoji:'💆',label:'Massage',bg:['#D8B8A0','#A07858'],stroke:'rgba(160,120,88,0.8)'},
+  {emoji:'👗',label:'Laundry',bg:['#B8D0F8','#6080C8'],stroke:'rgba(96,128,200,0.8)'},
+  {emoji:'🛎️',label:'Nyoman',bg:['#E8C880','#C09030'],stroke:'rgba(192,144,48,0.8)'},
+];
+
+// Pre-render colored bubble canvases
+const BS=32;
+const bubbles=CREW.map(m=>{
+  const bc=document.createElement('canvas');bc.width=BS*2;bc.height=BS*2;
+  const bx=bc.getContext('2d');
+  const g=bx.createRadialGradient(BS*0.55,BS*0.45,2,BS,BS,BS);
+  g.addColorStop(0,m.bg[0]);g.addColorStop(1,m.bg[1]);
+  bx.beginPath();bx.arc(BS,BS,BS-2,0,Math.PI*2);
+  bx.fillStyle=g;bx.fill();
+  bx.strokeStyle=m.stroke;bx.lineWidth=2;bx.stroke();
+  bx.font=`${BS}px serif`;bx.textAlign='center';bx.textBaseline='middle';
+  bx.fillText(m.emoji,BS,BS+1);
+  return bc;
+});
+
+function drawOrbit(){
+  const now=new Date();
+  const h=now.getHours()%12,m=now.getMinutes(),s=now.getSeconds()+now.getMilliseconds()/1000;
+  ctx.clearRect(0,0,290,290);
+
+  // dynamic bg — white/brand color if logo uploaded, dark otherwise
+  const orbitBg=window._orbitBg||'#030803';
+  ctx.beginPath();ctx.arc(CX,CY,144,0,Math.PI*2);
+  ctx.fillStyle=orbitBg;ctx.fill();
+
+  // adapt colors to bg brightness
+  const isLight=window._orbitBg&&window._orbitBg!=='#030803';
+  const ringColor=isLight?'rgba(0,0,0,0.12)':'rgba(201,168,76,0.14)';
+  const ringGlow=isLight?'rgba(0,0,0,0.04)':'rgba(201,168,76,0.04)';
+  const handH=isLight?'rgba(0,0,0,0.22)':'rgba(201,168,76,0.22)';
+  const handM=isLight?'rgba(0,0,0,0.16)':'rgba(201,168,76,0.16)';
+  const handS=isLight?'rgba(0,0,0,0.5)':'rgba(201,168,76,0.5)';
+  const dotC=isLight?'rgba(0,0,0,0.5)':'rgba(201,168,76,0.6)';
+
+  // orbit ring
+  ctx.beginPath();ctx.arc(CX,CY,OR,0,Math.PI*2);
+  ctx.strokeStyle=ringColor;ctx.lineWidth=1;ctx.setLineDash([3,9]);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(CX,CY,OR,0,Math.PI*2);
+  ctx.strokeStyle=ringGlow;ctx.lineWidth=10;ctx.stroke();
+
+  // clock hands
+  const hA=(h+m/60)/12*Math.PI*2-Math.PI/2;
+  const mA=(m+s/60)/60*Math.PI*2-Math.PI/2;
+  const sA=s/60*Math.PI*2-Math.PI/2;
+  [[hA,32,handH,3],[mA,44,handM,1.5],[sA,54,handS,1]].forEach(([a,len,col,w])=>{
+    ctx.beginPath();ctx.moveTo(CX,CY);ctx.lineTo(CX+Math.cos(a)*len,CY+Math.sin(a)*len);
+    ctx.strokeStyle=col;ctx.lineWidth=w;ctx.lineCap='round';ctx.stroke();
+  });
+  ctx.beginPath();ctx.arc(CX,CY,4,0,Math.PI*2);ctx.fillStyle=dotC;ctx.fill();
+
+  // crew — SLOW: 0.06 rad/s (was 0.28)
+  const t=Date.now()/1000;
+  const step=Math.PI*2/CREW.length;
+  CREW.forEach((m2,i)=>{
+    const angle=-t*0.06+i*step;
+    const x=CX+Math.cos(angle)*OR;
+    const y=CY+Math.sin(angle)*OR;
+    ctx.drawImage(bubbles[i],x-BS,y-BS,BS*2,BS*2);
+    ctx.font='bold 8px "Nunito",sans-serif';
+    ctx.fillStyle='rgba(255,255,255,0.6)';
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(m2.label,x,y+BS+3);
+  });
+  requestAnimationFrame(drawOrbit);
+}
+drawOrbit();
+
+// ── REVEAL ──
+function triggerReveal(){
+  document.querySelectorAll('.fi:not(.v)').forEach(el=>{
+    if(el.getBoundingClientRect().top<window.innerHeight+60)el.classList.add('v');
+  });
+}
+const obs=new IntersectionObserver(ee=>ee.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v');}),{threshold:.03});
+document.querySelectorAll('.fi').forEach(el=>obs.observe(el));
+setTimeout(triggerReveal,120);
+window.addEventListener('scroll',triggerReveal,{passive:true});
+
+// Set Sofia initial time
+const _n=new Date();document.getElementById('sofia-init-time').textContent=`${_n.getHours()}:${String(_n.getMinutes()).padStart(2,'0')}`;
+</script>
+</body>
+</html>
