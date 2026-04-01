@@ -4214,13 +4214,9 @@ const WORKER_URL = 'https://baliagencia.duanastys.workers.dev';
 // ─────────────────────────────────────────────────────────────────
 
 async function hostifyFetch(key, endpoint) {
-  const res = await fetch(WORKER_URL + '?endpoint=' + encodeURIComponent(endpoint), {
-    method: 'GET',
-    headers: {
-      'X-Hostify-Key': key,
-      'X-Endpoint': endpoint,
-    },
-  });
+  // Clé en query param (headers custom bloqués par certains proxies)
+  const url = WORKER_URL + '?endpoint=' + encodeURIComponent(endpoint) + '&apikey=' + encodeURIComponent(key);
+  const res = await fetch(url, { method: 'GET' });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error || 'HTTP ' + res.status);
@@ -4250,9 +4246,8 @@ async function testHostifyConnection() {
   let found = false;
   for (const base of bases) {
     try {
-      const res = await fetch(WORKER_URL + '?endpoint=/properties', {
+      const res = await fetch(WORKER_URL + '?endpoint=/properties&apikey=' + encodeURIComponent(key), {
         method: 'GET',
-        headers: { 'X-Hostify-Key': key, 'X-Endpoint': '/properties' },
       });
       const baseUsed = res.headers.get('X-Hostify-Base') || base;
 
