@@ -2791,6 +2791,10 @@ document.addEventListener('click', e => {
 
           <!-- ACTIONS -->
           <div class="api-actions">
+            <button id="btn-hostify-test" onclick="testHostifyConnection()" disabled
+              style="padding:10px 20px;background:rgba(52,152,219,0.08);border:1px solid rgba(52,152,219,0.3);color:var(--blue);border-radius:3px;font-family:DM Mono,monospace;font-size:11px;letter-spacing:1px;cursor:not-allowed;opacity:0.5;transition:all 0.2s;">
+              🔌 Tester la connexion
+            </button>
             <button class="btn-primary api-btn-connect" id="btn-hostify-connect" onclick="runDeepAudit('hostify')" disabled>
               🔗 Lancer l'audit complet →
             </button>
@@ -2798,6 +2802,7 @@ document.addEventListener('click', e => {
               ▶ Voir une démo avec de vraies données →
             </button>
           </div>
+          <div id="hostify-test-result" style="display:none;"></div>
           <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:8px;">La démo utilise des données fictives d'un vrai profil Hostify Bali — pour que vous voyiez exactement ce que vous obtiendrez.</div>
         </div>
       </div>
@@ -3987,9 +3992,14 @@ function checkApiInput(pms) {
   if (filled) {
     btn.disabled = false;
     btn.classList.add('ready');
+    // Active aussi le bouton test pour Hostify
+    const testBtn = document.getElementById('btn-' + pms + '-test');
+    if (testBtn) { testBtn.disabled = false; testBtn.style.opacity = '1'; testBtn.style.cursor = 'pointer'; }
   } else {
     btn.disabled = true;
     btn.classList.remove('ready');
+    const testBtn = document.getElementById('btn-' + pms + '-test');
+    if (testBtn) { testBtn.disabled = true; testBtn.style.opacity = '0.5'; testBtn.style.cursor = 'not-allowed'; }
   }
 }
 
@@ -4218,6 +4228,62 @@ async function hostifyFetch(key, endpoint) {
   return res.json();
 }
 
+// ── Test rapide connexion Hostify (sans lancer l'audit) ──────────
+async function testHostifyConnection() {
+  const key = (document.getElementById('hostify-key') || {}).value?.trim();
+  if (!key) return;
+
+  const resultEl = document.getElementById('hostify-test-result');
+  const btn = document.getElementById('btn-hostify-test');
+  if (!resultEl || !btn) return;
+
+  btn.textContent = '⏳ Test en cours...';
+  btn.disabled = true;
+  resultEl.style.display = 'none';
+
+  const bases = [
+    'https://app.hostify.com/api/v1',
+    'https://app.hostify.com/api/v2',
+    'https://app.hostify.com/api',
+  ];
+
+  let found = false;
+  for (const base of bases) {
+    try {
+      const res = await fetch(WORKER_URL + '?endpoint=/properties', {
+        method: 'GET',
+        headers: { 'X-Hostify-Key': key, 'X-Endpoint': '/properties' },
+      });
+      const baseUsed = res.headers.get('X-Hostify-Base') || base;
+
+      if (res.status === 200) {
+        const data = await res.json();
+        const props = Array.isArray(data) ? data : (data.data || []);
+        resultEl.style.cssText = 'display:block;margin-top:10px;padding:12px 16px;border-radius:6px;font-size:11px;line-height:1.8;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.3);color:var(--green);';
+        resultEl.innerHTML = `✅ <strong>Connexion réussie !</strong><br>Base URL : <code style="color:var(--gold-light)">${baseUsed}</code><br>${props.length} propriété${props.length !== 1 ? 's' : ''} détectée${props.length !== 1 ? 's' : ''} sur ce compte.<br><span style="color:var(--muted)">Tu peux maintenant lancer l'audit complet.</span>`;
+        found = true;
+        break;
+      } else if (res.status === 401 || res.status === 403) {
+        resultEl.style.cssText = 'display:block;margin-top:10px;padding:12px 16px;border-radius:6px;font-size:11px;line-height:1.8;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.3);color:var(--red);';
+        resultEl.innerHTML = `⚠️ <strong>Clé API refusée (${res.status})</strong><br>La clé est reconnue mais invalide ou expirée.<br>Vérifie que tu utilises la clé du <strong>compte propriétaire</strong> (Settings → API Key), pas un sous-compte admin.`;
+        found = true;
+        break;
+      }
+      // 500/502 → mauvaise base, on continue
+    } catch(e) {
+      // continue
+    }
+  }
+
+  if (!found) {
+    resultEl.style.cssText = 'display:block;margin-top:10px;padding:12px 16px;border-radius:6px;font-size:11px;line-height:1.8;background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.3);color:var(--red);';
+    resultEl.innerHTML = `🔴 <strong>Impossible de joindre Hostify</strong><br>Aucune des URLs de base connues ne répond.<br><br>👉 Demande à ton contact Hostify l'URL exacte de leur API (Settings → API Key → URL affichée) et envoie-la nous.`;
+  }
+
+  btn.textContent = '🔌 Tester la connexion';
+  btn.disabled = false;
+}
+
 async function runDeepAudit(pms) {
   const keyEl = document.getElementById(pms + '-key');
   const key = keyEl ? keyEl.value.trim() : '';
@@ -4285,8 +4351,10 @@ async function runDeepAudit(pms) {
       markStep(0, false);
       if (e.message.includes('401') || e.message.includes('403')) {
         showError('Clé API invalide ou expirée. Vérifie qu\'elle commence bien par <code>hf_</code> et qu\'elle appartient au compte propriétaire (pas un admin invité).');
+      } else if (e.message.includes('502') || e.message.includes('unreachable') || e.message.includes('all base')) {
+        showError('Impossible de joindre l\'API Hostify. L\'URL de base est peut-être différente sur ton compte. <br><br>👉 <strong>Solution</strong> : connecte-toi sur <a href="https://app.hostify.com" target="_blank" style="color:var(--gold)">app.hostify.com</a> → Settings → API Key → copie l\'URL d\'API indiquée, et envoie-la nous par WhatsApp.');
       } else {
-        showError('Impossible de contacter Hostify : ' + e.message + '. Vérifie ta connexion internet.');
+        showError('Impossible de contacter Hostify : ' + e.message + '<br><br>Vérifie ta connexion internet et que la clé est bien celle du compte principal (Settings → API Key).');
       }
       return;
     }
