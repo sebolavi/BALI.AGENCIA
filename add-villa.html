@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Ajouter une villa — Hidden Keys Bali</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<style>
+:root{
+  --gold:#8B6914;--gold-light:#C9A84C;
+  --cream:#F5F0E8;--cream2:#EDE8DC;--cream3:#E5DED0;
+  --border:rgba(139,105,20,0.18);
+  --text:#1A1208;--muted:#6B5B3E;
+  --green:#2ECC71;--green-d:#1A7A3C;
+  --blue:#3498DB;--blue-d:#1A5A8A;
+  --violet:#6B2D8B;--red:#C0392B;--orange:#B7590A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--cream);color:var(--text);font-family:"DM Mono",monospace;min-height:100vh;}
+
+.topbar{position:sticky;top:0;z-index:200;background:rgba(245,240,232,0.97);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);}
+.back-btn{display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:20px;transition:all .2s;background:transparent;font-family:"DM Mono",monospace;}
+.back-btn:hover{border-color:var(--gold);color:var(--gold);}
+.topbar-sep{width:1px;height:24px;background:var(--border);}
+.topbar-title{font-family:"Playfair Display",serif;font-size:15px;color:var(--text);}
+.topbar-title em{color:var(--gold);font-style:italic;}
+
+.main{max-width:760px;margin:0 auto;padding:48px 28px 120px;}
+
+/* CLIENT CHIP */
+.client-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border:1px solid var(--border);border-radius:20px;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:28px;}
+.chip-dot{width:7px;height:7px;border-radius:50%;background:var(--green);}
+
+/* IMPORT MODE */
+.import-modes{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+.im-btn{padding:7px 16px;border:1px solid var(--border);border-radius:20px;font-family:"DM Mono",monospace;font-size:9px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent;letter-spacing:.5px;}
+.im-btn:hover,.im-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(139,105,20,.07);}
+
+/* STEP BAR */
+.step-bar{display:flex;align-items:center;margin-bottom:32px;}
+.si{display:flex;align-items:center;gap:7px;}
+.si-num{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);transition:all .22s;flex-shrink:0;}
+.si.active .si-num{border-color:var(--gold);color:var(--gold);background:rgba(139,105,20,.08);}
+.si.done .si-num{border-color:var(--green-d);background:var(--green-d);color:white;}
+.si-label{font-size:9px;color:var(--muted);white-space:nowrap;}
+.si.active .si-label{color:var(--text);}
+.si.done .si-label{color:var(--green-d);}
+.sl{flex:1;height:1px;background:var(--border);min-width:12px;margin:0 5px;}
+
+/* PANES */
+.pane{display:none;animation:fu .25s ease;}
+.pane.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* CARD */
+.card{background:var(--cream2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px;}
+.card-hd{padding:15px 22px;border-bottom:1px solid var(--border);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.card-bd{padding:22px;}
+
+/* VILLA BUBBLE PREVIEW */
+.villa-preview{display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px 0 20px;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.villa-bubble{width:90px;height:90px;border-radius:50%;border:2.5px solid var(--gold);background:var(--cream3);display:flex;align-items:center;justify-content:center;font-size:34px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative;box-shadow:0 0 20px rgba(139,105,20,.15);}
+.villa-bubble:hover .bov{opacity:1;}
+.bov{position:absolute;inset:0;background:rgba(26,18,8,.48);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:20px;}
+.villa-bubble img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.bubble-hint{font-size:9px;color:var(--muted);letter-spacing:.5px;}
+.name-live{font-family:"Playfair Display",serif;font-size:22px;color:var(--text);min-height:28px;transition:all .2s;text-align:center;}
+.name-live.empty{color:var(--muted);font-style:italic;font-size:15px;}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.fl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.fi{padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:"DM Mono",monospace;font-size:11px;background:var(--cream);color:var(--text);outline:none;transition:border-color .15s;width:100%;}
+.fi:focus{border-color:var(--gold);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:600px){.frow{grid-template-columns:1fr;}}
+.fhint{font-size:9px;color:var(--muted);line-height:1.7;margin-top:3px;}
+
+/* MAP */
+.map-sb{display:flex;gap:8px;margin-bottom:10px;}
+.map-si{flex:1;padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:"DM Mono",monospace;font-size:11px;background:var(--cream);color:var(--text);outline:none;transition:border-color .15s;}
+.map-si:focus{border-color:var(--gold);}
+.map-sbtn{padding:10px 16px;border-radius:8px;border:none;background:var(--gold);color:white;font-family:"DM Mono",monospace;font-size:10px;cursor:pointer;transition:background .2s;white-space:nowrap;}
+.map-sbtn:hover{background:#7A5D11;}
+.map-wrap{border-radius:10px;overflow:hidden;border:1px solid var(--border);position:relative;margin-bottom:10px;}
+#wmap{height:270px;width:100%;}
+.crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-100%);z-index:500;pointer-events:none;transition:transform .15s;}
+.crosshair-pin{width:32px;height:32px;border-radius:50%;background:var(--gold);border:3px solid white;box-shadow:0 3px 12px rgba(0,0,0,.38);display:flex;align-items:center;justify-content:center;font-size:15px;}
+.crosshair-stem{width:2px;height:10px;background:var(--gold);margin:0 auto;opacity:.7;}
+.mhint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(26,18,8,.7);color:rgba(255,255,255,.88);font-size:8px;letter-spacing:.5px;padding:5px 13px;border-radius:20px;pointer-events:none;white-space:nowrap;backdrop-filter:blur(4px);z-index:10;}
+.msat{position:absolute;top:8px;right:8px;background:rgba(245,240,232,.93);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:8px;color:var(--muted);cursor:pointer;font-family:"DM Mono",monospace;backdrop-filter:blur(4px);transition:all .2s;z-index:10;}
+.msat:hover{border-color:var(--gold);color:var(--gold);}
+.gps-row{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--cream);border:1px solid var(--border);border-radius:8px;margin-bottom:10px;font-size:10px;}
+.gps-val{font-family:"DM Mono",monospace;flex:1;color:var(--text);}
+.gpsbadge{font-size:8px;padding:3px 9px;border-radius:10px;white-space:nowrap;}
+.gpsbadge.ok{background:rgba(46,204,113,.1);color:var(--green-d);}
+.gpsbadge.none{background:rgba(139,105,20,.08);color:var(--muted);}
+.gpsbadge.wait{background:rgba(183,89,10,.1);color:var(--orange);}
+
+/* SEARCH DROPDOWN */
+.sdrop{background:var(--cream);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:10px;box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.sdrop-hd{padding:7px 13px;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);}
+.sdrop-item{padding:10px 13px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;gap:9px;transition:background .15s;}
+.sdrop-item:last-child{border-bottom:none;}
+.sdrop-item:hover{background:rgba(139,105,20,.05);}
+.sri-name{font-size:11px;color:var(--text);}
+.sri-sub{font-size:9px;color:var(--muted);margin-top:2px;}
+
+/* PLATFORM */
+.platform-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--border);}
+.platform-row:last-child{border-bottom:none;}
+.plogo{width:34px;height:34px;border-radius:7px;background:var(--cream3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.pname{font-size:10px;color:var(--text);margin-bottom:3px;}
+.phint{font-size:8px;color:var(--muted);}
+.pinput{padding:8px 11px;border:1px solid var(--border);border-radius:7px;font-family:"DM Mono",monospace;font-size:10px;background:var(--cream);color:var(--text);outline:none;transition:border-color .15s;width:155px;flex-shrink:0;}
+.pinput:focus{border-color:var(--gold);}
+
+/* SECTION SEP */
+.ssep{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:18px 0 13px;display:flex;align-items:center;gap:12px;}
+.ssep::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+
+/* RECAP */
+.recap-top{display:flex;align-items:center;gap:18px;padding:18px 0;border-bottom:1px solid var(--border);margin-bottom:18px;}
+.recap-bub{width:68px;height:68px;border-radius:50%;border:2.5px solid var(--gold);background:var(--cream3);display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;flex-shrink:0;}
+.recap-bub img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.recap-name{font-family:"Playfair Display",serif;font-size:20px;color:var(--text);margin-bottom:4px;}
+.recap-meta{font-size:10px;color:var(--muted);line-height:1.9;}
+.rrow{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);}
+.rrow:last-child{border-bottom:none;}
+.ricon{font-size:13px;flex-shrink:0;width:18px;text-align:center;margin-top:1px;}
+.rlabel{font-size:9px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;width:90px;flex-shrink:0;margin-top:2px;}
+.rval{font-size:10px;color:var(--text);flex:1;}
+.rval.miss{color:var(--muted);font-style:italic;}
+.redit{font-size:9px;color:var(--gold);cursor:pointer;flex-shrink:0;padding:2px 6px;}
+.redit:hover{text-decoration:underline;}
+
+/* MINI MAP CONFIRM */
+#cmap{height:130px;border-radius:8px;overflow:hidden;border:1px solid var(--border);margin:10px 0;}
+
+/* CTA */
+.cta{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap;align-items:center;}
+.btn-p{padding:11px 24px;border-radius:8px;border:none;background:var(--gold);color:white;font-family:"DM Mono",monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-p:hover{background:#7A5D11;}
+.btn-p:disabled{opacity:.35;cursor:not-allowed;}
+.btn-g{padding:11px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:"DM Mono",monospace;font-size:10px;cursor:pointer;transition:all .2s;}
+.btn-g:hover{border-color:var(--gold);color:var(--gold);}
+.btn-skip{padding:11px 14px;border:none;background:transparent;color:var(--muted);font-family:"DM Mono",monospace;font-size:9px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.btn-create{padding:13px 30px;border-radius:8px;border:none;background:var(--green-d);color:white;font-family:"DM Mono",monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-create:hover{background:#0E5228;}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="back-btn" onclick="goBack()">← Retour</button>
+    <div class="topbar-sep"></div>
+    <div class="topbar-title">Nouvelle villa — <em id="tc">Jean-Luc Martin</em></div>
+  </div>
+  <span style="font-family:'Playfair Display',serif;font-size:13px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;">HIDDEN KEYS</span>
+</nav>
+
+<div class="main">
+
+  <div class="client-chip"><div class="chip-dot"></div><span id="cc-label">Jean-Luc Martin · 5 villas</span></div>
+
+  <div class="import-modes">
+    <button class="im-btn active" onclick="setMode('manual',this)">✏️ Saisie manuelle</button>
+    <button class="im-btn" onclick="setMode('api',this)">🔌 Hostaway API</button>
+    <button class="im-btn" onclick="setMode('zip',this)">📁 Fichiers / Zip</button>
+  </div>
+
+  <!-- MODE ZIP — DROP ZONE + PARSER -->
+  <div id="zip-panel" style="display:none;margin-bottom:28px;">
+    <div id="drop-zone" onclick="document.getElementById('file-inp').click()"
+      style="border:2px dashed rgba(52,152,219,.3);border-radius:14px;padding:36px 24px;text-align:center;cursor:pointer;background:rgba(52,152,219,.03);transition:all .2s;">
+      <div style="font-size:36px;margin-bottom:12px;">📁</div>
+      <div style="font-size:14px;color:var(--blue);font-weight:600;margin-bottom:6px;">Glisse tes fichiers ici</div>
+      <div style="font-size:11px;color:var(--muted);line-height:1.9;">ZIP · PDF · Excel · CSV · Screenshots<br>Claude analyse et pré-remplit la fiche villa</div>
+      <div style="margin-top:14px;font-size:10px;padding:6px 16px;border:1px solid rgba(52,152,219,.25);border-radius:20px;display:inline-block;color:var(--blue);">Choisir un fichier</div>
+    </div>
+    <input type="file" id="file-inp" accept=".zip,.pdf,.xlsx,.xls,.csv,image/*" multiple style="display:none;" onchange="onFileDrop(this.files)">
+
+    <!-- ÉTAT PARSING -->
+    <div id="parse-state" style="display:none;margin-top:16px;">
+      <div id="parse-loading" style="display:none;padding:20px;background:var(--cream2);border:1px solid var(--border);border-radius:12px;text-align:center;">
+        <div style="font-size:24px;margin-bottom:10px;">⏳</div>
+        <div style="font-size:12px;font-weight:600;margin-bottom:4px;">Claude analyse ton fichier…</div>
+        <div style="font-size:10px;color:var(--muted);" id="parse-substatus">Lecture en cours</div>
+      </div>
+
+      <div id="parse-result" style="display:none;">
+        <div style="padding:14px 18px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:10px;margin-bottom:14px;">
+          <div style="font-size:11px;font-weight:600;color:var(--green-d);margin-bottom:8px;">✓ Analyse terminée — données extraites</div>
+          <div id="parse-summary" style="font-size:11px;color:var(--muted);line-height:2.0;"></div>
+        </div>
+        <button onclick="applyParsed()" style="width:100%;padding:13px;border-radius:8px;border:none;background:var(--gold);color:white;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">
+          Appliquer et continuer le wizard →
+        </button>
+      </div>
+
+      <div id="parse-error" style="display:none;padding:14px 18px;background:rgba(192,57,43,.05);border:1px solid rgba(192,57,43,.2);border-radius:10px;">
+        <div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px;">Impossible d'extraire les données</div>
+        <div id="parse-error-msg" style="font-size:10px;color:var(--muted);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-bar">
+    <div class="si active" id="si1"><div class="si-num" id="sn1">1</div><div class="si-label">Photo & identité</div></div>
+    <div class="sl"></div>
+    <div class="si" id="si2"><div class="si-num" id="sn2">2</div><div class="si-label">Localisation</div></div>
+    <div class="sl"></div>
+    <div class="si" id="si3"><div class="si-num" id="sn3">3</div><div class="si-label">Plateformes</div></div>
+    <div class="sl"></div>
+    <div class="si" id="si4"><div class="si-num" id="sn4">4</div><div class="si-label">Confirmation</div></div>
+  </div>
+
+  <!-- ══ STEP 1 ══ -->
+  <div class="pane active" id="p1">
+    <div class="card">
+      <div class="card-hd">📸 Photo & identité</div>
+      <div class="card-bd">
+
+        <div class="villa-preview">
+          <div class="villa-bubble" id="bubble" onclick="document.getElementById('pu').click()">
+            <div id="bubble-inner" style="font-size:34px;">🏠</div>
+            <div class="bov">📸</div>
+          </div>
+          <input type="file" id="pu" accept="image/*" style="display:none;" onchange="onPhoto(this)">
+          <div class="bubble-hint">Cliquer pour ajouter une photo de couverture</div>
+          <div class="name-live empty" id="name-live">Nom de la villa</div>
+        </div>
+
+        <div class="fg">
+          <div class="fl">Nom de la villa *</div>
+          <input class="fi" id="m-name" type="text" placeholder="ex : Villa Karma" oninput="onName(this.value)" autofocus>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <div class="fl">Type</div>
+            <select class="fi" id="m-type"><option>Villa</option><option>Studio</option><option>Maison</option><option>Appartement</option></select>
+          </div>
+          <div class="fg">
+            <div class="fl">Chambres *</div>
+            <select class="fi" id="m-beds" onchange="chk1()">
+              <option value="">— Choisir</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6+</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg">
+          <div class="fl">Quartier *</div>
+          <select class="fi" id="m-area" onchange="chk1()">
+            <option value="">— Choisir</option>
+            <option>Canggu</option><option>Berawa</option><option>Seminyak</option>
+            <option>Pererenan</option><option>Echo Beach</option><option>Kuta</option><option>Autre</option>
+          </select>
+        </div>
+
+      </div>
+    </div>
+    <div class="cta">
+      <button class="btn-g" onclick="goBack()">Annuler</button>
+      <button class="btn-p" id="next1" onclick="go(2)" disabled>Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2 ══ -->
+  <div class="pane" id="p2">
+    <div class="card">
+      <div class="card-hd">📍 Localisation GPS</div>
+      <div class="card-bd">
+
+        <div class="map-sb">
+          <input class="map-si" id="msearch" type="text" placeholder="Chercher l'adresse ou le nom de la villa..." onkeydown="if(event.key==='Enter')doSearch()">
+          <button class="map-sbtn" onclick="doSearch()">Localiser</button>
+        </div>
+
+        <div id="sdrop" style="display:none;" class="sdrop"></div>
+
+        <div class="map-wrap">
+          <div id="wmap"></div>
+          <div class="crosshair" id="xhair">
+            <div class="crosshair-pin" id="xpin">🏠</div>
+            <div class="crosshair-stem"></div>
+          </div>
+          <div class="mhint" id="mhint">Déplacer la carte pour positionner la villa</div>
+          <button class="msat" onclick="toggleSat()">🛰 Satellite</button>
+        </div>
+
+        <div class="gps-row">
+          <span style="font-size:14px;">📡</span>
+          <span class="gps-val" id="gpsval">Position non définie</span>
+          <span class="gpsbadge none" id="gpsbadge">En attente</span>
+        </div>
+
+        <div class="fg" style="margin-bottom:0;">
+          <div class="fl">Adresse</div>
+          <input class="fi" id="m-addr" type="text" placeholder="Mise à jour automatique au déplacement de la carte">
+          <div class="fhint">Auto-remplie par reverse geocoding · Modifiable manuellement</div>
+        </div>
+
+      </div>
+    </div>
+    <div class="cta">
+      <button class="btn-g" onclick="go(1)">← Retour</button>
+      <button class="btn-skip" onclick="go(3)">Passer →</button>
+      <button class="btn-p" onclick="go(3)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3 ══ -->
+  <div class="pane" id="p3">
+    <div class="card">
+      <div class="card-hd">🔗 Plateformes & tarif</div>
+      <div class="card-bd">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:16px;padding:10px 13px;background:rgba(139,105,20,.04);border-radius:8px;line-height:1.9;">
+          Copier-coller les IDs depuis vos dashboards. Tout peut être renseigné ou modifié dans la fiche villa ensuite.
+        </div>
+
+        <div class="platform-row">
+          <div class="plogo">🏠</div>
+          <div style="flex:1;"><div class="pname">Airbnb — Listing ID</div><div class="phint">Dans l'URL de votre annonce : airbnb.com/rooms/<strong>12345678</strong></div></div>
+          <input class="pinput" id="p-airbnb" type="text" placeholder="12345678">
+        </div>
+        <div class="platform-row">
+          <div class="plogo">📘</div>
+          <div style="flex:1;"><div class="pname">Booking.com — Property ID</div><div class="phint">Extranet Booking → Propriété → Détails</div></div>
+          <input class="pinput" id="p-booking" type="text" placeholder="87654321">
+        </div>
+        <div class="platform-row">
+          <div class="plogo">🗝️</div>
+          <div style="flex:1;"><div class="pname">Hostaway — Property ID</div><div class="phint">Hostaway → Propriétés → ID</div></div>
+          <input class="pinput" id="p-hostaway" type="text" placeholder="HW-9923">
+        </div>
+
+        <div class="ssep">Tarif</div>
+
+        <div class="frow">
+          <div class="fg">
+            <div class="fl">Prix minimum (floor)</div>
+            <input class="fi" id="p-floor" type="text" placeholder="ex : $150">
+            <div class="fhint">Pricelabs ne descend jamais en dessous</div>
+          </div>
+          <div class="fg">
+            <div class="fl">Prix indicatif / nuit</div>
+            <input class="fi" id="p-price" type="text" placeholder="ex : $220">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cta">
+      <button class="btn-g" onclick="go(2)">← Retour</button>
+      <button class="btn-skip" onclick="go(4)">Passer →</button>
+      <button class="btn-p" onclick="go(4)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 4 — CONFIRMATION ══ -->
+  <div class="pane" id="p4">
+    <div class="card">
+      <div class="card-hd">✅ Confirmation</div>
+      <div class="card-bd">
+
+        <div class="recap-top">
+          <div class="recap-bub" id="rbub"><span id="rbub-inner" style="font-size:24px;">🏠</span></div>
+          <div>
+            <div class="recap-name" id="rname">—</div>
+            <div class="recap-meta" id="rmeta">—</div>
+          </div>
+        </div>
+
+        <div class="rrow">
+          <div class="ricon">📍</div><div class="rlabel">Adresse</div>
+          <div class="rval miss" id="r-addr">Non renseignée</div>
+          <div class="redit" onclick="go(2)">Modifier</div>
+        </div>
+        <div class="rrow">
+          <div class="ricon">📡</div><div class="rlabel">GPS</div>
+          <div class="rval miss" id="r-gps">Non renseigné</div>
+          <div class="redit" onclick="go(2)">Modifier</div>
+        </div>
+
+        <div id="cmap-wrap" style="display:none;">
+          <div id="cmap"></div>
+        </div>
+
+        <div class="rrow">
+          <div class="ricon">🏠</div><div class="rlabel">Airbnb ID</div>
+          <div class="rval miss" id="r-airbnb">Non renseigné</div>
+          <div class="redit" onclick="go(3)">Modifier</div>
+        </div>
+        <div class="rrow">
+          <div class="ricon">📘</div><div class="rlabel">Booking ID</div>
+          <div class="rval miss" id="r-booking">Non renseigné</div>
+          <div class="redit" onclick="go(3)">Modifier</div>
+        </div>
+        <div class="rrow">
+          <div class="ricon">💰</div><div class="rlabel">Prix floor</div>
+          <div class="rval miss" id="r-floor">Non renseigné</div>
+          <div class="redit" onclick="go(3)">Modifier</div>
+        </div>
+
+        <div style="margin-top:20px;padding:13px 15px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:8px;font-size:9px;color:var(--muted);line-height:2.1;">
+          ✓ Wallet Xendit sub-account créé automatiquement<br>
+          ✓ La fiche villa complète s'ouvrira pour ajouter les autres photos, le staff, les seuils<br>
+          ✓ Tout est modifiable dans Settings → Villa
+        </div>
+
+      </div>
+    </div>
+    <div class="cta">
+      <button class="btn-g" onclick="go(3)">← Retour</button>
+      <button class="btn-create" id="btn-create" onclick="createVilla()">Créer la villa →</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const P = new URLSearchParams(window.location.search);
+const clientId = P.get('client')||'jeanluc';
+const clientName = P.get('name')||'Jean-Luc Martin';
+const clientVillas = P.get('villas')||'5';
+document.getElementById('tc').textContent = clientName;
+document.getElementById('cc-label').textContent = clientName+' · '+clientVillas+' villa'+(clientVillas>1?'s':'');
+function goBack(){ window.location.href='settings-client.html?id='+clientId+'&tab=villas'; }
+function setMode(m,btn){
+  document.querySelectorAll('.im-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  // Affiche/cache la drop zone
+  document.getElementById('zip-panel').style.display = m==='zip' ? 'block' : 'none';
+  // Affiche/cache le wizard
+  document.querySelector('.step-bar').style.display = m==='zip' ? 'none' : 'flex';
+  document.getElementById('p1').style.display = m==='zip' ? 'none' : '';
+}
+
+// ── DRAG & DROP ──
+const dz = document.getElementById('drop-zone');
+if(dz){
+  dz.addEventListener('dragover', e=>{ e.preventDefault(); dz.style.borderColor='rgba(52,152,219,.7)'; dz.style.background='rgba(52,152,219,.07)'; });
+  dz.addEventListener('dragleave', ()=>{ dz.style.borderColor='rgba(52,152,219,.3)'; dz.style.background='rgba(52,152,219,.03)'; });
+  dz.addEventListener('drop', e=>{ e.preventDefault(); dz.style.borderColor='rgba(52,152,219,.3)'; dz.style.background='rgba(52,152,219,.03)'; onFileDrop(e.dataTransfer.files); });
+}
+
+// ── PARSED DATA (global pour applyParsed) ──
+let parsedData = null;
+
+// ── FILE DROP HANDLER ──
+async function onFileDrop(files){
+  if(!files || !files.length) return;
+  const file = files[0];
+
+  document.getElementById('parse-state').style.display = 'block';
+  document.getElementById('parse-loading').style.display = 'block';
+  document.getElementById('parse-result').style.display = 'none';
+  document.getElementById('parse-error').style.display = 'none';
+
+  try {
+    document.getElementById('parse-substatus').textContent = 'Lecture du fichier…';
+
+    // Lire le fichier
+    const content = await readFile(file);
+
+    document.getElementById('parse-substatus').textContent = 'Claude analyse le contenu…';
+
+    // Appel Claude API
+    const result = await parseWithClaude(file.name, content);
+
+    document.getElementById('parse-loading').style.display = 'none';
+
+    if(result && result.villa_name){
+      parsedData = result;
+      showParseResult(result);
+    } else {
+      showParseError('Aucune donnée villa trouvée dans ce fichier.');
+    }
+  } catch(err) {
+    document.getElementById('parse-loading').style.display = 'none';
+    showParseError(err.message || 'Erreur lors de l\'analyse.');
+  }
+}
+
+// ── READ FILE → TEXT ou BASE64 ──
+function readFile(file){
+  return new Promise((resolve, reject)=>{
+    const isPdf = file.type === 'application/pdf';
+    const isImage = file.type.startsWith('image/');
+    const r = new FileReader();
+    if(isPdf || isImage){
+      r.onload = e => resolve({ type: isPdf?'pdf':'image', mime: file.type, data: e.target.result.split(',')[1] });
+      r.onerror = ()=>reject(new Error('Lecture fichier échouée'));
+      r.readAsDataURL(file);
+    } else {
+      // CSV, Excel, texte, ZIP → on lit comme texte (ZIP sera limité mais on essaie)
+      r.onload = e => resolve({ type: 'text', data: e.target.result });
+      r.onerror = ()=>reject(new Error('Lecture fichier échouée'));
+      r.readAsText(file);
+    }
+  });
+}
+
+// ── CLAUDE API PARSER ──
+async function parseWithClaude(filename, content){
+  const systemPrompt = `Tu es un parser de données de gestion locative.
+Analyse le fichier fourni et extrait les informations de la villa.
+Réponds UNIQUEMENT en JSON valide, sans markdown, sans explication.
+Format exact :
+{
+  "villa_name": "nom de la villa ou null",
+  "quartier": "quartier/zone à Bali ou null",
+  "chambres": nombre ou null,
+  "adr": montant nuit moyen en USD ou null,
+  "occupancy_pct": pourcentage occupation 0-100 ou null,
+  "revenu_mensuel_usd": revenu mensuel moyen ou null,
+  "periode": "période couverte ex: jan-dec 2024 ou null",
+  "notes": "autres infos utiles ou null"
+}`;
+
+  let messages;
+  if(content.type === 'pdf'){
+    messages = [{
+      role: 'user',
+      content: [
+        { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: content.data } },
+        { type: 'text', text: `Fichier: ${filename}\nExtrait les données villa de ce document.` }
+      ]
+    }];
+  } else if(content.type === 'image'){
+    messages = [{
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: content.mime, data: content.data } },
+        { type: 'text', text: `Fichier: ${filename}\nExtrait les données villa visibles sur cette image/screenshot.` }
+      ]
+    }];
+  } else {
+    // Texte brut — tronquer si trop long
+    const text = content.data.slice(0, 8000);
+    messages = [{
+      role: 'user',
+      content: `Fichier: ${filename}\n\nContenu:\n${text}\n\nExtrait les données villa.`
+    }];
+  }
+
+  const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages
+    })
+  });
+
+  if(!resp.ok) throw new Error('Erreur API Claude ('+resp.status+')');
+  const data = await resp.json();
+  const text = data.content.map(b=>b.text||'').join('').trim();
+  const clean = text.replace(/```json|```/g,'').trim();
+  return JSON.parse(clean);
+}
+
+// ── AFFICHE RÉSULTAT ──
+function showParseResult(d){
+  document.getElementById('parse-result').style.display = 'block';
+  const lines = [
+    d.villa_name   ? `🏠 Villa : <strong>${d.villa_name}</strong>` : null,
+    d.quartier     ? `📍 Quartier : ${d.quartier}` : null,
+    d.chambres     ? `🛏 Chambres : ${d.chambres}` : null,
+    d.adr          ? `💰 ADR : $${d.adr}/nuit` : null,
+    d.occupancy_pct? `📊 Occupancy : ${d.occupancy_pct}%` : null,
+    d.revenu_mensuel_usd ? `💵 Revenu moyen/mois : $${d.revenu_mensuel_usd}` : null,
+    d.periode      ? `📅 Période : ${d.periode}` : null,
+    d.notes        ? `📝 ${d.notes}` : null,
+  ].filter(Boolean);
+  document.getElementById('parse-summary').innerHTML = lines.join('<br>');
+}
+
+function showParseError(msg){
+  document.getElementById('parse-error').style.display = 'block';
+  document.getElementById('parse-error-msg').textContent = msg;
+}
+
+// ── APPLIQUER LES DONNÉES AU WIZARD ──
+function applyParsed(){
+  if(!parsedData) return;
+  // Passer en mode manuel et activer le wizard
+  const manualBtn = document.querySelector('.im-btn');
+  setMode('manual', manualBtn);
+  manualBtn.classList.add('active');
+
+  // Pré-remplir les champs step 1
+  if(parsedData.villa_name){
+    const inp = document.getElementById('v-name');
+    if(inp){ inp.value = parsedData.villa_name; inp.dispatchEvent(new Event('input')); }
+  }
+  if(parsedData.chambres){
+    const inp = document.getElementById('v-beds');
+    if(inp) inp.value = parsedData.chambres;
+  }
+  if(parsedData.quartier){
+    const inp = document.getElementById('v-quartier');
+    if(inp) inp.value = parsedData.quartier;
+  }
+  // Stocker pour les steps suivants
+  window._parsed = parsedData;
+}
+
+
+// ── STEPS ──
+let cur=1;
+function go(n){
+  // mark done
+  document.getElementById('si'+cur).classList.remove('active');
+  document.getElementById('si'+cur).classList.add('done');
+  document.getElementById('sn'+cur).textContent='✓';
+  document.getElementById('p'+cur).classList.remove('active');
+  cur=n;
+  document.getElementById('si'+n).classList.remove('done');
+  document.getElementById('si'+n).classList.add('active');
+  document.getElementById('p'+n).classList.add('active');
+  if(n===2) setTimeout(initMap,80);
+  if(n===4) buildRecap();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── STEP 1 ──
+let photoUrl=null;
+function updatePinPhoto(){
+  const pin = document.getElementById('xpin');
+  if(!pin) return;
+  if(photoUrl){
+    pin.style.fontSize='0';
+    pin.style.padding='0';
+    pin.style.overflow='hidden';
+    pin.innerHTML=`<img src="${photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  } else {
+    pin.style.fontSize='15px';
+    pin.style.overflow='';
+    pin.innerHTML='🏠';
+  }
+}
+
+function onPhoto(inp){
+  const f=inp.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    photoUrl=e.target.result;
+    document.getElementById('bubble-inner').innerHTML=`<img src="${photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    // Pin map = photo dans bulle ronde
+    updatePinPhoto();
+  };
+  r.readAsDataURL(f);
+}
+function onName(v){
+  const el=document.getElementById('name-live');
+  if(v.trim()){el.textContent=v;el.classList.remove('empty');}
+  else{el.textContent='Nom de la villa';el.classList.add('empty');}
+  chk1();
+}
+function chk1(){
+  const ok=document.getElementById('m-name').value.trim()&&document.getElementById('m-beds').value&&document.getElementById('m-area').value;
+  document.getElementById('next1').disabled=!ok;
+}
+
+// ── STEP 2 MAP ──
+let map=null,mapReady=false,satMode=false,stile=null,satile=null;
+let gLat=null,gLng=null,rvt=null;
+const TS='https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+const TSAT='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+
+function initMap(){
+  if(mapReady) return;
+  map=L.map('wmap',{zoomControl:true,attributionControl:false,scrollWheelZoom:false,touchZoom:false,doubleClickZoom:true}).setView([-8.6503,115.1384],13);
+  stile=L.tileLayer(TS,{maxZoom:19}).addTo(map);
+  satile=L.tileLayer(TSAT,{maxZoom:19});
+  // pré-remplir recherche
+  const nm=document.getElementById('m-name').value.trim();
+  if(nm) document.getElementById('msearch').value=nm+', Bali';
+  map.on('movestart',()=>{ document.getElementById('xhair').style.transform='translate(-50%,-110%)'; });
+  map.on('moveend',()=>{
+    document.getElementById('xhair').style.transform='translate(-50%,-100%)';
+    const c=map.getCenter();
+    setGPS(c.lat,c.lng);
+    revGeo(c.lat,c.lng);
+  });
+  mapReady=true;
+  updatePinPhoto(); // appliquer la photo si déjà uploadée
+}
+function setGPS(lat,lng){
+  gLat=+lat.toFixed(6); gLng=+lng.toFixed(6);
+  document.getElementById('gpsval').textContent=gLat+', '+gLng;
+  document.getElementById('gpsbadge').textContent='✓ Confirmé';
+  document.getElementById('gpsbadge').className='gpsbadge ok';
+}
+function revGeo(lat,lng){
+  clearTimeout(rvt);
+  rvt=setTimeout(()=>{
+    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+      .then(r=>r.json())
+      .then(d=>{
+        if(d&&d.display_name){
+          const a=d.display_name.split(',').slice(0,3).map(s=>s.trim()).join(', ');
+          document.getElementById('m-addr').value=a;
+          document.getElementById('mhint').textContent='📍 '+a;
+        }
+      }).catch(()=>{});
+  },600);
+}
+function doSearch(){
+  const q=document.getElementById('msearch').value.trim(); if(!q||!mapReady) return;
+  document.getElementById('gpsbadge').textContent='Recherche...';
+  document.getElementById('gpsbadge').className='gpsbadge wait';
+  fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q+', Bali, Indonesia')}&format=json&limit=5`)
+    .then(r=>r.json())
+    .then(data=>{
+      const drop=document.getElementById('sdrop');
+      if(!data||!data.length){
+        document.getElementById('mhint').textContent='Non trouvé — déplacer la carte manuellement';
+        document.getElementById('gpsbadge').textContent='Non trouvé';
+        document.getElementById('gpsbadge').className='gpsbadge none';
+        drop.style.display='none'; return;
+      }
+      if(data.length===1){ drop.style.display='none'; map.setView([parseFloat(data[0].lat),parseFloat(data[0].lon)],17,{animate:true}); return; }
+      drop.innerHTML=`<div class="sdrop-hd">${data.length} résultats — choisir le bon</div>`+
+        data.map((d,i)=>{const p=d.display_name.split(',');return`<div class="sdrop-item" onclick="pick(${i})"><span style="font-size:13px;flex-shrink:0;">📍</span><div><div class="sri-name">${p[0].trim()}</div><div class="sri-sub">${p.slice(1,4).map(s=>s.trim()).join(', ')}</div></div></div>`;}).join('');
+      drop.style.display='block';
+      window._sr=data;
+    }).catch(()=>{ document.getElementById('mhint').textContent='Erreur réseau'; });
+}
+function pick(i){ map.setView([parseFloat(window._sr[i].lat),parseFloat(window._sr[i].lon)],17,{animate:true}); document.getElementById('sdrop').style.display='none'; }
+function toggleSat(){
+  if(!mapReady) return;
+  satMode=!satMode;
+  if(satMode){map.removeLayer(stile);satile.addTo(map);}else{map.removeLayer(satile);stile.addTo(map);}
+  document.querySelector('.msat').textContent=satMode?'🗺 Plan':'🛰 Satellite';
+}
+
+// ── STEP 4 RECAP ──
+let cmap=null;
+function buildRecap(){
+  const name=document.getElementById('m-name').value;
+  const beds=document.getElementById('m-beds').value;
+  const area=document.getElementById('m-area').value;
+  const type=document.getElementById('m-type').value;
+  const addr=document.getElementById('m-addr').value;
+  const airbnb=document.getElementById('p-airbnb').value;
+  const booking=document.getElementById('p-booking').value;
+  const floor=document.getElementById('p-floor').value;
+
+  // bulle
+  if(photoUrl){
+    document.getElementById('rbub-inner').innerHTML=`<img src="${photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  }
+  document.getElementById('rname').textContent=name||'—';
+  document.getElementById('rmeta').innerHTML=beds+' chambre'+(beds>1?'s':'')+' · '+type+' · '+area+'<br>Client : '+clientName;
+
+  const sv=(id,val)=>{const el=document.getElementById(id);if(val){el.textContent=val;el.classList.remove('miss');}else{el.textContent='Non renseigné';el.classList.add('miss');}};
+  sv('r-addr',addr); sv('r-gps',gLat?gLat+', '+gLng:null);
+  sv('r-airbnb',airbnb); sv('r-booking',booking); sv('r-floor',floor);
+
+  // mini map
+  const w=document.getElementById('cmap-wrap');
+  if(gLat!==null){
+    w.style.display='block';
+    setTimeout(()=>{
+      if(!cmap){
+        cmap=L.map('cmap',{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,touchZoom:false}).setView([gLat,gLng],16);
+        L.tileLayer(TS,{maxZoom:19}).addTo(cmap);
+        const ic=L.divIcon({html:`<div style="width:24px;height:24px;border-radius:50%;background:var(--gold);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:11px;">🏠</div>`,iconSize:[24,24],iconAnchor:[12,12],className:''});
+        L.marker([gLat,gLng],{icon:ic}).addTo(cmap);
+      } else { cmap.setView([gLat,gLng],16); cmap.invalidateSize(); }
+    },80);
+  } else { w.style.display='none'; }
+}
+
+// ── CREATE ──
+function createVilla(){
+  const btn=document.getElementById('btn-create');
+  btn.textContent='⏳ Création...'; btn.disabled=true;
+  setTimeout(()=>{
+    const name=document.getElementById('m-name').value;
+    const id=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+    const beds=document.getElementById('m-beds').value;
+    const area=document.getElementById('m-area').value;
+    const gps=gLat?`&lat=${gLat}&lng=${gLng}`:'';
+    window.location.href=`settings-villa.html?id=${id}&client=${clientId}&name=${encodeURIComponent(name)}&beds=${beds}&area=${encodeURIComponent(area)}${gps}&new=1`;
+  },1200);
+}
+</script>
+</body>
+</html>

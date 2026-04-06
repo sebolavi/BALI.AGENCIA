@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Nouveau client — Hidden Keys Bali</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#8B6914;--cream:#F5F0E8;--cream2:#EDE8DC;--cream3:#E5DED0;
+  --border:rgba(139,105,20,0.18);--text:#1A1208;--muted:#6B5B3E;
+  --green:#2ECC71;--green-d:#1A7A3C;--red:#C0392B;--orange:#B7590A;--blue:#3498DB;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--cream);color:var(--text);font-family:"DM Mono",monospace;min-height:100vh;}
+
+.topbar{position:sticky;top:0;z-index:200;background:rgba(245,240,232,.97);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);}
+.back-btn{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:20px;transition:all .2s;background:transparent;font-family:"DM Mono",monospace;}
+.back-btn:hover{border-color:var(--gold);color:var(--gold);}
+.topbar-sep{width:1px;height:24px;background:var(--border);margin:0 12px;}
+.topbar-title{font-family:"Playfair Display",serif;font-size:15px;}
+.topbar-title em{color:var(--gold);font-style:italic;}
+
+.main{max-width:720px;margin:0 auto;padding:44px 24px 120px;}
+
+.step-bar{display:flex;align-items:center;margin-bottom:36px;}
+.si{display:flex;align-items:center;gap:7px;}
+.si-num{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);transition:all .22s;flex-shrink:0;}
+.si.active .si-num{border-color:var(--gold);color:var(--gold);background:rgba(139,105,20,.08);}
+.si.done .si-num{border-color:var(--green-d);background:var(--green-d);color:white;}
+.si-label{font-size:9px;color:var(--muted);white-space:nowrap;}
+.si.active .si-label{color:var(--text);}
+.si.done .si-label{color:var(--green-d);}
+.sl{flex:1;height:1px;background:var(--border);min-width:10px;margin:0 4px;}
+
+.pane{display:none;animation:fu .22s ease;}
+.pane.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+
+.card{background:var(--cream2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px;}
+.card-hd{padding:14px 22px;border-bottom:1px solid var(--border);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.card-bd{padding:22px;}
+
+/* BUBBLE */
+.preview{display:flex;flex-direction:column;align-items:center;gap:10px;padding:22px 0 18px;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.bubble{width:88px;height:88px;border-radius:50%;border:2.5px solid var(--gold);background:var(--cream3);display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden;cursor:pointer;position:relative;box-shadow:0 0 18px rgba(139,105,20,.14);transition:all .2s;}
+.bubble:hover .bov{opacity:1;}
+.bov{position:absolute;inset:0;background:rgba(26,18,8,.45);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:18px;}
+.bubble img,.rbub img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.bub-hint{font-size:9px;color:var(--muted);}
+.name-live{font-family:"Playfair Display",serif;font-size:21px;text-align:center;min-height:26px;}
+.name-live.empty{color:var(--muted);font-style:italic;font-size:14px;}
+
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:13px;}
+.fl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.fi{padding:10px 13px;border:1px solid var(--border);border-radius:8px;font-family:"DM Mono",monospace;font-size:11px;background:var(--cream);color:var(--text);outline:none;transition:border-color .15s;width:100%;}
+.fi:focus{border-color:var(--gold);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:560px){.frow{grid-template-columns:1fr;}}
+.fhint{font-size:9px;color:var(--muted);line-height:1.7;margin-top:2px;}
+
+.ssep{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:16px 0 12px;display:flex;align-items:center;gap:10px;}
+.ssep::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+
+/* ZIP */
+.zip-zone{display:flex;align-items:center;gap:14px;padding:14px 18px;background:rgba(52,152,219,.04);border:1.5px dashed rgba(52,152,219,.25);border-radius:10px;margin-bottom:20px;cursor:pointer;transition:all .2s;}
+.zip-zone:hover{border-color:rgba(52,152,219,.5);background:rgba(52,152,219,.07);}
+.zip-zone.loaded{border-color:rgba(46,204,113,.4);background:rgba(46,204,113,.04);}
+.zip-ico{font-size:22px;flex-shrink:0;}
+.zip-txt{flex:1;}
+.zip-title{font-size:10px;color:var(--blue);margin-bottom:3px;}
+.zip-zone.loaded .zip-title{color:var(--green-d);}
+.zip-sub{font-size:8px;color:var(--muted);line-height:1.7;}
+.zip-pill{font-size:8px;padding:3px 9px;border-radius:10px;background:rgba(52,152,219,.1);color:var(--blue);flex-shrink:0;}
+.zip-zone.loaded .zip-pill{background:rgba(46,204,113,.1);color:var(--green-d);}
+
+/* LANG */
+.lang-grid{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
+.lang-btn{padding:6px 13px;border:1px solid var(--border);border-radius:18px;font-size:10px;color:var(--muted);cursor:pointer;transition:all .2s;background:transparent;font-family:"DM Mono",monospace;}
+.lang-btn.sel{border-color:var(--gold);color:var(--gold);background:rgba(139,105,20,.06);}
+
+/* TOGGLE */
+.trow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);}
+.trow:last-child{border-bottom:none;}
+.trow-ico{font-size:15px;width:22px;text-align:center;flex-shrink:0;}
+.trow-lbl{flex:1;font-size:10px;}
+.trow-sub{font-size:8px;color:var(--muted);margin-top:2px;}
+.tog{position:relative;width:38px;height:21px;flex-shrink:0;}
+.tog input{opacity:0;width:0;height:0;}
+.tsl{position:absolute;cursor:pointer;inset:0;background:var(--cream3);border:1px solid var(--border);border-radius:20px;transition:.2s;}
+.tsl:before{position:absolute;content:"";height:15px;width:15px;left:2px;top:2px;background:var(--muted);border-radius:50%;transition:.2s;}
+.tog input:checked+.tsl{background:var(--green-d);border-color:var(--green-d);}
+.tog input:checked+.tsl:before{transform:translateX(17px);background:white;}
+
+/* VILLAS */
+.vc{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--cream);border:1px solid var(--border);border-radius:8px;margin-bottom:7px;}
+.vc-n{width:22px;height:22px;border-radius:50%;background:rgba(139,105,20,.1);color:var(--gold);font-size:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.vc-name{flex:1;font-size:10px;}
+.vc-del{font-size:11px;color:var(--muted);cursor:pointer;padding:2px 6px;}
+.vc-del:hover{color:var(--red);}
+.vadd-row{display:flex;gap:8px;margin-top:6px;}
+.vadd-inp{flex:1;padding:9px 13px;border:1px solid var(--border);border-radius:8px;font-family:"DM Mono",monospace;font-size:11px;background:var(--cream);color:var(--text);outline:none;transition:border-color .15s;}
+.vadd-inp:focus{border-color:var(--gold);}
+.vadd-btn{padding:9px 16px;border-radius:8px;border:none;background:var(--gold);color:white;font-family:"DM Mono",monospace;font-size:10px;cursor:pointer;white-space:nowrap;}
+
+/* TRUST */
+.trust-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.trust-phase{font-size:11px;font-weight:600;}
+.trust-pct{font-family:"Playfair Display",serif;font-size:17px;color:var(--gold);}
+input[type=range]{width:100%;accent-color:var(--gold);cursor:pointer;}
+.trust-lbls{display:flex;justify-content:space-between;margin-top:8px;align-items:flex-end;}
+.tl{font-size:10px;color:var(--muted);text-align:center;flex:1;}
+.tl.on{color:var(--gold);}
+.tl:first-child,.tl:last-child{font-size:13px;font-weight:700;}
+.tl:first-child.on,.tl:last-child.on{color:var(--gold);}
+.trust-box{margin-top:12px;padding:12px 15px;background:rgba(139,105,20,.04);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--muted);line-height:2.1;}
+
+/* RECAP */
+.recap-top{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:16px;}
+.rbub{width:62px;height:62px;border-radius:50%;border:2.5px solid var(--gold);background:var(--cream3);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;}
+.rname{font-family:"Playfair Display",serif;font-size:19px;margin-bottom:3px;}
+.rmeta{font-size:9px;color:var(--muted);line-height:1.9;}
+.rrow{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);}
+.rrow:last-child{border-bottom:none;}
+.rico{font-size:13px;width:18px;text-align:center;flex-shrink:0;margin-top:1px;}
+.rlbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;width:88px;flex-shrink:0;margin-top:2px;}
+.rval{font-size:10px;flex:1;}
+.rval.miss{color:var(--muted);font-style:italic;}
+.redit{font-size:9px;color:var(--gold);cursor:pointer;padding:2px 5px;flex-shrink:0;}
+.redit:hover{text-decoration:underline;}
+.ok-box{margin-top:18px;padding:12px 14px;background:rgba(46,204,113,.06);border:1px solid rgba(46,204,113,.2);border-radius:8px;font-size:9px;color:var(--muted);line-height:2.1;}
+
+.cta{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;flex-wrap:wrap;align-items:center;}
+.btn-p{padding:11px 24px;border-radius:8px;border:none;background:var(--gold);color:white;font-family:"DM Mono",monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-p:hover{background:#7A5D11;}
+.btn-p:disabled{opacity:.35;cursor:not-allowed;}
+.btn-g{padding:11px 18px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:"DM Mono",monospace;font-size:10px;cursor:pointer;transition:all .2s;}
+.btn-g:hover{border-color:var(--gold);color:var(--gold);}
+.btn-skip{padding:11px 14px;border:none;background:transparent;color:var(--muted);font-family:"DM Mono",monospace;font-size:9px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.btn-create{padding:13px 28px;border-radius:8px;border:none;background:var(--green-d);color:white;font-family:"DM Mono",monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.btn-create:hover{background:#0E5228;}
+.btn-create:disabled{opacity:.35;cursor:not-allowed;}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div style="display:flex;align-items:center;">
+    <button class="back-btn" onclick="window.location.href='agency.html'">← Retour</button>
+    <div class="topbar-sep"></div>
+    <div class="topbar-title">Nouveau client — <em>Hidden Keys</em></div>
+  </div>
+  <span style="font-family:'Playfair Display',serif;font-size:13px;color:var(--gold);letter-spacing:2px;">HIDDEN KEYS</span>
+</nav>
+
+<div class="main">
+
+  <div class="step-bar">
+    <div class="si active" id="si1"><div class="si-num" id="sn1">1</div><div class="si-label">Identité</div></div>
+    <div class="sl"></div>
+    <div class="si" id="si2"><div class="si-num" id="sn2">2</div><div class="si-label">Contact</div></div>
+    <div class="sl"></div>
+    <div class="si" id="si3"><div class="si-num" id="sn3">3</div><div class="si-label">Villas & app</div></div>
+    <div class="sl"></div>
+    <div class="si" id="si4"><div class="si-num" id="sn4">4</div><div class="si-label">Confirmation</div></div>
+  </div>
+
+  <!-- STEP 1 — IDENTITÉ -->
+  <div class="pane active" id="p1">
+
+    <div class="zip-zone" id="zip-zone" onclick="document.getElementById('zip-inp').click()">
+      <div class="zip-ico">📁</div>
+      <div class="zip-txt">
+        <div class="zip-title">Vous avez un dossier client ?</div>
+        <div class="zip-sub">Déposez un ZIP — photo, contrats, RIB, docs villas<br>
+        <em>Parsing automatique par Claude — bientôt disponible</em></div>
+      </div>
+      <div class="zip-pill" id="zip-pill">Déposer</div>
+    </div>
+    <input type="file" id="zip-inp" accept=".zip,image/*,.pdf,.csv,.xlsx" multiple style="display:none;" onchange="onZip(this)">
+
+    <div class="card">
+      <div class="card-hd">👤 Identité</div>
+      <div class="card-bd">
+        <div class="preview">
+          <div class="bubble" id="bubble" onclick="document.getElementById('photo-inp').click()">
+            <div id="bub-inner" style="font-size:32px;">👤</div>
+            <div class="bov">📸</div>
+          </div>
+          <input type="file" id="photo-inp" accept="image/*" style="display:none;" onchange="onPhoto(this)">
+          <div class="bub-hint">Photo / portrait (optionnel)</div>
+          <div class="name-live empty" id="name-live">Prénom Nom</div>
+        </div>
+
+        <div class="frow">
+          <div class="fg">
+            <div class="fl">Prénom *</div>
+            <input class="fi" id="c-prenom" type="text" placeholder="Jean-Luc" oninput="onName()" autofocus>
+          </div>
+          <div class="fg">
+            <div class="fl">Nom *</div>
+            <input class="fi" id="c-nom" type="text" placeholder="Martin" oninput="onName()">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fg">
+            <div class="fl">Nationalité</div>
+            <select class="fi" id="c-nat" style="opacity:.8;">
+              <option value="">— optionnel</option>
+              <option>🇫🇷 Français</option><option>🇬🇧 Anglais</option>
+              <option>🇩🇪 Allemand</option><option>🇳🇱 Néerlandais</option>
+              <option>🇦🇺 Australien</option><option>🇺🇸 Américain</option>
+              <option>🇨🇭 Suisse</option><option>🇧🇪 Belge</option>
+              <option>🇮🇩 Indonésien</option><option>Autre</option>
+            </select>
+          </div>
+          <div class="fg">
+            <div class="fl">Début contrat</div>
+            <input class="fi" id="c-date" type="date" style="opacity:.8;">
+          </div>
+        </div>
+        <div class="fg" style="margin-bottom:0;">
+          <div class="fl">Notes internes</div>
+          <textarea class="fi" id="c-notes" rows="2" placeholder="Contexte, comment rencontré, remarques agence…" style="resize:vertical;opacity:.8;"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <button class="btn-g" onclick="window.location.href='agency.html'">Annuler</button>
+      <button class="btn-p" id="next1" onclick="go(2)" disabled>Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 — CONTACT -->
+  <div class="pane" id="p2">
+    <div class="card">
+      <div class="card-hd">📱 Contact & langue</div>
+      <div class="card-bd">
+        <div class="fg">
+          <div class="fl">Email</div>
+          <input class="fi" id="c-email" type="email" placeholder="jean-luc@gmail.com">
+          <div class="fhint">Rapports mensuels et factures</div>
+        </div>
+        <div class="fg">
+          <div class="fl">WhatsApp</div>
+          <input class="fi" id="c-wa" type="tel" placeholder="+33 6 12 34 56 78">
+          <div class="fhint">Alertes urgentes + résumés Sofia</div>
+        </div>
+
+        <div class="ssep">Langue Sofia</div>
+        <div class="lang-grid">
+          <button class="lang-btn sel" onclick="selLang(this,'fr')">🇫🇷 Français</button>
+          <button class="lang-btn" onclick="selLang(this,'en')">🇬🇧 English</button>
+          <button class="lang-btn" onclick="selLang(this,'de')">🇩🇪 Deutsch</button>
+          <button class="lang-btn" onclick="selLang(this,'nl')">🇳🇱 Nederlands</button>
+          <button class="lang-btn" onclick="selLang(this,'es')">🇪🇸 Español</button>
+          <button class="lang-btn" onclick="selLang(this,'it')">🇮🇹 Italiano</button>
+        </div>
+
+        <div class="ssep">Notifications</div>
+        <div class="trow">
+          <div class="trow-ico">💬</div>
+          <div class="trow-lbl">WhatsApp<div class="trow-sub">Alertes rouges uniquement</div></div>
+          <label class="tog"><input type="checkbox" id="n-wa" checked><span class="tsl"></span></label>
+        </div>
+        <div class="trow">
+          <div class="trow-ico">📧</div>
+          <div class="trow-lbl">Email<div class="trow-sub">Rapports hebdo + factures</div></div>
+          <label class="tog"><input type="checkbox" id="n-email" checked><span class="tsl"></span></label>
+        </div>
+        <div class="trow">
+          <div class="trow-ico">🔔</div>
+          <div class="trow-lbl">Push app<div class="trow-sub">Si le client installe la PWA</div></div>
+          <label class="tog"><input type="checkbox" id="n-push"><span class="tsl"></span></label>
+        </div>
+      </div>
+    </div>
+    <div class="cta">
+      <button class="btn-g" onclick="go(1)">← Retour</button>
+      <button class="btn-skip" onclick="go(3)">Passer →</button>
+      <button class="btn-p" onclick="go(3)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — VILLAS & APP -->
+  <div class="pane" id="p3">
+    <div class="card">
+      <div class="card-hd">🏠 Villas de ce client</div>
+      <div class="card-bd">
+        <div style="font-size:9px;color:var(--muted);margin-bottom:14px;line-height:1.9;">
+          Notez les noms — chaque villa sera créée en détail juste après via le wizard villa.
+        </div>
+        <div id="villa-list"></div>
+        <div class="vadd-row">
+          <input class="vadd-inp" id="villa-inp" type="text" placeholder="ex : Villa Karma, Studio Bulan…" onkeydown="if(event.key==='Enter')addVilla()">
+          <button class="vadd-btn" onclick="addVilla()">+ Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">⚡ Autonomie Sofia</div>
+      <div class="card-bd">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+          <div style="font-size:14px;font-weight:700;color:var(--text);">Superhost</div>
+          <div class="trust-pct" id="trust-pct">0%</div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);">Superghost</div>
+        </div>
+        <input type="range" id="trust-range" min="0" max="100" value="0" oninput="onTrust(this.value)">
+        <div class="trust-lbls">
+          <div class="tl on" id="tl0">Fantôme</div>
+          <div class="tl" id="tl1">Suggestions</div>
+          <div class="tl" id="tl2">Semi-auto</div>
+          <div class="tl" id="tl3">Superghost</div>
+        </div>
+        <div style="margin-top:10px;font-size:11px;font-weight:600;" id="trust-phase">Phase 0 — Fantôme conseiller</div>
+        <div class="trust-box" id="trust-box">
+          ✦ Sofia calcule tout, n'agit sur rien<br>
+          ✦ Rapport hebdo "voici ce qu'on aurait fait"<br>
+          ✦ <em>Recommandé pour démarrer — 2 à 4 semaines</em>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta">
+      <button class="btn-g" onclick="go(2)">← Retour</button>
+      <button class="btn-skip" onclick="go(4)">Passer →</button>
+      <button class="btn-p" onclick="go(4)">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — CONFIRMATION -->
+  <div class="pane" id="p4">
+    <div class="card">
+      <div class="card-hd">✅ Confirmation</div>
+      <div class="card-bd">
+        <div class="recap-top">
+          <div class="rbub" id="rbub"><span id="rbub-inner" style="font-size:22px;">👤</span></div>
+          <div>
+            <div class="rname" id="r-name">—</div>
+            <div class="rmeta" id="r-meta">—</div>
+          </div>
+        </div>
+        <div class="rrow">
+          <div class="rico">📧</div><div class="rlbl">Email</div>
+          <div class="rval miss" id="r-email">Non renseigné</div>
+          <div class="redit" onclick="go(2)">Modifier</div>
+        </div>
+        <div class="rrow">
+          <div class="rico">💬</div><div class="rlbl">WhatsApp</div>
+          <div class="rval miss" id="r-wa">Non renseigné</div>
+          <div class="redit" onclick="go(2)">Modifier</div>
+        </div>
+        <div class="rrow">
+          <div class="rico">🌐</div><div class="rlbl">Langue</div>
+          <div class="rval" id="r-lang">🇫🇷 Français</div>
+          <div class="redit" onclick="go(2)">Modifier</div>
+        </div>
+        <div class="rrow">
+          <div class="rico">🏠</div><div class="rlbl">Villas</div>
+          <div class="rval miss" id="r-villas">Aucune déclarée</div>
+          <div class="redit" onclick="go(3)">Modifier</div>
+        </div>
+        <div class="rrow">
+          <div class="rico">⚡</div><div class="rlbl">Sofia</div>
+          <div class="rval" id="r-trust">Phase 0 — Fantôme (0%)</div>
+          <div class="redit" onclick="go(3)">Modifier</div>
+        </div>
+        <div class="ok-box">
+          ✓ Fiche client créée — Settings disponibles pour RIB, contrat, Xendit<br>
+          ✓ Wallet Xendit client créé automatiquement<br>
+          <span id="ok-villa-line" style="display:none;">✓ Wizard villa lancé pour chaque villa déclarée</span>
+          <span id="ok-novilla-line">✓ Vous pourrez ajouter des villas depuis la fiche client</span>
+        </div>
+      </div>
+    </div>
+    <div class="cta">
+      <button class="btn-g" onclick="go(3)">← Retour</button>
+      <button class="btn-create" id="btn-create" onclick="createClient()">
+        <span id="btn-lbl">Créer le client →</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let photoData = null;
+let selectedLang = 'fr';
+let trustVal = 0;
+let villas = [];
+let cur = 1;
+
+// ── NAVIGATION ──
+function go(n){
+  document.getElementById('si'+cur).classList.remove('active');
+  document.getElementById('si'+cur).classList.add('done');
+  document.getElementById('sn'+cur).textContent = '✓';
+  document.getElementById('p'+cur).classList.remove('active');
+  cur = n;
+  document.getElementById('si'+n).classList.remove('done');
+  document.getElementById('si'+n).classList.add('active');
+  document.getElementById('p'+n).classList.add('active');
+  if(n===4) buildRecap();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── ZIP (placeholder) ──
+function onZip(inp){
+  if(!inp.files.length) return;
+  const z = document.getElementById('zip-zone');
+  z.classList.add('loaded');
+  z.querySelector('.zip-title').textContent = inp.files.length+' fichier(s) chargé(s) — parsing Claude bientôt';
+  document.getElementById('zip-pill').textContent = '✓ Reçu';
+}
+
+// ── PHOTO ──
+function onPhoto(inp){
+  const f = inp.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = e => {
+    photoData = e.target.result;
+    document.getElementById('bub-inner').innerHTML = `<img src="${photoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  };
+  r.readAsDataURL(f);
+}
+
+// ── STEP 1 ──
+function onName(){
+  const p = document.getElementById('c-prenom').value.trim();
+  const n = document.getElementById('c-nom').value.trim();
+  const el = document.getElementById('name-live');
+  const full = [p,n].filter(Boolean).join(' ');
+  el.textContent = full || 'Prénom Nom';
+  el.classList.toggle('empty', !full);
+  document.getElementById('next1').disabled = !(p&&n);
+}
+
+// ── STEP 2 ──
+function selLang(btn,code){
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selectedLang = code;
+}
+
+// ── STEP 3 VILLAS ──
+function addVilla(){
+  const inp = document.getElementById('villa-inp');
+  const v = inp.value.trim(); if(!v) return;
+  villas.push(v); inp.value=''; renderVillas();
+}
+function removeVilla(i){ villas.splice(i,1); renderVillas(); }
+function renderVillas(){
+  document.getElementById('villa-list').innerHTML = villas.map((v,i)=>
+    `<div class="vc"><div class="vc-n">${i+1}</div><div class="vc-name">${v}</div><div class="vc-del" onclick="removeVilla(${i})">✕</div></div>`
+  ).join('');
+}
+
+// ── STEP 3 TRUST ──
+const PHASES=[
+  {min:0, max:24, label:'Phase 0 — Fantôme conseiller', box:'✦ Sofia calcule tout, n\'agit sur rien<br>✦ Rapport hebdo "voici ce qu\'on aurait fait"<br>✦ <em>Recommandé pour démarrer</em>', tl:'tl0'},
+  {min:25,max:49, label:'Phase 1 — Suggestions actives',box:'✦ Sofia propose, le client valide<br>✦ [Appliquer] [Ignorer] sur chaque action<br>✦ <em>Mode apprentissage</em>', tl:'tl1'},
+  {min:50,max:74, label:'Phase 2 — Semi-automatique',   box:'✦ Sofia agit et informe après<br>✦ Décisions importantes remontent<br>✦ <em>Recommandé à 3 mois</em>', tl:'tl2'},
+  {min:75,max:100,label:'Phase 3 — Superghost',         box:'✦ Sofia gère tout en autonomie<br>✦ Seules alertes rouges remontent<br>✦ <em>Pour clients très confiants</em>', tl:'tl3'},
+];
+function onTrust(v){
+  trustVal=parseInt(v);
+  document.getElementById('trust-pct').textContent=trustVal+'%';
+  const ph=PHASES.find(p=>trustVal>=p.min&&trustVal<=p.max);
+  document.getElementById('trust-phase').textContent=ph.label;
+  document.getElementById('trust-box').innerHTML=ph.box;
+  ['tl0','tl1','tl2','tl3'].forEach(id=>document.getElementById(id).classList.remove('on'));
+  document.getElementById(ph.tl).classList.add('on');
+}
+
+// ── STEP 4 RECAP ──
+const LANG_LABELS={fr:'🇫🇷 Français',en:'🇬🇧 English',de:'🇩🇪 Deutsch',nl:'🇳🇱 Nederlands',es:'🇪🇸 Español',it:'🇮🇹 Italiano'};
+function buildRecap(){
+  const prenom=document.getElementById('c-prenom').value;
+  const nom=document.getElementById('c-nom').value;
+  const nat=document.getElementById('c-nat').value;
+  const date=document.getElementById('c-date').value;
+  const email=document.getElementById('c-email').value;
+  const wa=document.getElementById('c-wa').value;
+
+  if(photoData) document.getElementById('rbub-inner').innerHTML=`<img src="${photoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  document.getElementById('r-name').textContent=[prenom,nom].filter(Boolean).join(' ');
+  document.getElementById('r-meta').textContent=[nat,date?'Contrat '+date:''].filter(Boolean).join(' · ')||'Nouveau client';
+
+  const sv=(id,v)=>{const el=document.getElementById(id);if(v){el.textContent=v;el.classList.remove('miss');}else{el.textContent='Non renseigné';el.classList.add('miss');}};
+  sv('r-email',email); sv('r-wa',wa);
+  document.getElementById('r-lang').textContent=LANG_LABELS[selectedLang]||selectedLang;
+
+  if(villas.length){
+    document.getElementById('r-villas').textContent=villas.join(', ');
+    document.getElementById('r-villas').classList.remove('miss');
+    document.getElementById('ok-villa-line').style.display='';
+    document.getElementById('ok-novilla-line').style.display='none';
+    document.getElementById('btn-lbl').textContent='Créer + ajouter '+villas.length+' villa'+(villas.length>1?'s':'')+' →';
+  } else {
+    document.getElementById('r-villas').textContent='Aucune déclarée';
+    document.getElementById('r-villas').classList.add('miss');
+    document.getElementById('ok-villa-line').style.display='none';
+    document.getElementById('ok-novilla-line').style.display='';
+    document.getElementById('btn-lbl').textContent='Créer le client →';
+  }
+
+  const ph=PHASES.find(p=>trustVal>=p.min&&trustVal<=p.max);
+  document.getElementById('r-trust').textContent=ph.label+' ('+trustVal+'%)';
+}
+
+// ── CREATE ──
+function createClient(){
+  const btn=document.getElementById('btn-create');
+  btn.disabled=true;
+  document.getElementById('btn-lbl').textContent='⏳ Création...';
+
+  const prenom=document.getElementById('c-prenom').value.trim();
+  const nom=document.getElementById('c-nom').value.trim();
+  const clientId=(prenom+'-'+nom).toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  const clientName=prenom+' '+nom;
+
+  // Photo → sessionStorage (récupérée par settings-client)
+  if(photoData){
+    try{ sessionStorage.setItem('photo_'+clientId, photoData); }catch(e){}
+  }
+  // Liste villas → sessionStorage (cascade)
+  if(villas.length){
+    try{ sessionStorage.setItem('villas_'+clientId, JSON.stringify(villas)); }catch(e){}
+  }
+
+  setTimeout(()=>{
+    if(villas.length>0){
+      // → wizard villa, 1ère villa, avec contexte client + index pour cascader
+      window.location.href='add-villa.html?client='+clientId
+        +'&name='+encodeURIComponent(clientName)
+        +'&villas='+villas.length
+        +'&villa_name='+encodeURIComponent(villas[0])
+        +'&villa_index=0';
+    } else {
+      // → settings client directement
+      const p=new URLSearchParams({
+        id:clientId, name:clientName, new:'1',
+        lang:selectedLang, trust:trustVal,
+        email:document.getElementById('c-email').value,
+        wa:document.getElementById('c-wa').value,
+      });
+      window.location.href='settings-client.html?'+p.toString();
+    }
+  },1100);
+}
+</script>
+</body>
+</html>
